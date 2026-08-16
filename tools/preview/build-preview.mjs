@@ -26,12 +26,13 @@ const FONTS = {
   inter: b64(join(REPO, '.next/static/media/e4af272ccee01ff0-s.p.woff2'), 'font/woff2'),
 };
 
-/* ── Images ── */
-const imgDir = join(REPO, 'public/portfolio');
-const IMG = {};
-for (const f of readdirSync(imgDir).filter((f) => f.endsWith('.jpg'))) {
-  IMG[`/portfolio/${f}`] = b64(join(imgDir, f), 'image/jpeg');
-}
+/* ── Images ──
+   Base64 inflates by ~33%, and the whole bundle has to stay comfortably under
+   the hosting size limit, so the preview carries a capped set of photos per
+   project rather than the full gallery. Pass --full to embed everything (fine
+   for opening the file locally, usually too large to publish). */
+const FULL = process.argv.includes('--full');
+const PHOTOS_PER_PROJECT = FULL ? Infinity : 3;
 
 /* ── Pull the real data out of the TS sources ──
    These files are plain data with no imports beyond types, so stripping
@@ -75,8 +76,24 @@ const PROJECTS = proj.projects.map((p) => ({
   highlights: p.highlights,
   cover: p.cover.src,
   coverAlt: p.cover.alt,
-  photos: p.photos.map((ph) => ({ src: ph.src, alt: ph.alt, caption: ph.caption })),
+  photos: p.photos
+    .slice(0, PHOTOS_PER_PROJECT)
+    .map((ph) => ({ src: ph.src, alt: ph.alt, caption: ph.caption })),
 }));
+
+// Embed only what the trimmed set actually references, plus the hero.
+const imgDir = join(REPO, 'public/portfolio');
+const needed = new Set(['/portfolio/cabin-exterior-dusk.jpg', '/portfolio/cabin-timber-frame.jpg']);
+for (const p of PROJECTS) {
+  needed.add(p.cover);
+  for (const ph of p.photos) needed.add(ph.src);
+}
+const IMG = {};
+for (const ref of needed) {
+  IMG[ref] = b64(join(imgDir, ref.replace('/portfolio/', '')), 'image/jpeg');
+}
+const skipped = readdirSync(imgDir).filter((f) => f.endsWith('.jpg')).length - needed.size;
+if (skipped > 0) console.log(`note: ${skipped} photos omitted from the bundle (run with --full to include all)`);
 
 const DATA = `
 const IMG = ${JSON.stringify(IMG)};
