@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
 import { materialsFor, type Material } from '@/data/materials';
 
@@ -80,14 +81,17 @@ function MaterialTile({
           className="relative block aspect-square w-full"
           style={{ backgroundColor: material.hex }}
         >
+          {/* next/image resizes and re-encodes these: the sources are 1024px
+              at ~600KB each, but the tile renders around 100px. Serving the
+              originals would push ~4MB down the wire for six thumbnails. */}
           {!failed && (
-            // eslint-disable-next-line @next/next/no-img-element -- static asset, may legitimately be absent
-            <img
+            <Image
               src={`/materials/${material.id}.jpg`}
               alt={material.name}
-              loading="lazy"
+              fill
+              sizes="(max-width: 640px) 30vw, 140px"
               onError={() => setFailed(true)}
-              className="h-full w-full object-cover"
+              className="object-cover"
             />
           )}
           {selected && (

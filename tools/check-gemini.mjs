@@ -54,7 +54,7 @@ async function main() {
   process.stdout.write('1. Key valid ............ ');
   try {
     const r = await ai.models.generateContent({
-      model: 'gemini-3.1-flash',
+      model: 'gemini-flash-latest',
       contents: 'Reply with the single word: ok',
     });
     console.log(`yes  (replied "${(r.text ?? '').trim().slice(0, 20)}")`);

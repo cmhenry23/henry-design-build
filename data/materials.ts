@@ -165,7 +165,7 @@ export const MATERIALS: Material[] = [
     category: 'Surface',
     hex: '#4A3446',
     suits: ['bath', 'reno'],
-    prompt: `Flat wall painted deep aubergine plum, satin sheen, smooth even finish, soft directional daylight showing subtle colour depth. ${SHOT}`,
+    prompt: `Interior corner where two walls painted deep aubergine plum meet crisp white trim and a white baseboard, satin sheen, even wall colour, raking daylight defining the corner. The colour, the clean paint line and the trim edge are the subject. ${SHOT}`,
   },
 
   // ── Detail ──
