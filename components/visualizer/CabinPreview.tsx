@@ -1,5 +1,7 @@
 'use client';
 
+import { useId } from 'react';
+
 /**
  * A live front-elevation drawing that redraws as the configurator changes.
  * Pure SVG — no canvas, no 3D library, no external assets, so it stays
@@ -34,6 +36,11 @@ export default function CabinPreview({
   hasFireplace,
   isInterior,
 }: PreviewProps) {
+  // Namespaces the gradient and clipPath ids. Without this, two previews on the
+  // same page (the intake brief card and the configurator) would share the
+  // first one's clip paths and draw each other's geometry.
+  const uid = useId().replace(/:/g, '');
+
   if (isInterior) {
     return <InteriorPreview cladding={cladding} sqft={sqft} sizeRatio={sizeRatio} />;
   }
@@ -102,24 +109,24 @@ export default function CabinPreview({
       aria-label={`Sketch of a building with ${cladding.label.toLowerCase()} cladding and a ${roof.label.toLowerCase()} roof, approximately ${sqft} square feet${hasDeck ? ', with a deck' : ''}${hasLoft ? ', with a loft window' : ''}${hasFireplace ? ', with a chimney' : ''}.`}
     >
       <defs>
-        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id={`sky-${uid}`} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#1B2733" />
           <stop offset="55%" stopColor="#31414C" />
           <stop offset="100%" stopColor="#5B6559" />
         </linearGradient>
-        <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id={`glow-${uid}`} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#F2C879" stopOpacity="0.95" />
           <stop offset="100%" stopColor="#E8A94F" stopOpacity="0.6" />
         </linearGradient>
-        <linearGradient id="roofShade" x1="0" y1="0" x2="1" y2="0">
+        <linearGradient id={`roofShade-${uid}`} x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stopColor="#000" stopOpacity="0.22" />
           <stop offset="50%" stopColor="#000" stopOpacity="0" />
           <stop offset="100%" stopColor="#000" stopOpacity="0.28" />
         </linearGradient>
-        <clipPath id="wallClip">
+        <clipPath id={`wallClip-${uid}`}>
           <rect x={left} y={wallTop} width={bodyW} height={wallH} />
         </clipPath>
-        <clipPath id="roofClip">
+        <clipPath id={`roofClip-${uid}`}>
           <polygon
             points={`${cx},${ridgeY} ${right + eaveOverhang},${wallTop + eaveOverhang * pitch} ${left - eaveOverhang},${wallTop + eaveOverhang * pitch}`}
           />
@@ -127,7 +134,7 @@ export default function CabinPreview({
       </defs>
 
       {/* Sky and moon */}
-      <rect width={VB_W} height={VB_H} fill="url(#sky)" />
+      <rect width={VB_W} height={VB_H} fill={`url(#sky-${uid})`} />
       <circle cx="655" cy="88" r="26" fill="#F6F2EB" opacity="0.14" />
 
       {/* Far treeline */}
@@ -201,7 +208,7 @@ export default function CabinPreview({
 
       {/* Walls */}
       <rect x={left} y={wallTop} width={bodyW} height={wallH} fill={cladding.hex} />
-      <g clipPath="url(#wallClip)" stroke="#000" strokeOpacity="0.14" strokeWidth="1">
+      <g clipPath={`url(#wallClip-${uid})`} stroke="#000" strokeOpacity="0.14" strokeWidth="1">
         {boardLines.map((y) => (
           <line key={y} x1={left} y1={y} x2={right} y2={y} />
         ))}
@@ -234,7 +241,7 @@ export default function CabinPreview({
         points={`${cx},${ridgeY} ${right + eaveOverhang},${wallTop + eaveOverhang * pitch} ${left - eaveOverhang},${wallTop + eaveOverhang * pitch}`}
         fill={roof.hex}
       />
-      <g clipPath="url(#roofClip)">
+      <g clipPath={`url(#roofClip-${uid})`}>
         {roof.ribbed &&
           ribs.map((r, i) => (
             <line
@@ -263,7 +270,7 @@ export default function CabinPreview({
           ))}
         <polygon
           points={`${cx},${ridgeY} ${right + eaveOverhang},${wallTop + eaveOverhang * pitch} ${left - eaveOverhang},${wallTop + eaveOverhang * pitch}`}
-          fill="url(#roofShade)"
+          fill={`url(#roofShade-${uid})`}
         />
       </g>
       {/* Fascia */}
@@ -288,7 +295,7 @@ export default function CabinPreview({
       {hasLoft && ridgeY < wallTop - 46 && (
         <g>
           <rect x={cx - 22} y={wallTop - 40} width="44" height="30" fill={cladding.trim} />
-          <rect x={cx - 18} y={wallTop - 36} width="36" height="22" fill="url(#glow)" />
+          <rect x={cx - 18} y={wallTop - 36} width="36" height="22" fill={`url(#glow-${uid})`} />
           <line x1={cx} y1={wallTop - 36} x2={cx} y2={wallTop - 14} stroke={cladding.trim} strokeWidth="2.5" />
         </g>
       )}
@@ -297,7 +304,7 @@ export default function CabinPreview({
       {[...leftWindows, ...rightWindows].map((x, i) => (
         <g key={i}>
           <rect x={x - 3} y={groundY - 96} width={winW + 6} height={winH + 6} fill={cladding.trim} />
-          <rect x={x} y={groundY - 93} width={winW} height={winH} fill="url(#glow)" />
+          <rect x={x} y={groundY - 93} width={winW} height={winH} fill={`url(#glow-${uid})`} />
           <line
             x1={x + winW / 2}
             y1={groundY - 93}
@@ -379,6 +386,7 @@ function InteriorPreview({
   sqft: number;
   sizeRatio: number;
 }) {
+  const uid = useId().replace(/:/g, '');
   const VB_W = 800;
   const VB_H = 520;
   const floorY = 400;
@@ -396,15 +404,15 @@ function InteriorPreview({
       aria-label={`Sketch of a renovated room roughly ${sqft} square feet, with ${cladding.label.toLowerCase()} cabinetry.`}
     >
       <defs>
-        <linearGradient id="wallGrad" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id={`wallGrad-${uid}`} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#E6E1D8" />
           <stop offset="100%" stopColor="#CFC8BC" />
         </linearGradient>
-        <linearGradient id="winGlow" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id={`winGlow-${uid}`} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#BBD3D8" />
           <stop offset="100%" stopColor="#8FA98C" />
         </linearGradient>
-        <linearGradient id="floorGrad" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id={`floorGrad-${uid}`} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#C6A177" />
           <stop offset="100%" stopColor="#A9855C" />
         </linearGradient>
@@ -413,7 +421,7 @@ function InteriorPreview({
       <rect width={VB_W} height={VB_H} fill="#1B1917" />
 
       {/* Back wall */}
-      <rect x={left} y={ceilY} width={roomW} height={floorY - ceilY} fill="url(#wallGrad)" />
+      <rect x={left} y={ceilY} width={roomW} height={floorY - ceilY} fill={`url(#wallGrad-${uid})`} />
 
       {/* Tile splash band */}
       <rect x={left} y={floorY - 168} width={roomW} height="84" fill="#F1EDE6" />
@@ -440,7 +448,7 @@ function InteriorPreview({
 
       {/* Window */}
       <rect x={cx - 90} y={floorY - 166} width="180" height="80" fill={cladding.trim} />
-      <rect x={cx - 82} y={floorY - 158} width="164" height="64" fill="url(#winGlow)" />
+      <rect x={cx - 82} y={floorY - 158} width="164" height="64" fill={`url(#winGlow-${uid})`} />
       <line x1={cx} y1={floorY - 158} x2={cx} y2={floorY - 94} stroke={cladding.trim} strokeWidth="4" />
 
       {/* Base cabinets */}
@@ -491,7 +499,7 @@ function InteriorPreview({
       </g>
 
       {/* Floor */}
-      <rect x="0" y={floorY} width={VB_W} height={VB_H - floorY} fill="url(#floorGrad)" />
+      <rect x="0" y={floorY} width={VB_W} height={VB_H - floorY} fill={`url(#floorGrad-${uid})`} />
       <g stroke="#000" strokeOpacity="0.13" strokeWidth="1.5">
         {Array.from({ length: 9 }).map((_, i) => (
           <line key={i} x1={i * 100 - 60} y1={VB_H} x2={cx - 200 + i * 60} y2={floorY} />

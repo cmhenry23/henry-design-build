@@ -98,7 +98,7 @@ export default function Testimonials() {
             </figcaption>
           </div>
 
-          <div className="flex flex-col justify-end gap-1">
+          <div className="flex min-w-0 flex-col justify-end gap-1">
             {testimonials.map((t, i) => (
               <button
                 key={i}
@@ -106,7 +106,7 @@ export default function Testimonials() {
                 onClick={() => setActive(i)}
                 aria-pressed={i === active}
                 aria-label={`Show testimonial ${i + 1}`}
-                className={`group flex items-center gap-4 border-l-2 py-3 pl-5 text-left transition-colors ${
+                className={`group flex min-w-0 items-center gap-4 border-l-2 py-3 pl-5 text-left transition-colors ${
                   i === active
                     ? 'border-cedar text-bone'
                     : 'border-bone/12 text-bone/40 hover:border-bone/40 hover:text-bone/70'
@@ -115,7 +115,9 @@ export default function Testimonials() {
                 <span className="font-display text-[0.68rem] uppercase tracking-[0.16em]">
                   {String(i + 1).padStart(2, '0')}
                 </span>
-                <span className="line-clamp-1 text-sm">{t.quote.slice(0, 46)}&hellip;</span>
+                {/* min-w-0 lets this flex child shrink below its text width;
+                    without it the label pushes the page wider than the viewport. */}
+                <span className="min-w-0 truncate text-sm">{t.quote.slice(0, 46)}&hellip;</span>
               </button>
             ))}
           </div>
