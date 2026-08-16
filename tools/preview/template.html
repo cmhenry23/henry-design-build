@@ -1,0 +1,1625 @@
+<title>Henry Design Build — site preview</title>
+
+<style>
+  @font-face {
+    font-family: 'ArchivoP';
+    font-style: normal;
+    font-weight: 400 800;
+    font-display: block;
+    src: url({{FONT:archivo}}) format('woff2');
+  }
+  @font-face {
+    font-family: 'InterP';
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: block;
+    src: url({{FONT:inter}}) format('woff2');
+  }
+
+  /* ── Henry Design Build tokens — mirrored from tailwind.config.ts ──
+     This preview deliberately commits to the brand's own single visual
+     world (bone ground, ink sections, cedar accent) rather than adapting
+     to the viewer's theme: inverting it would misrepresent the site. */
+  :root {
+    --ink:    #14110F;
+    --char:   #221F1C;
+    --stone:  #3A3532;
+    --bone:   #F6F2EB;
+    --sand:   #E8E0D3;
+    --cedar:  #C9A06A;
+    --brass:  #B8863B;
+    --shell:  78rem;
+
+    --display: 'ArchivoP', 'Archivo', Arial, sans-serif;
+    --body: 'InterP', 'Inter', system-ui, sans-serif;
+
+    color-scheme: light;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bone);
+    color: var(--ink);
+    font-family: var(--body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  img { max-width: 100%; display: block; }
+
+  h1, h2, h3, h4 {
+    font-family: var(--display);
+    margin: 0;
+    text-wrap: balance;
+  }
+  p { text-wrap: pretty; }
+
+  ::selection { background: var(--cedar); color: var(--ink); }
+
+  :focus-visible {
+    outline: 2px solid var(--cedar);
+    outline-offset: 3px;
+  }
+
+  .shell {
+    width: 100%;
+    max-width: var(--shell);
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 4vw, 2rem);
+  }
+
+  .eyebrow {
+    font-family: var(--display);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    margin: 0;
+  }
+
+  .h-hero {
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 0.88;
+    letter-spacing: -0.02em;
+    font-size: clamp(2.5rem, 8vw, 6rem);
+  }
+
+  .h-section {
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 0.95;
+    letter-spacing: -0.015em;
+    font-size: clamp(1.9rem, 4.4vw, 3.25rem);
+  }
+
+  .h-card {
+    font-size: 1.15rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+  }
+
+  .lede { font-size: 1.05rem; line-height: 1.65; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.75rem;
+    font-family: var(--display);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    text-decoration: none;
+    border: 0;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .btn-ink    { background: var(--ink); color: var(--bone); }
+  .btn-ink:hover { background: var(--stone); }
+  .btn-cedar  { background: var(--cedar); color: var(--ink); }
+  .btn-cedar:hover { background: var(--brass); }
+  .btn-ghost  { background: transparent; color: var(--bone); border: 1px solid rgba(246,242,235,0.3); }
+  .btn-ghost:hover { border-color: var(--cedar); background: var(--cedar); color: var(--ink); }
+  .btn-ghost-d { background: transparent; color: var(--ink); border: 1px solid rgba(20,17,15,0.25); }
+  .btn-ghost-d:hover { background: var(--ink); color: var(--bone); }
+
+  /* ── Preview ribbon ── */
+  .ribbon {
+    background: var(--char);
+    color: rgba(246,242,235,0.75);
+    font-size: 0.78rem;
+    line-height: 1.5;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid rgba(201,160,106,0.35);
+  }
+  .ribbon strong {
+    font-family: var(--display);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.7rem;
+    color: var(--cedar);
+  }
+  .ribbon-inner { display: flex; flex-wrap: wrap; gap: 0.35rem 1rem; align-items: baseline; }
+
+  /* ── Hero ── */
+  .hero {
+    position: relative;
+    min-height: 88vh;
+    display: flex;
+    align-items: flex-end;
+    background: var(--ink);
+    overflow: hidden;
+  }
+  .hero img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.55;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, var(--ink), rgba(20,17,15,0.55) 45%, rgba(20,17,15,0.35));
+  }
+  .hero-body { position: relative; z-index: 1; color: var(--bone); padding: 8rem 0 5rem; width: 100%; }
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+    max-width: 40rem;
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(246,242,235,0.15);
+  }
+  .stat-k {
+    font-family: var(--display);
+    font-size: clamp(1.6rem, 4vw, 2.25rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--cedar);
+    line-height: 1;
+  }
+  .stat-v { font-size: 0.75rem; color: rgba(246,242,235,0.5); margin: 0.6rem 0 0; line-height: 1.35; }
+
+  /* ── Section rhythm ── */
+  .sec { padding: clamp(4rem, 9vw, 7.5rem) 0; }
+  .sec-sand { background: var(--sand); border-block: 1px solid rgba(20,17,15,0.1); }
+  .sec-ink  { background: var(--ink); color: var(--bone); }
+
+  .marquee-wrap {
+    overflow: hidden;
+    background: var(--sand);
+    border-block: 1px solid rgba(20,17,15,0.1);
+    padding: 1rem 0;
+  }
+  .marquee { display: flex; width: max-content; animation: marquee 34s linear infinite; }
+  .marquee span {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding-inline: 2rem;
+    font-family: var(--display);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgba(20,17,15,0.45);
+    white-space: nowrap;
+  }
+  .marquee i { width: 4px; height: 4px; background: var(--cedar); }
+  @keyframes marquee { to { transform: translateX(-50%); } }
+
+  .split { display: grid; gap: clamp(2.5rem, 6vw, 6rem); }
+  @media (min-width: 62rem) { .split { grid-template-columns: 0.85fr 1.15fr; } }
+
+  .prose p { line-height: 1.7; color: rgba(20,17,15,0.75); margin: 0 0 1.35rem; font-size: 1.05rem; }
+  .prose p:last-child { margin-bottom: 0; }
+  .pull {
+    font-family: var(--display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    color: var(--ink) !important;
+  }
+
+  .grid-services {
+    display: grid;
+    gap: 1px;
+    background: rgba(20,17,15,0.12);
+    border: 1px solid rgba(20,17,15,0.12);
+    margin-top: 3.5rem;
+  }
+  @media (min-width: 45rem) { .grid-services { grid-template-columns: 1fr 1fr; } }
+  .service { background: var(--bone); padding: clamp(1.75rem, 4vw, 2.75rem); }
+  .service-n {
+    font-family: var(--display);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--cedar);
+  }
+  .service h3 { margin: 1.15rem 0 0; }
+  .service p { margin: 0.9rem 0 0; line-height: 1.6; color: rgba(20,17,15,0.65); }
+
+  /* ── Portfolio ── */
+  .filters { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: 2.5rem; }
+  .filter {
+    padding: 0.5rem 1rem;
+    font-family: var(--display);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    background: transparent;
+    border: 0;
+    color: rgba(20,17,15,0.55);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+  }
+  .filter:hover { background: rgba(20,17,15,0.05); color: var(--ink); }
+  .filter[aria-pressed='true'] { background: var(--ink); color: var(--bone); }
+  .filter b { font-weight: 400; opacity: 0.5; margin-left: 0.5rem; font-size: 0.65rem; }
+
+  .projects { display: grid; gap: 1.5rem; margin-top: 2.5rem; }
+  .project {
+    display: grid;
+    border: 1px solid rgba(20,17,15,0.12);
+    background: rgba(255,255,255,0.5);
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .project:hover { border-color: rgba(20,17,15,0.35); }
+  @media (min-width: 52rem) { .project { grid-template-columns: 1.05fr 1fr; } }
+  .project-img { position: relative; aspect-ratio: 4/3; overflow: hidden; background: var(--sand); }
+  @media (min-width: 52rem) { .project-img { aspect-ratio: auto; min-height: 24rem; } }
+  .project-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.9s cubic-bezier(0.22,1,0.36,1); }
+  .project:hover .project-img img { transform: scale(1.04); }
+  .project-tag {
+    position: absolute;
+    left: 1.25rem;
+    top: 1.25rem;
+    background: rgba(246,242,235,0.92);
+    padding: 0.4rem 0.75rem;
+    font-family: var(--display);
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+  }
+  .project-body { padding: clamp(1.75rem, 4vw, 3rem); display: flex; flex-direction: column; justify-content: center; }
+  .project-meta { font-family: var(--display); font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.18em; color: rgba(20,17,15,0.4); margin: 0; }
+  .project h3 { font-size: clamp(1.6rem, 3.4vw, 2.4rem); font-weight: 800; text-transform: uppercase; letter-spacing: -0.015em; line-height: 1; margin: 1rem 0 0; }
+  .project-sum { margin: 1.15rem 0 0; line-height: 1.65; color: rgba(20,17,15,0.7); }
+  .hl { list-style: none; padding: 0; margin: 1.75rem 0 0; display: grid; gap: 0.5rem; }
+  .hl li { display: flex; gap: 0.75rem; font-size: 0.875rem; color: rgba(20,17,15,0.6); line-height: 1.5; }
+  .hl i { width: 4px; height: 4px; background: var(--cedar); flex: none; margin-top: 0.5rem; }
+  .thumbs { display: flex; gap: 0.5rem; margin-top: 2rem; flex-wrap: wrap; }
+  .thumbs button { width: 4.25rem; height: 4.25rem; padding: 0; border: 1px solid rgba(20,17,15,0.15); background: none; cursor: pointer; overflow: hidden; }
+  .thumbs img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+  .thumbs button:hover img { transform: scale(1.1); }
+
+  /* ── Lightbox ── */
+  .lb {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    background: rgba(20,17,15,0.97);
+    display: none;
+    flex-direction: column;
+  }
+  .lb[open-state='1'] { display: flex; }
+  .lb-top { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; color: rgba(246,242,235,0.6); }
+  .lb-count { font-family: var(--display); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.18em; }
+  .lb-x, .lb-nav { background: none; border: 0; color: rgba(246,242,235,0.6); cursor: pointer; font-size: 2rem; line-height: 1; padding: 0.5rem 0.85rem; }
+  .lb-x:hover, .lb-nav:hover { color: var(--cedar); }
+  .lb-stage { flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0 0.5rem 1rem; min-height: 0; }
+  .lb-stage img { max-height: 100%; max-width: 100%; object-fit: contain; }
+  .lb-cap { text-align: center; color: rgba(246,242,235,0.65); font-size: 0.875rem; padding: 0 1.5rem 2rem; margin: 0; line-height: 1.6; }
+
+  /* ── Design Studio ── */
+  .studio { display: grid; gap: 2.5rem; margin-top: 3rem; }
+  @media (min-width: 66rem) { .studio { grid-template-columns: minmax(0,1fr) 22rem; gap: 3rem; align-items: start; } }
+  .preview-frame { border: 1px solid rgba(20,17,15,0.12); background: var(--ink); }
+  .preview-note { border-top: 1px solid rgba(246,242,235,0.1); padding: 0.75rem 1.25rem; text-align: center; font-size: 0.75rem; color: rgba(246,242,235,0.45); margin: 0; }
+
+  .field { margin-top: 2.5rem; }
+  .field:first-child { margin-top: 0; }
+  .field-head { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 1.25rem; }
+  .field-step { font-family: var(--display); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.18em; color: var(--cedar); }
+  .field-head h3 { font-size: 1.05rem; font-weight: 700; text-transform: uppercase; letter-spacing: -0.01em; }
+  .field-sub { font-family: var(--display); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.22em; color: rgba(20,17,15,0.45); margin: 0 0 0.85rem; }
+
+  .opts { display: grid; gap: 0.5rem; }
+  @media (min-width: 34rem) { .opts-2 { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 48rem) { .opts-3 { grid-template-columns: repeat(3, 1fr); } }
+  .opt {
+    border: 1px solid rgba(20,17,15,0.15);
+    background: rgba(255,255,255,0.5);
+    padding: 1rem;
+    text-align: left;
+    cursor: pointer;
+    font-family: inherit;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .opt:hover { border-color: rgba(20,17,15,0.45); }
+  .opt[aria-pressed='true'] { border-color: var(--ink); background: var(--ink); color: var(--bone); }
+  .opt[aria-pressed='true'] .opt-b { color: rgba(246,242,235,0.6); }
+  .opt-cedar[aria-pressed='true'] { border-color: var(--cedar); background: rgba(201,160,106,0.16); color: var(--ink); }
+  .opt-cedar[aria-pressed='true'] .opt-b { color: rgba(20,17,15,0.6); }
+  .opt-t { display: block; font-family: var(--display); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+  .opt-b { display: block; margin-top: 0.4rem; font-size: 0.75rem; line-height: 1.4; color: rgba(20,17,15,0.55); }
+
+  .size-row { display: flex; align-items: baseline; justify-content: space-between; }
+  .size-n { font-family: var(--display); font-size: clamp(1.9rem, 5vw, 2.5rem); font-weight: 800; letter-spacing: -0.02em; }
+  .size-u { font-family: var(--display); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; color: rgba(20,17,15,0.45); margin-left: 0.5rem; }
+  .size-lim { font-size: 0.75rem; color: rgba(20,17,15,0.45); }
+  input[type='range'] { width: 100%; margin-top: 1rem; accent-color: var(--cedar); }
+
+  .swatches { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .sw {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 1rem 0.5rem 0.5rem;
+    border: 1px solid rgba(20,17,15,0.15);
+    background: rgba(255,255,255,0.5);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.75rem;
+    transition: border-color 0.2s;
+  }
+  .sw:hover { border-color: rgba(20,17,15,0.45); }
+  .sw[aria-pressed='true'] { border-color: var(--ink); }
+  .sw-chip { width: 1.75rem; height: 1.75rem; border: 1px solid rgba(0,0,0,0.15); flex: none; }
+  .pitch { padding: 0.65rem 1.25rem; border: 1px solid rgba(20,17,15,0.15); background: rgba(255,255,255,0.5); font-family: inherit; font-size: 0.75rem; cursor: pointer; }
+  .pitch[aria-pressed='true'] { background: var(--ink); color: var(--bone); border-color: var(--ink); }
+
+  .addon { display: flex; gap: 0.75rem; }
+  .addon-box { width: 1rem; height: 1rem; border: 1px solid rgba(20,17,15,0.35); flex: none; margin-top: 0.15rem; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; }
+  .opt[aria-pressed='true'] .addon-box { background: var(--ink); border-color: var(--ink); color: var(--bone); }
+  .opt-cedar[aria-pressed='true'] .addon-box { background: var(--ink); color: var(--bone); }
+
+  /* Estimate panel */
+  .panel { border: 1px solid rgba(20,17,15,0.15); background: var(--ink); color: var(--bone); position: sticky; top: 1.5rem; }
+  .panel-sec { padding: 1.75rem; border-bottom: 1px solid rgba(246,242,235,0.12); }
+  .panel-sec:last-child { border-bottom: 0; }
+  .panel-lo { font-family: var(--display); font-size: clamp(1.8rem, 5vw, 2.35rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1; margin: 1rem 0 0; font-variant-numeric: tabular-nums; }
+  .panel-hi { color: rgba(246,242,235,0.45); margin-top: 0.35rem; }
+  .panel-per { font-size: 0.75rem; color: rgba(246,242,235,0.5); margin: 1.25rem 0 0; line-height: 1.6; }
+  .lines { list-style: none; padding: 0; margin: 1rem 0 0; display: grid; gap: 0.75rem; font-size: 0.875rem; }
+  .lines li { display: flex; justify-content: space-between; gap: 1rem; }
+  .lines span:first-child { color: rgba(246,242,235,0.7); }
+  .lines span:last-child { color: rgba(246,242,235,0.45); flex: none; font-variant-numeric: tabular-nums; }
+  .panel-btns { display: grid; gap: 0.75rem; padding: 1.75rem; }
+
+  .note {
+    border: 1px solid rgba(20,17,15,0.15);
+    background: rgba(255,255,255,0.6);
+    padding: 1.5rem;
+    font-size: 0.78rem;
+    line-height: 1.65;
+    color: rgba(20,17,15,0.65);
+    margin-top: 1rem;
+  }
+  .note h4 { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink); }
+  .note p { margin: 0.75rem 0 0; }
+  .note code { background: rgba(20,17,15,0.1); padding: 0.1rem 0.35rem; font-size: 0.72rem; }
+  .note-warn { border-color: var(--cedar); background: rgba(201,160,106,0.16); }
+
+  /* ── Floating launcher + panel ── */
+  .fab {
+    position: fixed;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border: 0;
+    background: var(--ink);
+    color: var(--bone);
+    font-family: var(--display);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    cursor: pointer;
+    box-shadow: 0 6px 28px rgba(20,17,15,0.28);
+    transition: background 0.2s, color 0.2s;
+  }
+  @media (min-width: 40rem) { .fab { right: 1.75rem; bottom: 1.75rem; } }
+  .fab:hover { background: var(--stone); }
+  .fab[data-ready='1'] { background: var(--cedar); color: var(--ink); }
+  .fab[data-ready='1']:hover { background: var(--brass); }
+  .fab-badge { position: absolute; top: -0.25rem; right: -0.25rem; width: 0.75rem; height: 0.75rem; background: var(--ink); }
+  .panel-scrim { position: fixed; inset: 0; z-index: 55; background: rgba(20,17,15,0.45); }
+  @media (min-width: 62rem) { .panel-scrim { display: none; } }
+  .chat-panel {
+    position: fixed;
+    inset: 0 0 0 0;
+    top: 3.5rem;
+    z-index: 58;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(20,17,15,0.15);
+    background: var(--bone);
+    box-shadow: 0 10px 50px rgba(20,17,15,0.3);
+  }
+  @media (min-width: 40rem) {
+    .chat-panel { inset: auto 1.75rem 7rem auto; width: 26rem; height: min(42rem, calc(100vh - 10rem)); }
+  }
+  .chat-panel[hidden], .panel-scrim[hidden] { display: none; }
+  .panel-body { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+  .panel-body[hidden] { display: none; }
+  .panel-scrollable { overflow-y: auto; }
+  .panel-tabs { display: flex; border-bottom: 1px solid rgba(20,17,15,0.12); flex: none; }
+  .panel-tabs[hidden] { display: none; }
+  .panel-tabs button {
+    flex: 1; padding: 0.75rem 1rem; border: 0; background: transparent;
+    font-family: var(--display); font-size: 0.66rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.14em; color: rgba(20,17,15,0.5); cursor: pointer;
+  }
+  .panel-tabs button[aria-pressed='true'] { background: var(--ink); color: var(--bone); }
+  .panel-send { flex: none; border-top: 1px solid rgba(20,17,15,0.12); padding: 1rem; }
+  .panel-send[hidden] { display: none; }
+
+  /* ── Project intake chat ── */
+  .chat-head { display: flex; align-items: center; gap: 0.75rem; border-bottom: 1px solid rgba(20,17,15,0.12); padding: 0.9rem 1.25rem; }
+  .chat-dot { width: 8px; height: 8px; background: var(--cedar); flex: none; }
+  .chat-head h3 { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.16em; }
+  .chat-mode { margin-left: auto; font-size: 0.75rem; color: rgba(20,17,15,0.4); }
+  .chat-note { border-bottom: 1px solid rgba(201,160,106,0.45); background: rgba(201,160,106,0.12); padding: 0.75rem 1.25rem; font-size: 0.75rem; line-height: 1.6; color: rgba(20,17,15,0.7); margin: 0; }
+  .chat-log { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 1rem; overflow-y: auto; padding: 1.25rem; }
+  .bubble { max-width: 85%; padding: 0.75rem 1rem; font-size: 0.875rem; line-height: 1.6; margin: 0; }
+  .bubble-a { align-self: flex-start; border: 1px solid rgba(20,17,15,0.12); background: rgba(255,255,255,0.8); }
+  .bubble-u { align-self: flex-end; background: var(--ink); color: var(--bone); }
+  .chat-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; border-top: 1px solid rgba(20,17,15,0.12); padding: 0.75rem 1.25rem; }
+  .chat-chips:empty { display: none; }
+  .chat-chip {
+    border: 1px solid rgba(20,17,15,0.2);
+    background: transparent;
+    padding: 0.4rem 0.75rem;
+    font-family: inherit;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .chat-chip:hover { background: var(--ink); color: var(--bone); border-color: var(--ink); }
+  .chat-foot { border-top: 1px solid rgba(20,17,15,0.12); padding: 0.9rem 1.25rem; font-size: 0.75rem; color: rgba(20,17,15,0.45); margin: 0; }
+
+  .brief { border: 1px solid rgba(20,17,15,0.15); background: rgba(255,255,255,0.7); }
+  .brief-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem; border-bottom: 1px solid rgba(20,17,15,0.12); padding: 1.25rem 1.5rem; }
+  .brief-ref { font-family: var(--display); font-size: 1.1rem; font-weight: 800; letter-spacing: 0.04em; color: var(--cedar); margin: 0.5rem 0 0; }
+  .brief-grid { display: grid; gap: 1px; background: rgba(20,17,15,0.12); }
+  @media (min-width: 34rem) { .brief-grid { grid-template-columns: 1fr 1fr; } }
+  .brief-rows { background: var(--bone); padding: 1.5rem; margin: 0; }
+  .brief-rows div { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.875rem; margin-top: 0.65rem; }
+  .brief-rows dt { color: rgba(20,17,15,0.45); flex: none; }
+  .brief-rows dd { margin: 0; text-align: right; color: rgba(20,17,15,0.8); }
+  .brief-price { background: var(--ink); color: var(--bone); padding: 1.5rem; }
+  .brief-price p { margin: 0; }
+  .brief-lo { font-family: var(--display); font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1; margin-top: 0.75rem !important; font-variant-numeric: tabular-nums; }
+  .brief-hi { color: rgba(246,242,235,0.45); margin-top: 0.25rem !important; }
+  .brief-empty { border: 1px dashed rgba(20,17,15,0.2); background: rgba(255,255,255,0.4); padding: 2rem; }
+  .brief-steps { list-style: none; padding: 0; margin: 2rem 0 0; display: grid; gap: 1rem; }
+  .brief-steps li { display: flex; gap: 1rem; }
+  .brief-steps i {
+    width: 1.25rem; height: 1.25rem; flex: none; margin-top: 0.15rem;
+    border: 1px solid rgba(20,17,15,0.25); color: rgba(20,17,15,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.65rem; font-style: normal;
+  }
+  .brief-steps li[data-done='1'] i { border-color: var(--cedar); background: var(--cedar); color: var(--ink); }
+  .brief-steps b { display: block; font-family: var(--display); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(20,17,15,0.5); }
+  .brief-steps li[data-done='1'] b { color: var(--ink); }
+  .brief-steps span { display: block; margin-top: 0.25rem; font-size: 0.75rem; line-height: 1.5; color: rgba(20,17,15,0.5); }
+
+  /* ── Testimonials ── */
+  .t-head { display: flex; flex-direction: column; gap: 1rem; }
+  @media (min-width: 48rem) { .t-head { flex-direction: row; align-items: flex-end; justify-content: space-between; } }
+  .t-warn {
+    display: flex;
+    gap: 1rem;
+    border: 1px solid rgba(201,160,106,0.45);
+    background: rgba(201,160,106,0.1);
+    padding: 1.25rem;
+    color: var(--cedar);
+    font-size: 0.85rem;
+    line-height: 1.65;
+    margin-top: 2.5rem;
+  }
+  .t-warn strong { font-family: var(--display); text-transform: uppercase; letter-spacing: 0.08em; }
+  .t-warn code { background: rgba(20,17,15,0.4); padding: 0.1rem 0.35rem; font-size: 0.75rem; }
+  .t-grid { display: grid; gap: 3rem; margin-top: 3.5rem; }
+  @media (min-width: 62rem) { .t-grid { grid-template-columns: 1.6fr 1fr; gap: 5rem; } }
+  .t-quote { font-family: var(--display); font-size: clamp(1.3rem, 3vw, 2rem); font-weight: 600; line-height: 1.28; letter-spacing: -0.01em; margin: 1.75rem 0 0; }
+  .t-name { font-family: var(--display); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.875rem; margin: 2rem 0 0; }
+  .t-detail { color: rgba(246,242,235,0.45); font-size: 0.875rem; margin: 0.35rem 0 0; }
+  /* min-width:0 on the grid item and the flex button, so the nowrap label
+     inside can shrink instead of widening the page. */
+  .t-list { display: grid; gap: 0.25rem; align-content: end; min-width: 0; }
+  .t-pick {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    border: 0;
+    border-left: 2px solid rgba(246,242,235,0.12);
+    background: none;
+    color: rgba(246,242,235,0.4);
+    padding: 0.75rem 0 0.75rem 1.25rem;
+    text-align: left;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.875rem;
+    min-width: 0;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .t-pick:hover { color: rgba(246,242,235,0.7); border-color: rgba(246,242,235,0.4); }
+  .t-pick[aria-pressed='true'] { color: var(--bone); border-color: var(--cedar); }
+  .t-pick i { font-family: var(--display); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.16em; font-style: normal; }
+  /* min-width:0 lets this flex child shrink below its text width — without it
+     the nowrap label forces the whole page wider than the viewport. */
+  .t-pick span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .stars { display: flex; gap: 0.25rem; }
+  .stars svg { width: 0.9rem; height: 0.9rem; fill: var(--cedar); }
+
+  /* ── Checklist footer ── */
+  .checks { display: grid; gap: 1px; background: rgba(246,242,235,0.15); border: 1px solid rgba(246,242,235,0.15); margin-top: 3rem; }
+  @media (min-width: 52rem) { .checks { grid-template-columns: repeat(3, 1fr); } }
+  .check { background: var(--ink); padding: 1.75rem; }
+  .check h3 { font-size: 0.95rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; color: var(--cedar); }
+  .check p { margin: 0.85rem 0 0; font-size: 0.85rem; line-height: 1.65; color: rgba(246,242,235,0.6); }
+  .check code { background: rgba(246,242,235,0.1); padding: 0.1rem 0.35rem; font-size: 0.75rem; }
+
+  .foot { padding: 3rem 0; border-top: 1px solid rgba(246,242,235,0.12); margin-top: 4rem; font-size: 0.78rem; color: rgba(246,242,235,0.4); display: flex; flex-wrap: wrap; gap: 0.75rem 2rem; justify-content: space-between; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+</style>
+
+<div class="ribbon">
+  <div class="shell ribbon-inner">
+    <strong>Preview snapshot</strong>
+    <span>A self-contained walkthrough of the henrydb.ca rebuild. The Design Studio below is fully working — try it. The source of truth is the repo; run <code>npm run dev</code> for the complete site.</span>
+  </div>
+</div>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <img src="{{IMG:cabin-exterior-dusk}}" alt="A charcoal-clad cabin with a steep gable roof standing in the trees at dusk">
+  <div class="hero-body">
+    <div class="shell">
+      <p class="eyebrow" style="color: var(--cedar)">Small team. Big heart.</p>
+      <h1 class="h-hero" style="margin-top: 1.75rem; max-width: 60rem">
+        Where your<br>vision<br><span style="color: var(--cedar)">becomes home</span>
+      </h1>
+      <p class="lede" style="margin: 2.25rem 0 0; max-width: 34rem; color: rgba(246,242,235,0.7)">
+        Custom cottages, tiny homes, saunas and renovations across Ontario cottage country — designed
+        and built hands-on by Ryan Henry, from the first cut to the final flourish.
+      </p>
+      <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2.75rem">
+        <a class="btn btn-cedar" href="#portfolio">See the work</a>
+        <a class="btn btn-ghost" href="#studio">Design your build</a>
+      </div>
+      <dl class="hero-stats">
+        <div><dt class="stat-k">5+</dt><dd class="stat-v">Years building</dd></div>
+        <div><dt class="stat-k">1</dt><dd class="stat-v">Lead carpenter, start to finish</dd></div>
+        <div><dt class="stat-k">100%</dt><dd class="stat-v">Hands-on oversight</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<div class="marquee-wrap">
+  <div class="marquee" aria-hidden="true">
+    <span>Your style<i></i>Your vision<i></i>Your home<i></i>Hand built<i></i>Built to last<i></i></span>
+    <span>Your style<i></i>Your vision<i></i>Your home<i></i>Hand built<i></i>Built to last<i></i></span>
+  </div>
+</div>
+
+<!-- ══ STORY ══ -->
+<section class="sec">
+  <div class="shell split">
+    <div>
+      <p class="eyebrow" style="color: rgba(20,17,15,0.4)">Our story</p>
+      <h2 class="h-section" style="margin-top: 1.25rem">Not a firm.<br>A carpenter.</h2>
+    </div>
+    <div class="prose">
+      <p>Henry Design Build isn't a big firm with layers of management. It's Ryan Henry — founder,
+        lead carpenter, and your direct partner — forging homes that capture your family's heritage.</p>
+      <p>Every project gets hands-on oversight from the first cut to the final flourish, blending
+        bold ideas with time-honoured skill to create a home that endures and evolves with you.</p>
+      <p class="pull">A home is more than a structure. It's where traditions root, families gather,
+        and legacy grows.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SERVICES ══ -->
+<section class="sec sec-sand">
+  <div class="shell">
+    <p class="eyebrow" style="color: rgba(20,17,15,0.4)">What we build</p>
+    <h2 class="h-section" style="margin-top: 1.25rem; max-width: 34rem">From an accent wall to the whole cottage</h2>
+    <div class="grid-services" id="services"></div>
+  </div>
+</section>
+
+<!-- ══ PORTFOLIO ══ -->
+<section class="sec" id="portfolio">
+  <div class="shell">
+    <p class="eyebrow" style="color: rgba(20,17,15,0.4)">Portfolio</p>
+    <h2 class="h-section" style="margin-top: 1.25rem">Creativity. <span style="color: var(--cedar)">Built.</span></h2>
+    <p class="lede" style="margin: 1.75rem 0 0; max-width: 34rem; color: rgba(20,17,15,0.7)">
+      Twenty photographs, organised into five documented projects. Click any thumbnail to open the
+      full gallery.
+    </p>
+    <div class="filters" id="filters"></div>
+    <div class="projects" id="projects"></div>
+  </div>
+</section>
+
+<!-- ══ DESIGN STUDIO ══ -->
+<section class="sec sec-sand" id="studio">
+  <div class="shell">
+    <p class="eyebrow" style="color: rgba(20,17,15,0.4)">Design Studio</p>
+    <h2 class="h-section" style="margin-top: 1.25rem">Draw it before you build it</h2>
+    <p class="lede" style="margin: 1.75rem 0 0; max-width: 38rem; color: rgba(20,17,15,0.7)">
+      Pick what you're building and watch it take shape. Change the cladding, the roof, the pitch,
+      the size. This is the real tool — every control works.
+    </p>
+
+    <div class="studio">
+      <div>
+        <div class="preview-frame">
+          <div id="sketch"></div>
+          <p class="preview-note">A stylised sketch to make choices feel real — not an architectural drawing.</p>
+        </div>
+        <div id="controls" style="margin-top: 2.5rem"></div>
+      </div>
+
+      <aside>
+        <div class="panel">
+          <div class="panel-sec">
+            <p class="eyebrow" style="color: var(--cedar)">Planning range</p>
+            <p class="panel-lo" id="est-low">—</p>
+            <p class="panel-lo panel-hi" id="est-high">—</p>
+            <p class="panel-per" id="est-per"></p>
+          </div>
+          <div class="panel-sec">
+            <p class="eyebrow" style="color: rgba(246,242,235,0.4)">What's in it</p>
+            <ul class="lines" id="est-lines"></ul>
+          </div>
+          <div class="panel-btns">
+            <button class="btn btn-cedar" id="copy-btn" type="button">Copy the summary</button>
+          </div>
+        </div>
+
+        <div class="note">
+          <h4>This is a planning range, not a quote</h4>
+          <p>It exists so you can find out whether an idea is anywhere near your budget before anyone
+            spends time on drawings. Real numbers come after we walk the site. Foundations, servicing,
+            permits, rock, and the finishes you actually fall in love with move a total more than
+            square footage ever will.</p>
+        </div>
+
+        <div class="note note-warn">
+          <h4>Ryan — replace these rates before launch</h4>
+          <p>The figures above are placeholders seeded from published 2026 Ontario cost-per-square-foot
+            guides, not from your jobs. Put your own numbers into the <code>rate</code> field of each
+            entry in <code>BUILD_TYPES</code> in <code>lib/estimate.ts</code>, check the tool against a
+            project you've already completed, then set <code>PLACEHOLDER_PRICING = false</code>.</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PROJECT INTAKE ══ -->
+<section class="sec" id="intake">
+  <div class="shell">
+    <p class="eyebrow" style="color: rgba(20,17,15,0.4)">Start a project</p>
+    <h2 class="h-section" style="margin-top: 1.25rem">Tell us what you&rsquo;re picturing</h2>
+    <p class="lede" style="margin: 1.75rem 0 0; max-width: 38rem; color: rgba(20,17,15,0.7)">
+      A short conversation instead of a form. At the end you get a project reference, a sketch of
+      what you described, and a planning range &mdash; ready to send to Ryan.
+    </p>
+
+    <p style="margin: 1.75rem 0 0; max-width: 38rem; font-size: 0.85rem; line-height: 1.7; color: rgba(20,17,15,0.55)">
+      <strong>Preview note:</strong> on the live site an AI assistant runs this conversation and
+      understands free-form answers. A static page has no server, so this preview shows the
+      <em>guided</em> fallback &mdash; the same flow the real site uses when no API key is
+      configured. It collects the same brief and produces the same result.
+    </p>
+
+    <button class="btn btn-ink" type="button" id="open-chat" style="margin-top: 2rem">
+      Open the assistant
+    </button>
+
+    <div class="grid-services" style="margin-top: 3.5rem">
+      <div class="service">
+        <span class="service-n">01</span>
+        <h3 class="h-card">It follows you</h3>
+        <p>The contact button is fixed to every page, through scroll and across navigation &mdash;
+          so a half-finished conversation is still there after browsing the portfolio.</p>
+      </div>
+      <div class="service">
+        <span class="service-n">02</span>
+        <h3 class="h-card">It becomes an email</h3>
+        <p>Once enough is captured, the button turns and reads <em>Send to Ryan</em>. One tap opens
+          a message with the full project overview and price range already written.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FLOATING LAUNCHER ══ -->
+<button class="fab" type="button" id="fab" aria-expanded="false" aria-controls="chat-panel">
+  <span id="fab-icon" aria-hidden="true">&#9993;</span>
+  <span id="fab-label">Let&rsquo;s talk</span>
+  <span class="fab-badge" id="fab-badge" hidden></span>
+</button>
+
+<div class="panel-scrim" id="panel-scrim" hidden></div>
+
+<aside class="chat-panel" id="chat-panel" role="dialog" aria-label="Talk to Henry Design Build" hidden>
+  <div class="chat-head">
+    <span class="chat-dot" aria-hidden="true"></span>
+    <h3 id="panel-title">Project intake</h3>
+    <span class="chat-mode">Guided</span>
+    <button type="button" id="panel-close" aria-label="Close"
+      style="margin-left:0.25rem;background:none;border:0;font-size:1.35rem;line-height:1;color:rgba(20,17,15,0.4);cursor:pointer">&times;</button>
+  </div>
+  <div class="panel-tabs" id="panel-tabs" hidden>
+    <button type="button" data-view="chat" aria-pressed="true">Conversation</button>
+    <button type="button" data-view="overview" aria-pressed="false">Overview &amp; price</button>
+  </div>
+  <div class="panel-body" id="panel-chat">
+    <div class="chat-log" id="chat-log" role="log" aria-live="polite" aria-label="Conversation"></div>
+    <div class="chat-chips" id="chat-chips"></div>
+    <p class="chat-foot" id="chat-foot">Pick an answer to continue.</p>
+  </div>
+  <div class="panel-body panel-scrollable" id="panel-overview" hidden>
+    <div id="brief-slot"></div>
+  </div>
+  <div class="panel-send" id="panel-send" hidden>
+    <a class="btn btn-cedar" id="send-mail" href="#" style="width:100%">Email this to Ryan</a>
+    <p style="margin:0.75rem 0 0;text-align:center;font-size:0.7rem;line-height:1.6;color:rgba(20,17,15,0.45)">
+      Opens your mail app with the full overview and range filled in.
+    </p>
+  </div>
+</aside>
+
+<!-- ══ TESTIMONIALS ══ -->
+<section class="sec sec-ink">
+  <div class="shell">
+    <div class="t-head">
+      <div>
+        <p class="eyebrow" style="color: var(--cedar)">In their words</p>
+        <h2 class="h-section" style="margin-top: 1.25rem">What it's like<br>to build with us</h2>
+      </div>
+      <p style="max-width: 18rem; font-size: 0.875rem; line-height: 1.65; color: rgba(246,242,235,0.5); margin: 0">
+        Every project ends with a walkthrough, and every client gets Ryan's number afterwards. These
+        are the people who used it.
+      </p>
+    </div>
+
+    <div class="t-warn">
+      <strong style="flex: none">!</strong>
+      <p style="margin: 0">
+        <strong>Placeholder content —</strong> these quotes are examples showing the layout, not real
+        client reviews. Replace them in <code>data/testimonials.ts</code> with real, permissioned
+        quotes before launch, then set <code>PLACEHOLDER = false</code> to remove this notice.
+      </p>
+    </div>
+
+    <figure class="t-grid" style="margin-left: 0; margin-right: 0">
+      <div>
+        <div class="stars" id="t-stars" aria-label="5 out of 5"></div>
+        <blockquote style="margin: 0"><p class="t-quote" id="t-quote"></p></blockquote>
+        <figcaption>
+          <p class="t-name" id="t-name"></p>
+          <p class="t-detail" id="t-detail"></p>
+        </figcaption>
+      </div>
+      <div class="t-list" id="t-list"></div>
+    </figure>
+  </div>
+</section>
+
+<!-- ══ BEFORE LAUNCH ══ -->
+<section class="sec sec-ink" style="padding-top: 0">
+  <div class="shell">
+    <p class="eyebrow" style="color: var(--cedar)">Before this goes live</p>
+    <h2 class="h-section" style="margin-top: 1.25rem; max-width: 34rem">Three things need real information</h2>
+    <div class="checks">
+      <div class="check">
+        <h3>Testimonials are invented</h3>
+        <p>The five quotes are examples written to show the layout — not real reviews. Publishing
+          invented reviews misleads customers and is prohibited under Canada's Competition Act.
+          Replace them in <code>data/testimonials.ts</code>, or empty the array and the section hides
+          itself.</p>
+      </div>
+      <div class="check">
+        <h3>Budget rates are guesses</h3>
+        <p>Seeded from published 2026 Ontario guides, not Ryan's jobs. Divide a few finished invoices
+          by square footage, put those into <code>BUILD_TYPES</code>, and check the tool against a
+          project already completed.</p>
+      </div>
+      <div class="check">
+        <h3>Project facts need confirming</h3>
+        <p>Every project name, location, year and duration was inferred from the photos. Email, phone
+          and service area are <code>TODO</code> in <code>data/site.ts</code>. The About page also
+          needs a real portrait of Ryan.</p>
+      </div>
+    </div>
+
+    <div class="foot">
+      <span>Henry Design Build — preview of the henrydb.ca rebuild</span>
+      <span>All 20 photographs are Henry Design Build's own work</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══ LIGHTBOX ══ -->
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Photo viewer" open-state="0">
+  <div class="lb-top">
+    <span class="lb-count" id="lb-count"></span>
+    <button class="lb-x" type="button" id="lb-close" aria-label="Close">&times;</button>
+  </div>
+  <div class="lb-stage">
+    <button class="lb-nav" type="button" id="lb-prev" aria-label="Previous photo">&#8249;</button>
+    <img id="lb-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="">
+    <button class="lb-nav" type="button" id="lb-next" aria-label="Next photo">&#8250;</button>
+  </div>
+  <p class="lb-cap" id="lb-cap"></p>
+</div>
+
+<script>
+{{DATA}}
+
+/* ══════════════ SERVICES ══════════════ */
+document.getElementById('services').innerHTML = SERVICES.map((s, i) => `
+  <div class="service">
+    <span class="service-n">${String(i + 1).padStart(2, '0')}</span>
+    <h3 class="h-card">${s.title}</h3>
+    <p>${s.body}</p>
+  </div>`).join('');
+
+/* ══════════════ PORTFOLIO ══════════════ */
+const CATS = ['All work', ...new Set(PROJECTS.map(p => p.category))];
+let activeCat = 'All work';
+let lbPhotos = [];
+let lbIndex = 0;
+
+function renderFilters() {
+  document.getElementById('filters').innerHTML = CATS.map(c => {
+    const n = c === 'All work' ? PROJECTS.length : PROJECTS.filter(p => p.category === c).length;
+    return `<button class="filter" type="button" data-cat="${c}" aria-pressed="${c === activeCat}">${c}<b>${n}</b></button>`;
+  }).join('');
+}
+
+function renderProjects() {
+  const list = activeCat === 'All work' ? PROJECTS : PROJECTS.filter(p => p.category === activeCat);
+  document.getElementById('projects').innerHTML = list.map(p => `
+    <article class="project">
+      <div class="project-img">
+        <img src="${IMG[p.cover]}" alt="${p.coverAlt}">
+        <span class="project-tag">${p.category}</span>
+      </div>
+      <div class="project-body">
+        <p class="project-meta">${p.location} &middot; ${p.year}</p>
+        <h3>${p.title}</h3>
+        <p class="project-sum">${p.summary}</p>
+        <ul class="hl">${p.highlights.slice(0, 3).map(h => `<li><i></i>${h}</li>`).join('')}</ul>
+        <div class="thumbs">
+          ${p.photos.map((ph, i) => `
+            <button type="button" data-slug="${p.slug}" data-i="${i}" aria-label="Open photo: ${ph.caption}">
+              <img src="${IMG[ph.src]}" alt="${ph.alt}">
+            </button>`).join('')}
+        </div>
+      </div>
+    </article>`).join('');
+}
+
+document.getElementById('filters').addEventListener('click', e => {
+  const b = e.target.closest('.filter');
+  if (!b) return;
+  activeCat = b.dataset.cat;
+  renderFilters();
+  renderProjects();
+});
+
+document.getElementById('projects').addEventListener('click', e => {
+  const b = e.target.closest('button[data-slug]');
+  if (!b) return;
+  const project = PROJECTS.find(p => p.slug === b.dataset.slug);
+  lbPhotos = project.photos.map(ph => ({ ...ph, project: project.title }));
+  lbIndex = Number(b.dataset.i);
+  showLightbox();
+});
+
+/* ══════════════ LIGHTBOX ══════════════ */
+const lb = document.getElementById('lb');
+
+function showLightbox() {
+  const p = lbPhotos[lbIndex];
+  document.getElementById('lb-img').src = IMG[p.src];
+  document.getElementById('lb-img').alt = p.alt;
+  document.getElementById('lb-cap').textContent = p.caption;
+  document.getElementById('lb-count').textContent = `${lbIndex + 1} / ${lbPhotos.length} · ${p.project}`;
+  lb.setAttribute('open-state', '1');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  lb.setAttribute('open-state', '0');
+  document.body.style.overflow = '';
+}
+function moveLightbox(d) {
+  lbIndex = (lbIndex + d + lbPhotos.length) % lbPhotos.length;
+  showLightbox();
+}
+document.getElementById('lb-close').onclick = closeLightbox;
+document.getElementById('lb-prev').onclick = () => moveLightbox(-1);
+document.getElementById('lb-next').onclick = () => moveLightbox(1);
+lb.addEventListener('click', e => { if (e.target === lb) closeLightbox(); });
+window.addEventListener('keydown', e => {
+  if (lb.getAttribute('open-state') !== '1') return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowRight') moveLightbox(1);
+  if (e.key === 'ArrowLeft') moveLightbox(-1);
+});
+
+/* ══════════════ DESIGN STUDIO ══════════════ */
+const INTERIOR = ['kitchen', 'bath', 'reno'];
+const state = {
+  buildType: 'cottage',
+  sqft: 1400,
+  finish: 'crafted',
+  access: 'easy',
+  season: 'four',
+  addOns: ['sauna'],
+  cladding: 'charcoal',
+  roof: 'steel-black',
+  pitch: 'classic',
+};
+
+const cad = n => new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 }).format(n);
+const roundTo = (v, n) => Math.round(v / n) * n;
+
+function activeAddOns() {
+  return state.addOns.filter(id => {
+    const a = ADD_ONS.find(x => x.id === id);
+    return a && a.appliesTo.includes(state.buildType);
+  });
+}
+
+function estimate() {
+  const t = BUILD_TYPES.find(x => x.id === state.buildType);
+  const f = FINISH_LEVELS.find(x => x.id === state.finish);
+  const ac = SITE_ACCESS.find(x => x.id === state.access);
+  const se = SEASONS.find(x => x.id === state.season);
+  const mult = f.multiplier * (t.showsAccess ? ac.multiplier : 1) * (t.showsSeason ? se.multiplier : 1);
+  const perLo = t.rate[0] * mult, perHi = t.rate[1] * mult;
+  const baseLo = perLo * state.sqft, baseHi = perHi * state.sqft;
+  const sel = ADD_ONS.filter(a => activeAddOns().includes(a.id));
+  const addLo = sel.reduce((s, a) => s + a.cost[0], 0);
+  const addHi = sel.reduce((s, a) => s + a.cost[1], 0);
+  const nearest = baseHi > 400000 ? 10000 : 5000;
+  return {
+    low: roundTo(baseLo + addLo, nearest),
+    high: roundTo(baseHi + addHi, nearest),
+    perLo: Math.round(perLo),
+    perHi: Math.round(perHi),
+    lines: [
+      { label: `${t.label} — ${state.sqft.toLocaleString()} sq ft`, low: baseLo, high: baseHi },
+      ...sel.map(a => ({ label: a.label, low: a.cost[0], high: a.cost[1] })),
+    ],
+  };
+}
+
+/* ── The live sketch ── */
+function sketch() {
+  const t = BUILD_TYPES.find(x => x.id === state.buildType);
+  const cl = CLADDINGS.find(x => x.id === state.cladding);
+  const rf = ROOFS.find(x => x.id === state.roof);
+  const pitch = PITCHES.find(x => x.id === state.pitch).value;
+  const ratio = Math.min(1, Math.max(0, (state.sqft - t.min) / (t.max - t.min)));
+  const on = id => activeAddOns().includes(id);
+
+  if (INTERIOR.includes(state.buildType)) return interiorSVG(cl, ratio);
+
+  const W = 800, H = 520, groundY = 430;
+  const bodyW = 210 + ratio * 330;
+  const wallH = 110 + ratio * 55;
+  const cx = W / 2, left = cx - bodyW / 2, right = cx + bodyW / 2;
+  const wallTop = groundY - wallH;
+  const ridgeY = wallTop - (bodyW / 2) * pitch;
+  const eave = 16;
+  const doorW = 42, doorH = 84, winW = 34, winH = 46;
+  const windows = Math.max(2, Math.min(8, Math.round(2 + ratio * 5)));
+  const perSide = Math.max(0, Math.round(windows / 2));
+  const sideSpan = (bodyW - doorW) / 2 - 26;
+  const slot = perSide > 0 ? sideSpan / perSide : 0;
+  const leftWins = Array.from({ length: perSide }, (_, i) =>
+    Math.min(left + 18 + slot * (i + 0.5), cx - doorW / 2 - winW - 10));
+  const wins = [...leftWins, ...leftWins.map(x => cx + (cx - x) - winW)];
+  const deckTop = groundY + 4;
+
+  let s = '';
+  const boards = [];
+  for (let y = wallTop + 11; y < groundY; y += 11) boards.push(y);
+
+  s += `<rect width="${W}" height="${H}" fill="url(#sky)"/><circle cx="655" cy="88" r="26" fill="#F6F2EB" opacity=".14"/>`;
+  s += '<g opacity=".45" fill="#16211C">';
+  for (let i = 0; i < 30; i++) { const x = i * 28 - 10, h = 74 + (i * 37) % 62; s += `<polygon points="${x},${groundY} ${x + 15},${groundY - h} ${x + 30},${groundY}"/>`; }
+  s += '</g><g opacity=".75" fill="#0E1714">';
+  for (let i = 0; i < 20; i++) { const x = i * 43 - 20, h = 100 + (i * 53) % 86; s += `<polygon points="${x},${groundY + 8} ${x + 22},${groundY - h} ${x + 44},${groundY + 8}"/>`; }
+  s += '</g>';
+  s += `<rect x="0" y="${groundY}" width="${W}" height="${H - groundY}" fill="#232B24"/><rect x="0" y="${groundY}" width="${W}" height="3" fill="#000" opacity=".3"/>`;
+
+  if (on('deck')) {
+    s += `<rect x="${left - 46}" y="${deckTop}" width="${bodyW + 92}" height="9" fill="${cl.hex}" opacity=".85"/>`;
+    s += `<rect x="${left - 46}" y="${deckTop + 9}" width="${bodyW + 92}" height="20" fill="#000" opacity=".35"/>`;
+    for (let i = 0; i < 9; i++) {
+      const x = left - 44 + i * ((bodyW + 88) / 9);
+      if (Math.abs(x - cx) > doorW) s += `<rect x="${x}" y="${deckTop - 30}" width="3" height="30" fill="${cl.trim}" opacity=".55"/>`;
+    }
+    s += `<rect x="${left - 46}" y="${deckTop - 33}" width="${bodyW / 2 + 46 - doorW}" height="4" fill="${cl.trim}" opacity=".75"/>`;
+    s += `<rect x="${cx + doorW}" y="${deckTop - 33}" width="${bodyW / 2 + 46 - doorW}" height="4" fill="${cl.trim}" opacity=".75"/>`;
+    s += `<rect x="${cx - doorW / 2 - 6}" y="${deckTop + 9}" width="${doorW + 12}" height="7" fill="${cl.hex}" opacity=".7"/>`;
+    s += `<rect x="${cx - doorW / 2 - 12}" y="${deckTop + 16}" width="${doorW + 24}" height="7" fill="${cl.hex}" opacity=".55"/>`;
+  }
+
+  s += `<rect x="${left}" y="${wallTop}" width="${bodyW}" height="${wallH}" fill="${cl.hex}"/>`;
+  s += '<g clip-path="url(#wallClip)" stroke="#000" stroke-opacity=".14">';
+  boards.forEach(y => { s += `<line x1="${left}" y1="${y}" x2="${right}" y2="${y}"/>`; });
+  s += '</g>';
+  s += `<rect x="${left}" y="${wallTop}" width="9" height="${wallH}" fill="${cl.trim}" opacity=".9"/>`;
+  s += `<rect x="${right - 9}" y="${wallTop}" width="9" height="${wallH}" fill="${cl.trim}" opacity=".9"/>`;
+
+  if (on('fireplace')) {
+    s += `<rect x="${right - 62}" y="${ridgeY + 4}" width="28" height="${wallTop - ridgeY + 30}" fill="#6E6660"/>`;
+    s += `<rect x="${right - 66}" y="${ridgeY}" width="36" height="10" fill="#57504B"/>`;
+  }
+
+  const roofPts = `${cx},${ridgeY} ${right + eave},${wallTop + eave * pitch} ${left - eave},${wallTop + eave * pitch}`;
+  s += `<polygon points="${roofPts}" fill="${rf.hex}"/><g clip-path="url(#roofClip)">`;
+  if (rf.ribbed) {
+    for (let i = 1; i < 13; i++) {
+      const t2 = i / 13, dx = (bodyW / 2 + eave) * t2, dy = wallTop + dx * pitch * 0.98;
+      s += `<line x1="${cx - dx}" y1="${dy}" x2="${cx}" y2="${ridgeY}" stroke="#fff" stroke-opacity=".11" stroke-width="1.5"/>`;
+      s += `<line x1="${cx + dx}" y1="${dy}" x2="${cx}" y2="${ridgeY}" stroke="#fff" stroke-opacity=".11" stroke-width="1.5"/>`;
+    }
+  } else {
+    for (let i = 0; i < 12; i++) {
+      const y = ridgeY + ((wallTop - ridgeY) / 12) * i + 6;
+      s += `<line x1="${left - eave}" y1="${y}" x2="${right + eave}" y2="${y}" stroke="#000" stroke-opacity=".16" stroke-width="2"/>`;
+    }
+  }
+  s += `<polygon points="${roofPts}" fill="url(#roofShade)"/></g>`;
+  s += `<line x1="${left - eave}" y1="${wallTop + eave * pitch}" x2="${cx}" y2="${ridgeY}" stroke="${cl.trim}" stroke-width="5"/>`;
+  s += `<line x1="${right + eave}" y1="${wallTop + eave * pitch}" x2="${cx}" y2="${ridgeY}" stroke="${cl.trim}" stroke-width="5"/>`;
+
+  if (on('loft') && ridgeY < wallTop - 46) {
+    s += `<rect x="${cx - 22}" y="${wallTop - 40}" width="44" height="30" fill="${cl.trim}"/>`;
+    s += `<rect x="${cx - 18}" y="${wallTop - 36}" width="36" height="22" fill="url(#glow)"/>`;
+    s += `<line x1="${cx}" y1="${wallTop - 36}" x2="${cx}" y2="${wallTop - 14}" stroke="${cl.trim}" stroke-width="2.5"/>`;
+  }
+
+  wins.forEach(x => {
+    s += `<rect x="${x - 3}" y="${groundY - 96}" width="${winW + 6}" height="${winH + 6}" fill="${cl.trim}"/>`;
+    s += `<rect x="${x}" y="${groundY - 93}" width="${winW}" height="${winH}" fill="url(#glow)"/>`;
+    s += `<line x1="${x + winW / 2}" y1="${groundY - 93}" x2="${x + winW / 2}" y2="${groundY - 93 + winH}" stroke="${cl.trim}" stroke-width="2"/>`;
+    s += `<polygon points="${x},${groundY} ${x + winW},${groundY} ${x + winW + 16},${groundY + 26} ${x - 16},${groundY + 26}" fill="#F2C879" opacity=".07"/>`;
+  });
+
+  s += `<rect x="${cx - doorW / 2 - 4}" y="${groundY - doorH - 4}" width="${doorW + 8}" height="${doorH + 4}" fill="${cl.trim}" stroke="#000" stroke-opacity=".25"/>`;
+  s += `<rect x="${cx - doorW / 2}" y="${groundY - doorH}" width="${doorW}" height="${doorH}" fill="#F2F0EC" stroke="#000" stroke-opacity=".22"/>`;
+  s += `<rect x="${cx - doorW / 2 + 7}" y="${groundY - doorH + 9}" width="${doorW - 14}" height="20" fill="#2B2E33"/>`;
+  s += `<circle cx="${cx + doorW / 2 - 8}" cy="${groundY - doorH / 2 + 6}" r="2.5" fill="#8A8F94"/>`;
+  s += `<circle cx="${cx}" cy="${wallTop + 22}" r="4" fill="#F2C879" opacity=".9"/><circle cx="${cx}" cy="${wallTop + 22}" r="13" fill="#F2C879" opacity=".14"/>`;
+  s += `<g opacity=".5" fill="#0B0F0D" transform="translate(${right + 52}, ${groundY})"><circle cx="0" cy="-62" r="6"/><rect x="-5" y="-55" width="10" height="30" rx="4"/><rect x="-5" y="-26" width="4" height="26" rx="2"/><rect x="1" y="-26" width="4" height="26" rx="2"/></g>`;
+
+  const label = `Sketch of a building with ${cl.label.toLowerCase()} cladding and a ${rf.label.toLowerCase()} roof, approximately ${state.sqft} square feet` +
+    (on('deck') ? ', with a deck' : '') + (on('loft') ? ', with a loft window' : '') + (on('fireplace') ? ', with a chimney' : '') + '.';
+
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${label}" style="width:100%;height:auto">
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1B2733"/><stop offset="55%" stop-color="#31414C"/><stop offset="100%" stop-color="#5B6559"/></linearGradient>
+      <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F2C879" stop-opacity=".95"/><stop offset="100%" stop-color="#E8A94F" stop-opacity=".6"/></linearGradient>
+      <linearGradient id="roofShade" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#000" stop-opacity=".22"/><stop offset="50%" stop-color="#000" stop-opacity="0"/><stop offset="100%" stop-color="#000" stop-opacity=".28"/></linearGradient>
+      <clipPath id="wallClip"><rect x="${left}" y="${wallTop}" width="${bodyW}" height="${wallH}"/></clipPath>
+      <clipPath id="roofClip"><polygon points="${roofPts}"/></clipPath>
+    </defs>${s}</svg>`;
+}
+
+function interiorSVG(cl, ratio) {
+  const W = 800, H = 520, floorY = 400, ceilY = 70;
+  const roomW = 460 + ratio * 260;
+  const cx = W / 2, left = cx - roomW / 2, right = cx + roomW / 2;
+  let s = `<rect width="${W}" height="${H}" fill="#1B1917"/>`;
+  s += `<rect x="${left}" y="${ceilY}" width="${roomW}" height="${floorY - ceilY}" fill="url(#wallGrad)"/>`;
+  s += `<rect x="${left}" y="${floorY - 168}" width="${roomW}" height="84" fill="#F1EDE6"/>`;
+  s += '<g stroke="#000" stroke-opacity=".07">';
+  for (let i = 0; i < 7; i++) s += `<line x1="${left}" y1="${floorY - 168 + i * 12}" x2="${right}" y2="${floorY - 168 + i * 12}"/>`;
+  for (let i = 0; i < 22; i++) { const x = left + i * (roomW / 22) + ((i % 2) * roomW) / 44; s += `<line x1="${x}" y1="${floorY - 168}" x2="${x}" y2="${floorY - 84}"/>`; }
+  s += '</g>';
+  s += `<rect x="${cx - 90}" y="${floorY - 166}" width="180" height="80" fill="${cl.trim}"/><rect x="${cx - 82}" y="${floorY - 158}" width="164" height="64" fill="url(#winGlow)"/>`;
+  s += `<line x1="${cx}" y1="${floorY - 158}" x2="${cx}" y2="${floorY - 94}" stroke="${cl.trim}" stroke-width="4"/>`;
+  s += `<rect x="${left}" y="${floorY - 84}" width="${roomW}" height="84" fill="${cl.hex}"/><rect x="${left}" y="${floorY - 92}" width="${roomW}" height="10" fill="#F1EDE6"/>`;
+  s += '<g stroke="#000" stroke-opacity=".18" stroke-width="1.5">';
+  for (let i = 1; i < 7; i++) { const x = left + i * (roomW / 7); s += `<line x1="${x}" y1="${floorY - 82}" x2="${x}" y2="${floorY}"/>`; }
+  s += '</g>';
+  for (let i = 0; i < 7; i++) s += `<rect x="${left + i * (roomW / 7) + roomW / 21}" y="${floorY - 62}" width="${roomW / 10}" height="4" rx="2" fill="#1B1917" opacity=".7"/>`;
+  s += `<rect x="${left + 26}" y="${floorY - 232}" width="${roomW * 0.32}" height="9" fill="#7A5433"/><rect x="${left + 26}" y="${floorY - 202}" width="${roomW * 0.32}" height="9" fill="#7A5433"/>`;
+  s += `<rect x="${left + 26}" y="${floorY - 223}" width="${roomW * 0.32}" height="3" fill="#F2C879" opacity=".55"/>`;
+  s += `<polygon points="${right - 130},${floorY - 168} ${right - 46},${floorY - 168} ${right - 62},${floorY - 210} ${right - 114},${floorY - 210}" fill="#2B2E33"/><rect x="${right - 96}" y="${floorY - 262}" width="28" height="54" fill="#2B2E33"/>`;
+  s += `<rect x="${cx - 150}" y="${floorY + 40}" width="300" height="14" fill="#F1EDE6"/><rect x="${cx - 142}" y="${floorY + 54}" width="284" height="66" fill="${cl.hex}"/>`;
+  s += `<rect x="0" y="${floorY}" width="${W}" height="${H - floorY}" fill="url(#floorGrad)"/>`;
+  s += '<g stroke="#000" stroke-opacity=".13" stroke-width="1.5">';
+  for (let i = 0; i < 9; i++) s += `<line x1="${i * 100 - 60}" y1="${H}" x2="${cx - 200 + i * 60}" y2="${floorY}"/>`;
+  s += `</g><rect x="0" y="${floorY}" width="${W}" height="${H - floorY}" fill="#1B1917" opacity=".12"/>`;
+  [-90, 0, 90].forEach(dx => {
+    s += `<line x1="${cx + dx}" y1="${ceilY}" x2="${cx + dx}" y2="${floorY - 14}" stroke="#2B2E33" stroke-width="2"/>`;
+    s += `<circle cx="${cx + dx}" cy="${floorY - 6}" r="11" fill="#F2C879" opacity=".9"/><circle cx="${cx + dx}" cy="${floorY - 6}" r="26" fill="#F2C879" opacity=".12"/>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Sketch of a renovated room roughly ${state.sqft} square feet, with ${cl.label.toLowerCase()} cabinetry." style="width:100%;height:auto">
+    <defs>
+      <linearGradient id="wallGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E6E1D8"/><stop offset="100%" stop-color="#CFC8BC"/></linearGradient>
+      <linearGradient id="winGlow" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#BBD3D8"/><stop offset="100%" stop-color="#8FA98C"/></linearGradient>
+      <linearGradient id="floorGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C6A177"/><stop offset="100%" stop-color="#A9855C"/></linearGradient>
+    </defs>${s}</svg>`;
+}
+
+/* ── Controls ── */
+function renderControls() {
+  const t = BUILD_TYPES.find(x => x.id === state.buildType);
+  const isInt = INTERIOR.includes(state.buildType);
+  const avail = ADD_ONS.filter(a => a.appliesTo.includes(state.buildType));
+  let step = 0;
+  const nextStep = () => String(++step).padStart(2, '0');
+
+  const field = (label, inner) =>
+    `<div class="field"><div class="field-head"><span class="field-step">${nextStep()}</span><h3>${label}</h3></div>${inner}</div>`;
+
+  let html = field('What are you building?',
+    `<div class="opts opts-3">${BUILD_TYPES.map(b => `
+      <button class="opt" type="button" data-act="type" data-v="${b.id}" aria-pressed="${b.id === state.buildType}">
+        <span class="opt-t">${b.label}</span><span class="opt-b">${b.blurb}</span>
+      </button>`).join('')}</div>`);
+
+  html += field('How big, roughly?',
+    `<div class="size-row">
+       <span class="size-n">${state.sqft.toLocaleString()}<span class="size-u">sq ft</span></span>
+       <span class="size-lim">${t.min.toLocaleString()} – ${t.max.toLocaleString()}</span>
+     </div>
+     <input type="range" id="size" min="${t.min}" max="${t.max}" step="${t.step}" value="${state.sqft}" aria-label="Approximate size in square feet">`);
+
+  html += field('How far do you want to take the finish?',
+    `<div class="opts opts-3">${FINISH_LEVELS.map(f => `
+      <button class="opt opt-cedar" type="button" data-act="finish" data-v="${f.id}" aria-pressed="${f.id === state.finish}">
+        <span class="opt-t">${f.label}</span><span class="opt-b">${f.blurb}</span>
+      </button>`).join('')}</div>`);
+
+  if (t.showsSeason || t.showsAccess) {
+    let inner = '<div class="opts opts-2">';
+    if (t.showsSeason) {
+      inner += `<div><p class="field-sub">Season of use</p><div class="opts">${SEASONS.map(s => `
+        <button class="opt opt-cedar" type="button" data-act="season" data-v="${s.id}" aria-pressed="${s.id === state.season}">
+          <span class="opt-t" style="text-transform:none;letter-spacing:0">${s.label}</span><span class="opt-b">${s.blurb}</span>
+        </button>`).join('')}</div></div>`;
+    }
+    if (t.showsAccess) {
+      inner += `<div><p class="field-sub">Site access</p><div class="opts">${SITE_ACCESS.map(a => `
+        <button class="opt opt-cedar" type="button" data-act="access" data-v="${a.id}" aria-pressed="${a.id === state.access}">
+          <span class="opt-t" style="text-transform:none;letter-spacing:0">${a.label}</span><span class="opt-b">${a.blurb}</span>
+        </button>`).join('')}</div></div>`;
+    }
+    html += field('Tell us about the site', inner + '</div>');
+  }
+
+  if (!isInt) {
+    html += field('Pick the look',
+      `<p class="field-sub">Cladding</p>
+       <div class="swatches">${CLADDINGS.map(c => `
+         <button class="sw" type="button" data-act="cladding" data-v="${c.id}" aria-pressed="${c.id === state.cladding}">
+           <span class="sw-chip" style="background:${c.hex}"></span>${c.label}
+         </button>`).join('')}</div>
+       <p class="field-sub" style="margin-top:1.75rem">Roof</p>
+       <div class="swatches">${ROOFS.map(r => `
+         <button class="sw" type="button" data-act="roof" data-v="${r.id}" aria-pressed="${r.id === state.roof}">
+           <span class="sw-chip" style="background:${r.hex}"></span>${r.label}
+         </button>`).join('')}</div>
+       <p class="field-sub" style="margin-top:1.75rem">Roof pitch</p>
+       <div class="swatches">${PITCHES.map(p => `
+         <button class="pitch" type="button" data-act="pitch" data-v="${p.id}" aria-pressed="${p.id === state.pitch}">${p.label}</button>`).join('')}</div>`);
+  }
+
+  if (avail.length) {
+    html += field('Anything else?',
+      `<div class="opts opts-2">${avail.map(a => {
+        const isOn = activeAddOns().includes(a.id);
+        return `<button class="opt opt-cedar addon" type="button" data-act="addon" data-v="${a.id}" aria-pressed="${isOn}">
+          <span class="addon-box">${isOn ? '✓' : ''}</span>
+          <span><span class="opt-t">${a.label}</span><span class="opt-b">${a.blurb}</span></span>
+        </button>`;
+      }).join('')}</div>`);
+  }
+
+  document.getElementById('controls').innerHTML = html;
+}
+
+function renderStudio() {
+  document.getElementById('sketch').innerHTML = sketch();
+  renderControls();
+  const e = estimate();
+  document.getElementById('est-low').textContent = cad(e.low);
+  document.getElementById('est-high').textContent = cad(e.high);
+  document.getElementById('est-per').textContent = `Roughly ${cad(e.perLo)} – ${cad(e.perHi)} per sq ft at this spec.`;
+  document.getElementById('est-lines').innerHTML = e.lines.map(l =>
+    `<li><span>${l.label}</span><span>${cad(l.low)}–${cad(l.high)}</span></li>`).join('');
+}
+
+document.getElementById('controls').addEventListener('click', ev => {
+  const b = ev.target.closest('button[data-act]');
+  if (!b) return;
+  const { act, v } = b.dataset;
+  if (act === 'type') {
+    const nt = BUILD_TYPES.find(x => x.id === v);
+    state.buildType = v;
+    state.sqft = nt.defaultSize;
+    state.addOns = state.addOns.filter(id => ADD_ONS.find(a => a.id === id)?.appliesTo.includes(v));
+  } else if (act === 'addon') {
+    state.addOns = state.addOns.includes(v) ? state.addOns.filter(x => x !== v) : [...state.addOns, v];
+  } else if (act === 'cladding') state.cladding = v;
+  else if (act === 'roof') state.roof = v;
+  else if (act === 'pitch') state.pitch = v;
+  else state[act] = v;
+  renderStudio();
+});
+
+document.getElementById('controls').addEventListener('input', ev => {
+  if (ev.target.id !== 'size') return;
+  state.sqft = Number(ev.target.value);
+  document.getElementById('sketch').innerHTML = sketch();
+  const e = estimate();
+  document.getElementById('est-low').textContent = cad(e.low);
+  document.getElementById('est-high').textContent = cad(e.high);
+  document.getElementById('est-per').textContent = `Roughly ${cad(e.perLo)} – ${cad(e.perHi)} per sq ft at this spec.`;
+  document.getElementById('est-lines').innerHTML = e.lines.map(l =>
+    `<li><span>${l.label}</span><span>${cad(l.low)}–${cad(l.high)}</span></li>`).join('');
+  const row = ev.target.previousElementSibling.querySelector('.size-n');
+  if (row) row.innerHTML = `${state.sqft.toLocaleString()}<span class="size-u">sq ft</span>`;
+});
+
+document.getElementById('copy-btn').addEventListener('click', async () => {
+  const t = BUILD_TYPES.find(x => x.id === state.buildType);
+  const e = estimate();
+  const lines = [
+    'Design Studio concept — Henry Design Build', '',
+    `Project type: ${t.label}`,
+    `Approximate size: ${state.sqft.toLocaleString()} sq ft`,
+    `Finish level: ${FINISH_LEVELS.find(f => f.id === state.finish).label}`,
+  ];
+  if (t.showsSeason) lines.push(`Use: ${SEASONS.find(s => s.id === state.season).label}`);
+  if (t.showsAccess) lines.push(`Site access: ${SITE_ACCESS.find(a => a.id === state.access).label}`);
+  if (!INTERIOR.includes(state.buildType)) {
+    lines.push(`Cladding: ${CLADDINGS.find(c => c.id === state.cladding).label}`);
+    lines.push(`Roof: ${ROOFS.find(r => r.id === state.roof).label} (${PITCHES.find(p => p.id === state.pitch).label.toLowerCase()} pitch)`);
+  }
+  const ao = activeAddOns();
+  if (ao.length) lines.push(`Add-ons: ${ao.map(id => ADD_ONS.find(a => a.id === id).label).join(', ')}`);
+  lines.push('', `Planning range shown by the tool: ${cad(e.low)} – ${cad(e.high)}`, '(Planning range only — not a quote.)');
+  const btn = document.getElementById('copy-btn');
+  try {
+    await navigator.clipboard.writeText(lines.join('\n'));
+    btn.textContent = 'Copied to clipboard';
+  } catch { btn.textContent = 'Copy blocked by browser'; }
+  setTimeout(() => { btn.textContent = 'Copy the summary'; }, 2200);
+});
+
+/* ══════════════ PROJECT INTAKE (guided flow) ══════════════ */
+const intake = {
+  buildType: null, sqft: 0, finish: null, access: null, timeline: null,
+  cladding: 'charcoal', roof: 'steel-black', pitch: 'classic', addOns: [],
+};
+let intakeStep = 0;
+let projectRef = null;
+
+const GUIDED = [
+  {
+    q: 'What are you looking to build?',
+    opts: BUILD_TYPES.map(t => ({ label: t.label, apply: () => { intake.buildType = t.id; } })),
+  },
+  {
+    q: 'Roughly how big? A ballpark is fine — pick the closest.',
+    opts: [
+      { label: 'Small', k: 0.15 }, { label: 'Medium', k: null }, { label: 'Large', k: 0.75 },
+    ].map(o => ({ label: o.label, apply: () => {
+      const t = BUILD_TYPES.find(x => x.id === intake.buildType) || BUILD_TYPES[0];
+      intake.sqft = o.k === null ? t.defaultSize : Math.round(t.min + (t.max - t.min) * o.k);
+    }})),
+  },
+  {
+    q: 'How far do you want to take the finish?',
+    opts: FINISH_LEVELS.map(f => ({ label: f.label, apply: () => { intake.finish = f.id; } })),
+  },
+  {
+    q: 'What is the site like to get to?',
+    opts: SITE_ACCESS.map(a => ({ label: a.label, apply: () => { intake.access = a.id; } })),
+  },
+  {
+    q: 'Last one — roughly when would you want to start?',
+    opts: ['As soon as possible', 'Within 6 months', 'Next year', 'Just exploring']
+      .map(l => ({ label: l, apply: () => { intake.timeline = l; } })),
+  },
+];
+
+function chatSay(role, text) {
+  const log = document.getElementById('chat-log');
+  const p = document.createElement('p');
+  p.className = 'bubble ' + (role === 'user' ? 'bubble-u' : 'bubble-a');
+  p.textContent = text;
+  log.appendChild(p);
+  log.scrollTop = log.scrollHeight;
+}
+
+function chatChips(labels, onPick) {
+  const box = document.getElementById('chat-chips');
+  box.innerHTML = '';
+  labels.forEach((label, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'chat-chip';
+    b.textContent = label;
+    b.onclick = () => onPick(i, label);
+    box.appendChild(b);
+  });
+}
+
+/* The reference generator, mirroring lib/projectId.ts */
+function makeProjectId(seed) {
+  const AB = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+  const fnv = s => { let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; } return h; };
+  const now = new Date();
+  const yy = String(now.getFullYear()).slice(2), mm = String(now.getMonth() + 1).padStart(2, '0');
+  let h = fnv(seed + '|' + now.getTime()), code = '';
+  for (let i = 0; i < 4; i++) { code += AB[h % AB.length]; h = Math.floor(h / AB.length) || fnv(code); }
+  return `HDB-${yy}${mm}-${code}`;
+}
+
+/* ── Panel plumbing ── */
+const fab = document.getElementById('fab');
+const panel = document.getElementById('chat-panel');
+const scrim = document.getElementById('panel-scrim');
+let intakeComplete = false;
+
+function setPanel(open) {
+  panel.hidden = !open;
+  scrim.hidden = !open;
+  fab.setAttribute('aria-expanded', String(open));
+  const sendState = intakeComplete && !open;
+  fab.dataset.ready = sendState ? '1' : '0';
+  // Set explicitly rather than relying on the attribute selector, so the state
+  // can't be lost to a cascade surprise in the artifact's injected reset.
+  fab.style.backgroundColor = sendState ? '#C9A06A' : '#14110F';
+  fab.style.color = sendState ? '#14110F' : '#F6F2EB';
+  document.getElementById('fab-icon').innerHTML = open ? '&times;' : (intakeComplete ? '&#9993;' : '&#9998;');
+  document.getElementById('fab-label').textContent = open
+    ? 'Close'
+    : intakeComplete ? 'Send to Ryan' : "Let's talk";
+  document.getElementById('fab-badge').hidden = !(intakeComplete && !open);
+}
+fab.onclick = () => setPanel(panel.hidden);
+document.getElementById('panel-close').onclick = () => setPanel(false);
+scrim.onclick = () => setPanel(false);
+document.getElementById('open-chat').onclick = () => setPanel(true);
+window.addEventListener('keydown', e => { if (e.key === 'Escape' && !panel.hidden) setPanel(false); });
+
+function setView(view) {
+  document.getElementById('panel-chat').hidden = view !== 'chat';
+  document.getElementById('panel-overview').hidden = view !== 'overview';
+  document.getElementById('panel-send').hidden = view !== 'overview';
+  document.getElementById('panel-title').textContent = view === 'overview' ? 'Your project' : 'Project intake';
+  document.querySelectorAll('#panel-tabs button').forEach(b => {
+    b.setAttribute('aria-pressed', String(b.dataset.view === view));
+  });
+}
+document.querySelectorAll('#panel-tabs button').forEach(b => {
+  b.onclick = () => setView(b.dataset.view);
+});
+
+function askNext() {
+  const step = GUIDED[intakeStep];
+  if (!step) {
+    chatSay('agent', "That's everything I need. Your project overview and planning range are ready — send them over to Ryan whenever you like.");
+    chatChips([], () => {});
+    document.getElementById('chat-foot').textContent = 'Brief complete.';
+    intakeComplete = true;
+    renderBrief();
+    // Switch only now — not the moment the brief became priceable, which would
+    // cut the conversation off with questions still to go.
+    document.getElementById('panel-tabs').hidden = false;
+    setView('overview');
+    setPanel(!panel.hidden);
+    return;
+  }
+  chatSay('agent', step.q);
+  chatChips(step.opts.map(o => o.label), (i, label) => {
+    chatSay('user', label);
+    step.opts[i].apply();
+    intakeStep++;
+    renderBrief();
+    setTimeout(askNext, 380);
+  });
+}
+
+function renderBrief() {
+  const slot = document.getElementById('brief-slot');
+  const ready = intake.buildType && intake.sqft > 0 && intake.finish;
+
+  if (!ready) {
+    const done = [!!intake.buildType, intake.sqft > 0, !!intake.finish];
+    const steps = [
+      ['What', 'Cottage, tiny home, sauna, kitchen, bath or renovation'],
+      ['How big', 'A rough square footage — we can work it out together'],
+      ['How far', 'Essential, crafted, or heirloom'],
+    ];
+    slot.innerHTML = `<div class="brief-empty">
+      <p class="eyebrow" style="color: rgba(20,17,15,0.4)">Your project</p>
+      <h3 style="margin-top:1rem;font-size:1.25rem;font-weight:700;text-transform:uppercase;letter-spacing:-0.01em;color:rgba(20,17,15,0.5)">Nothing to draw yet</h3>
+      <p style="margin-top:1rem;font-size:0.875rem;line-height:1.65;color:rgba(20,17,15,0.6)">
+        Once we know what you're building, roughly how big, and how far you want to take the finish,
+        a sketch appears here — along with a reference number and an honest planning range.
+      </p>
+      <ol class="brief-steps">${steps.map((s, i) => `
+        <li data-done="${done[i] ? 1 : 0}"><i>${done[i] ? '✓' : i + 1}</i><span><b>${s[0]}</b><span>${s[1]}</span></span></li>`).join('')}
+      </ol>
+    </div>`;
+    return;
+  }
+
+  if (!projectRef) projectRef = makeProjectId(JSON.stringify(intake));
+
+  // Drive the shared sketch + estimator off the collected brief, then put the
+  // Design Studio's own state back so the two tools don't interfere.
+  const saved = { ...state, addOns: [...state.addOns] };
+  Object.assign(state, {
+    buildType: intake.buildType,
+    sqft: intake.sqft,
+    finish: intake.finish,
+    access: intake.access || 'easy',
+    season: 'four',
+    addOns: intake.addOns,
+    cladding: intake.cladding,
+    roof: intake.roof,
+    pitch: intake.pitch,
+  });
+  const e = estimate();
+  // Namespace this SVG's gradient/clipPath ids so it doesn't inherit the
+  // Design Studio sketch's clip paths (identical ids, different geometry).
+  const drawing = sketch().replace(
+    /(id="|url\(#)(sky|glow|roofShade|wallClip|roofClip|wallGrad|winGlow|floorGrad)\b/g,
+    '$1$2-ik'
+  );
+  Object.assign(state, saved);
+
+  const t = BUILD_TYPES.find(x => x.id === intake.buildType);
+  const isInt = INTERIOR.includes(intake.buildType);
+
+  const rows = [
+    ['Project', t.label],
+    ['Size', intake.sqft.toLocaleString() + ' sq ft'],
+    ['Finish', FINISH_LEVELS.find(f => f.id === intake.finish).label],
+    ...(t.showsAccess && intake.access ? [['Access', SITE_ACCESS.find(a => a.id === intake.access).label]] : []),
+    ...(isInt ? [] : [['Cladding', CLADDINGS.find(c => c.id === intake.cladding).label]]),
+    ...(isInt ? [] : [['Roof', ROOFS.find(r => r.id === intake.roof).label]]),
+    ...(intake.timeline ? [['Timeline', intake.timeline]] : []),
+  ];
+
+  // Priceable — surface the tabs so it can be jumped to early, and build the
+  // email body from exactly the same fields shown on screen.
+  document.getElementById('panel-tabs').hidden = false;
+  const finishDef = FINISH_LEVELS.find(f => f.id === intake.finish);
+  const overview = [
+    `PROJECT OVERVIEW — ${projectRef}`,
+    'Henry Design Build', '',
+    'WHAT THEY WANT',
+    ...rows.map(r => `  ${r[0]}: ${r[1]}`), '',
+    'FINISH LEVEL',
+    `  ${finishDef.label} — ${finishDef.blurb}`, '',
+    'PLANNING RANGE',
+    `  ${cad(e.low)} – ${cad(e.high)}`,
+    `  Roughly ${cad(e.perLo)} – ${cad(e.perHi)} per sq ft at this spec.`,
+    '  This is a planning range, not a quote. Real numbers come after a site visit.', '',
+    'CONTACT',
+    '  Name: —', '  Email: —', '  Location: —',
+    `  Timeline: ${intake.timeline || '—'}`, '',
+    'Captured by the intake assistant on www.henrydb.ca',
+  ].join('\n');
+  const subject = `${projectRef} — ${t.label}, ${intake.sqft.toLocaleString()} sq ft`;
+  document.getElementById('send-mail').href =
+    `mailto:hello@henrydb.ca?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(overview)}`;
+
+  slot.innerHTML = `<section class="brief">
+    <header class="brief-head">
+      <div>
+        <p class="eyebrow" style="color: rgba(20,17,15,0.4)">Your project</p>
+        <h3 style="margin-top:0.5rem;font-size:1.1rem;font-weight:700;text-transform:uppercase;letter-spacing:-0.01em">${t.label}</h3>
+      </div>
+      <div style="text-align:right">
+        <p class="eyebrow" style="color: rgba(20,17,15,0.4)">Reference</p>
+        <p class="brief-ref">${projectRef}</p>
+      </div>
+    </header>
+    <div style="background: var(--ink); border-bottom: 1px solid rgba(20,17,15,0.12)">
+      ${drawing}
+      <p class="preview-note">Visual reference — a stylised sketch from what you described.</p>
+    </div>
+    <div class="brief-grid">
+      <dl class="brief-rows">
+        <p class="eyebrow" style="color: rgba(20,17,15,0.4); margin:0">What we captured</p>
+        ${rows.map(r => `<div><dt>${r[0]}</dt><dd>${r[1]}</dd></div>`).join('')}
+      </dl>
+      <div class="brief-price">
+        <p class="eyebrow" style="color: var(--cedar)">Planning range</p>
+        <p class="brief-lo">${cad(e.low)}</p>
+        <p class="brief-lo brief-hi">${cad(e.high)}</p>
+        <p style="margin-top:1rem !important;font-size:0.75rem;line-height:1.6;color:rgba(246,242,235,0.5)">
+          Roughly ${cad(e.perLo)} – ${cad(e.perHi)} per sq ft at this spec.
+        </p>
+        <p style="margin-top:1rem !important;font-size:0.75rem;line-height:1.6;color:rgba(246,242,235,0.6)">
+          A planning range, not a quote. Real numbers come after Ryan walks the site.
+        </p>
+      </div>
+    </div>
+  </section>`;
+}
+
+setPanel(false);
+setView('chat');
+chatSay('agent', "Hi — I'm here to take down what you're thinking about building. Let's start with the basics.");
+renderBrief();
+setTimeout(askNext, 400);
+
+/* ══════════════ TESTIMONIALS ══════════════ */
+let tActive = 0;
+const starSVG = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.5l2.47 5.4 5.9.63-4.4 4 1.23 5.82L10 14.42 4.8 17.35 6.03 11.53l-4.4-4 5.9-.63z"/></svg>';
+document.getElementById('t-stars').innerHTML = starSVG.repeat(5);
+
+function renderT() {
+  const t = TESTIMONIALS[tActive];
+  document.getElementById('t-quote').textContent = `“${t.quote}”`;
+  document.getElementById('t-name').textContent = t.name;
+  document.getElementById('t-detail').textContent = t.detail;
+  document.getElementById('t-list').innerHTML = TESTIMONIALS.map((x, i) =>
+    `<button class="t-pick" type="button" data-i="${i}" aria-pressed="${i === tActive}" aria-label="Show testimonial ${i + 1}">
+       <i>${String(i + 1).padStart(2, '0')}</i><span>${x.quote.slice(0, 46)}…</span>
+     </button>`).join('');
+}
+document.getElementById('t-list').addEventListener('click', e => {
+  const b = e.target.closest('button[data-i]');
+  if (!b) return;
+  tActive = Number(b.dataset.i);
+  renderT();
+});
+
+/* ══════════════ GO ══════════════ */
+renderFilters();
+renderProjects();
+renderStudio();
+renderT();
+</script>

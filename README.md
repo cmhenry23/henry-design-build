@@ -42,6 +42,17 @@ npm run build
 npm run typecheck
 ```
 
+Build a single self-contained HTML file of the whole site — every image, font
+and script inlined — for sharing a clickable preview with someone who can't run
+the dev server:
+
+```bash
+npm run preview
+```
+
+Output lands at `tools/preview/preview.html` (~4MB, gitignored). It runs the
+intake assistant's guided flow, since a static file has no server to reach.
+
 ---
 
 ## ⚠ Before this goes live

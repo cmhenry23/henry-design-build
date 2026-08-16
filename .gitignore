@@ -6,3 +6,6 @@ out
 *.tsbuildinfo
 next-env.d.ts
 .DS_Store
+
+# Generated preview bundle (4MB) — rebuild with: npm run preview
+tools/preview/preview.html
