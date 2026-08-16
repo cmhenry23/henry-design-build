@@ -46,8 +46,10 @@ export async function POST(request: Request) {
     );
   }
 
+  // Our own throttle, not Google's — kept distinct so the two are never
+  // confused when diagnosing a failure.
   if (overLimit()) {
-    return NextResponse.json({ error: 'rate_limited' }, { status: 429 });
+    return NextResponse.json({ error: 'throttled_locally' }, { status: 429 });
   }
 
   let body: { brief?: Brief };
@@ -94,13 +96,26 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    if (/quota|rate|429/i.test(message)) {
-      return NextResponse.json({ error: 'rate_limited' }, { status: 429 });
-    }
-    if (/api[_ ]?key|401|403|permission/i.test(message)) {
-      return NextResponse.json({ error: 'bad_api_key' }, { status: 503 });
-    }
     console.error('[image] generation failed', error);
-    return NextResponse.json({ error: 'upstream_failed' }, { status: 502 });
+
+    // Pass the upstream reason through. Google's quota errors and its
+    // billing-not-enabled errors are both 429-shaped, so collapsing them into
+    // one generic code makes the real cause impossible to see from the client.
+    // The message is Google's own text — it carries no key material.
+    const detail = message.slice(0, 300);
+
+    if (/billing|not enabled|free tier|FAILED_PRECONDITION/i.test(message)) {
+      return NextResponse.json({ error: 'billing_required', detail }, { status: 402 });
+    }
+    if (/quota|RESOURCE_EXHAUSTED|429/i.test(message)) {
+      return NextResponse.json({ error: 'quota_exceeded', detail }, { status: 429 });
+    }
+    if (/api[_ ]?key|401|403|PERMISSION_DENIED|UNAUTHENTICATED/i.test(message)) {
+      return NextResponse.json({ error: 'bad_api_key', detail }, { status: 503 });
+    }
+    if (/not found|NOT_FOUND|unsupported|invalid model/i.test(message)) {
+      return NextResponse.json({ error: 'model_unavailable', detail, model: MODEL }, { status: 502 });
+    }
+    return NextResponse.json({ error: 'upstream_failed', detail }, { status: 502 });
   }
 }

@@ -8,15 +8,22 @@ type State =
   | { status: 'idle' }
   | { status: 'loading' }
   | { status: 'ready'; dataUrl: string }
-  | { status: 'error'; reason: string };
+  | { status: 'error'; reason: string; detail?: string };
 
 const MESSAGES: Record<string, string> = {
   no_api_key: 'Style images need a Gemini API key on the server. Everything else still works.',
-  rate_limited: 'Too many images just now — give it a minute and try again.',
+  billing_required:
+    'Image generation is a paid Google model — the API key’s project needs billing enabled.',
+  quota_exceeded: 'The image service is out of quota for now. Try again shortly.',
+  throttled_locally: 'A few too many images in the last minute — give it a moment.',
   bad_api_key: 'The image service rejected the server’s API key.',
+  model_unavailable: 'The configured image model isn’t available to this API key.',
   brief_incomplete: 'Tell us a bit more first and we can draw it.',
   no_image: 'The image service declined that one. Try rewording what you described.',
 };
+
+/** Reasons the visitor can't fix by retrying. */
+const TERMINAL = ['no_api_key', 'billing_required', 'bad_api_key', 'model_unavailable'];
 
 /**
  * The AI-generated style reference.
@@ -53,7 +60,7 @@ export default function StyleImage({
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.dataUrl) {
-        setState({ status: 'error', reason: data.error ?? 'upstream_failed' });
+        setState({ status: 'error', reason: data.error ?? 'upstream_failed', detail: data.detail });
       } else {
         setState({ status: 'ready', dataUrl: data.dataUrl });
         setCount((c) => c + 1);
@@ -108,7 +115,14 @@ export default function StyleImage({
             <p className="text-sm leading-relaxed text-bone/60">
               {MESSAGES[state.reason] ?? 'The style image could not be generated just now.'}
             </p>
-            {state.reason !== 'no_api_key' && (
+            {/* Surface the upstream reason so a misconfiguration is diagnosable
+                without digging through server logs. Google's own wording. */}
+            {state.detail && (
+              <p className="mx-auto mt-3 max-w-sm break-words text-[0.7rem] leading-relaxed text-bone/35">
+                {state.detail}
+              </p>
+            )}
+            {!TERMINAL.includes(state.reason) && (
               <button
                 type="button"
                 onClick={generate}
