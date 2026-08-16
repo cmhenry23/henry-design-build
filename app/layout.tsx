@@ -1,0 +1,64 @@
+import type { Metadata } from 'next';
+import { Archivo, Inter } from 'next/font/google';
+import './globals.css';
+import SiteHeader from '@/components/SiteHeader';
+import SiteFooter from '@/components/SiteFooter';
+import { site } from '@/data/site';
+
+const display = Archivo({
+  subsets: ['latin'],
+  weight: ['400', '600', '700', '800'],
+  variable: '--font-display',
+  display: 'swap',
+});
+
+const body = Inter({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-body',
+  display: 'swap',
+});
+
+export const metadata: Metadata = {
+  metadataBase: new URL(site.url),
+  title: {
+    default: `${site.name} — ${site.tagline}`,
+    template: `%s — ${site.name}`,
+  },
+  description: `Custom cottages, tiny homes, saunas, kitchens and renovations across ${site.serviceArea}. Design-build led hands-on by ${site.owner.name}.`,
+  keywords: [
+    'custom cottage builder',
+    'tiny home builder',
+    'sauna builder',
+    'kitchen renovation',
+    'bathroom renovation',
+    'design build',
+    site.serviceAreaShort,
+  ],
+  openGraph: {
+    type: 'website',
+    siteName: site.name,
+    title: `${site.name} — ${site.tagline}`,
+    description: `Custom cottages, tiny homes, saunas and renovations. Small team. Big heart.`,
+    url: site.url,
+  },
+  robots: { index: true, follow: true },
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" className={`${display.variable} ${body.variable}`}>
+      <body>
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:bg-ink focus:px-5 focus:py-3 focus:font-display focus:text-xs focus:uppercase focus:tracking-widest focus:text-bone"
+        >
+          Skip to content
+        </a>
+        <SiteHeader />
+        <main id="main">{children}</main>
+        <SiteFooter />
+      </body>
+    </html>
+  );
+}
