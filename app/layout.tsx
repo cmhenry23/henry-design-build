@@ -3,6 +3,7 @@ import { Archivo, Inter } from 'next/font/google';
 import './globals.css';
 import SiteHeader from '@/components/SiteHeader';
 import SiteFooter from '@/components/SiteFooter';
+import ChatLauncher from '@/components/chat/ChatLauncher';
 import { site } from '@/data/site';
 
 const display = Archivo({
@@ -58,6 +59,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SiteHeader />
         <main id="main">{children}</main>
         <SiteFooter />
+        {/* Lives in the layout so the conversation survives navigation. */}
+        <ChatLauncher />
       </body>
     </html>
   );

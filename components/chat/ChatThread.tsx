@@ -1,0 +1,125 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+import type { Turn } from '@/components/chat/useProjectIntake';
+
+/**
+ * The conversation surface itself — log, quick replies, composer.
+ * Rendered identically inside the floating panel and on the /start page.
+ */
+export default function ChatThread({
+  turns,
+  chips,
+  busy,
+  notice,
+  guided,
+  onSend,
+  className = '',
+}: {
+  turns: Turn[];
+  chips: string[];
+  busy: boolean;
+  notice: string | null;
+  guided: boolean;
+  onSend: (text: string) => void;
+  className?: string;
+}) {
+  const [input, setInput] = useState('');
+  const endRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }, [turns, busy]);
+
+  return (
+    <div className={`flex min-h-0 flex-col ${className}`}>
+      {notice && (
+        <p className="shrink-0 border-b border-cedar/40 bg-cedar/10 px-5 py-3 text-xs leading-relaxed text-ink/70">
+          {notice}
+        </p>
+      )}
+
+      <div
+        className="min-h-0 flex-1 space-y-4 overflow-y-auto p-5"
+        role="log"
+        aria-live="polite"
+        aria-label="Conversation"
+      >
+        {turns.map((turn, i) => (
+          <div key={i} className={`flex ${turn.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <p
+              className={`max-w-[85%] px-4 py-3 text-sm leading-relaxed ${
+                turn.role === 'user'
+                  ? 'bg-ink text-bone'
+                  : 'border border-ink/12 bg-white/80 text-ink/85'
+              }`}
+            >
+              {turn.content}
+            </p>
+          </div>
+        ))}
+
+        {busy && (
+          <div className="flex justify-start">
+            <p className="flex gap-1.5 border border-ink/12 bg-white/80 px-4 py-4">
+              {[0, 1, 2].map((i) => (
+                <span
+                  key={i}
+                  className="h-1.5 w-1.5 animate-bounce bg-ink/40"
+                  style={{ animationDelay: `${i * 130}ms` }}
+                />
+              ))}
+              <span className="sr-only">Thinking</span>
+            </p>
+          </div>
+        )}
+
+        <div ref={endRef} />
+      </div>
+
+      {chips.length > 0 && (
+        <div className="flex shrink-0 flex-wrap gap-2 border-t border-ink/12 px-5 py-3">
+          {chips.map((chip) => (
+            <button
+              key={chip}
+              type="button"
+              onClick={() => onSend(chip)}
+              disabled={busy}
+              className="border border-ink/20 px-3 py-1.5 text-xs transition-colors hover:border-ink hover:bg-ink hover:text-bone disabled:opacity-40"
+            >
+              {chip}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          onSend(input);
+          setInput('');
+        }}
+        className="flex shrink-0 gap-2 border-t border-ink/12 p-4"
+      >
+        <label htmlFor="chat-input" className="sr-only">
+          Your message
+        </label>
+        <input
+          id="chat-input"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder={guided ? 'Type an answer…' : "Tell us what you're thinking…"}
+          autoComplete="off"
+          className="min-w-0 flex-1 border border-ink/20 bg-white/70 px-4 py-3 text-sm placeholder:text-ink/30 focus:border-ink focus:outline-none"
+        />
+        <button
+          type="submit"
+          disabled={busy || !input.trim()}
+          className="btn-primary shrink-0 !px-5 disabled:opacity-40"
+        >
+          Send
+        </button>
+      </form>
+    </div>
+  );
+}
