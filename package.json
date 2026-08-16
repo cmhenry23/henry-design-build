@@ -9,8 +9,8 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "preview": "next build && node tools/preview/build-preview.mjs",
-    "check:gemini": "node tools/check-gemini.mjs",
-    "materials": "node tools/materials/generate.mjs"
+    "check:gemini": "node --env-file-if-exists=.env.local tools/check-gemini.mjs",
+    "materials": "node --env-file-if-exists=.env.local tools/materials/generate.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.117.1",
