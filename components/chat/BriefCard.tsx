@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useMemo } from 'react';
+import StyleImage from '@/components/chat/StyleImage';
 import CabinPreview from '@/components/visualizer/CabinPreview';
 import { resolveBrief, type Brief } from '@/lib/brief';
 import { buildSummary } from '@/lib/briefSummary';
@@ -59,7 +60,12 @@ export default function BriefCard({
         </div>
       </header>
 
-      {/* Visual reference */}
+      {/* AI style reference — what it could look like */}
+      <div className="border-b border-ink/12">
+        <StyleImage brief={brief} />
+      </div>
+
+      {/* Schematic sketch — scale and configuration, drawn from the same fields */}
       <div className="border-b border-ink/12 bg-ink">
         <CabinPreview
           cladding={resolved.cladding}
@@ -74,7 +80,7 @@ export default function BriefCard({
           scene={summary.scene}
         />
         <p className="border-t border-bone/10 px-5 py-3 text-center text-xs text-bone/45">
-          Visual reference — a stylised sketch from what you described.
+          Scale sketch — size and configuration, drawn from the same answers.
         </p>
       </div>
 

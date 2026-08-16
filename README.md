@@ -134,6 +134,35 @@ the same brief and produces the same reference, sketch and range. The header
 switches from "Live" to "Guided" and a notice explains why. The feature degrades;
 it never breaks.
 
+### AI style images
+
+Once the brief is complete the chat generates a photoreal style reference with
+Google's **Nano Banana Pro** (`gemini-3-pro-image`) — top-ranked for
+architectural visualisation.
+
+**The model is set in code, not in Google AI Studio.** AI Studio only issues
+the key; a key is not tied to a model. The default lives in
+`app/api/image/route.ts` and can be overridden with `GEMINI_IMAGE_MODEL`
+without touching code.
+
+The prompt is built in `lib/imagePrompt.ts` from Ryan's *real* material
+palette — the charcoal cladding and steep gable of the Cedar Sauna Cabin, the
+grey shaker and honed quartz of the Forest Kitchen, the plum walls and reeded
+glass of the Aubergine Bath — plus an explicit negative prompt. Left generic,
+these models default to a house style (cream walls, terracotta, mid-century
+furniture) that looks nothing like a Canadian cottage-country build. That
+specificity is what makes the renders look like Ryan's work.
+
+> ⚠️ **The disclaimer under the image is load-bearing.** A photoreal image on
+> a *builder's* site reads as "this is what I'm getting". The caption states
+> it is a style reference generated from the visitor's own words — not a
+> design, not a plan, not something Ryan has priced. Don't remove or soften it.
+
+Costs ~$0.13 per image. The route is throttled to 8 images/minute per server
+instance and each visitor can regenerate 4 times. **Image generation is a paid
+model** — the key must belong to a project with billing enabled, or the API
+returns 429/403.
+
 ### Cost
 
 The route uses `claude-opus-5` at `effort: "low"`, caps history at 24 turns, and
