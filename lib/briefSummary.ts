@@ -7,6 +7,8 @@
  */
 
 import { materialById } from '@/data/materials';
+import { paletteById } from '@/data/palettes';
+import { styleById } from '@/data/styles';
 import { resolveBrief, type Brief } from '@/lib/brief';
 import {
   ADD_ONS,
@@ -94,6 +96,15 @@ export function buildSummary(brief: Brief, projectId: string): BriefSummary {
     rows.push({
       label: 'Add-ons',
       value: r.addOns.map((id) => ADD_ONS.find((a) => a.id === id)!.label).join(', '),
+    });
+  }
+  const styleDef = styleById(r.style);
+  if (styleDef) rows.push({ label: 'Style', value: styleDef.name });
+  const paletteDef = paletteById(r.palette);
+  if (paletteDef) {
+    rows.push({
+      label: 'Palette',
+      value: `${paletteDef.name} (${paletteDef.colours.map((c) => `${c.name} ${c.hex}`).join(', ')})`,
     });
   }
   if (r.materials.length) {

@@ -14,6 +14,8 @@
  */
 
 import { materialById } from '@/data/materials';
+import { paletteById } from '@/data/palettes';
+import { styleById } from '@/data/styles';
 import { resolveBrief, type Brief } from '@/lib/brief';
 import { ADD_ONS, BUILD_TYPES, FINISH_LEVELS } from '@/lib/estimate';
 
@@ -81,6 +83,14 @@ export function buildImagePrompt(brief: Brief): string {
   for (const id of r.addOns) {
     if (ADD_ON_NOTES[id]) parts.push(ADD_ON_NOTES[id]);
   }
+
+  // Style and palette are explicit choices, so they outrank the build-type
+  // defaults above and go in before the material list.
+  const style = styleById(r.style);
+  if (style) parts.push(`Design style — ${style.promptFragment}.`);
+
+  const palette = paletteById(r.palette);
+  if (palette) parts.push(`Use ${palette.promptFragment}.`);
 
   // Materials the visitor actually tapped. These are concrete choices, so they
   // carry more weight than the build-type defaults.

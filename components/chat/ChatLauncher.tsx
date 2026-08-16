@@ -153,6 +153,8 @@ export default function ChatLauncher() {
                 guided={intake.guided}
                 onSend={intake.send}
                 brief={intake.brief}
+                onSelectStyle={intake.selectStyle}
+                onSelectPalette={intake.selectPalette}
                 onToggleMaterial={intake.toggleMaterial}
                 className="flex-1"
               />

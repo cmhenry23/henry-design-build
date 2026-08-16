@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import MaterialBoard from '@/components/chat/MaterialBoard';
+import PaletteBoard from '@/components/chat/PaletteBoard';
+import StyleBoard from '@/components/chat/StyleBoard';
 import type { Turn } from '@/components/chat/useProjectIntake';
 import { UNKNOWN, type Brief } from '@/lib/brief';
 
@@ -17,6 +19,8 @@ export default function ChatThread({
   guided,
   onSend,
   brief,
+  onSelectStyle,
+  onSelectPalette,
   onToggleMaterial,
   className = '',
 }: {
@@ -27,6 +31,8 @@ export default function ChatThread({
   guided: boolean;
   onSend: (text: string) => void;
   brief: Brief;
+  onSelectStyle: (id: string) => void;
+  onSelectPalette: (id: string) => void;
   onToggleMaterial: (id: string) => void;
   className?: string;
 }) {
@@ -80,10 +86,27 @@ export default function ChatThread({
           </div>
         )}
 
-        {/* Materials appear in the conversation as soon as we know what's
-            being built, so the visitor can point at what they like rather
-            than having to describe it. */}
+        {/* Boards unfold broad -> specific as the visitor commits: style,
+            then palette, then materials. Showing all three at once buries the
+            conversation; revealing the next only after a pick keeps the panel
+            readable and makes each choice feel like progress. */}
         {brief.buildType !== UNKNOWN && (
+          <StyleBoard
+            buildType={brief.buildType}
+            selected={brief.style}
+            onSelect={onSelectStyle}
+          />
+        )}
+
+        {brief.buildType !== UNKNOWN && brief.style && (
+          <PaletteBoard
+            buildType={brief.buildType}
+            selected={brief.palette}
+            onSelect={onSelectPalette}
+          />
+        )}
+
+        {brief.buildType !== UNKNOWN && brief.style && brief.palette && (
           <MaterialBoard
             buildType={brief.buildType}
             selected={brief.materials}

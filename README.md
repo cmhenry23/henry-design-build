@@ -188,6 +188,37 @@ Once that passes, test the real thing: open `/start`, answer three questions
 scale sketch. If it fails there, the error names the cause on screen — it no
 longer hides behind a generic message.
 
+### Style, palette and material boards
+
+The chat narrows broad → specific, revealing the next board only after a pick.
+All three feed the render prompt and reach Ryan as named rows in the email.
+
+| Board | What it is | How it's rendered |
+|---|---|---|
+| **Style** | 8 looks — modern farmhouse, craftsman, nordic, rustic lodge, modern minimal, timber frame, traditional cottage, transitional | Pre-generated photos |
+| **Palette** | 6 schemes, each 4 named colours with roles | **CSS swatches** |
+| **Materials** | 16 real materials from Ryan's projects | Pre-generated photos |
+
+**Palettes are deliberately not AI-generated.** A palette *is* a set of hex
+values — rendering one through an image model gives an approximation that
+drifts every regeneration, and the colour on screen stops being the colour
+named. Drawn as CSS they're exact, free, instant, and the email can quote
+`Aubergine #4A3446` to a painter.
+
+Each palette is anchored on a real project (charcoal & cedar from the cabin,
+aubergine & sage from the bath) then completed with harmonious partners, so the
+accent reads as a decision rather than a clash. Swatch widths are weighted, not
+equal — a palette is proportions.
+
+Regenerate the photo sets with:
+
+```bash
+npm run images
+```
+
+`--set=styles` / `--set=materials` to do one, `--only=<id>` for a single tile,
+`--force` to redo what exists. ~$0.13 each.
+
 ### Material board in the chat
 
 As soon as the chat knows what's being built, it shows a grid of the materials

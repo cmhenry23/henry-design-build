@@ -38,6 +38,10 @@ export interface Brief {
   access: SiteAccessId | typeof UNKNOWN;
   season: SeasonId | typeof UNKNOWN;
   addOns: string[];
+  /** Design style id the visitor picked. Broadest signal we capture. */
+  style: string;
+  /** Colour palette id. */
+  palette: string;
   /** Material ids the visitor tapped in the chat. Feeds the render + the email. */
   materials: string[];
   cladding: string;
@@ -58,6 +62,8 @@ export const EMPTY_BRIEF: Brief = {
   access: UNKNOWN,
   season: UNKNOWN,
   addOns: [],
+  style: '',
+  palette: '',
   materials: [],
   cladding: 'charcoal',
   roof: 'steel-black',
@@ -89,6 +95,8 @@ export function resolveBrief(brief: Brief) {
     addOns: brief.addOns.filter((id) =>
       ADD_ONS.find((a) => a.id === id)?.appliesTo.includes(buildType)
     ),
+    style: brief.style ?? '',
+    palette: brief.palette ?? '',
     materials: brief.materials ?? [],
     cladding: CLADDINGS.find((c) => c.id === brief.cladding) ?? CLADDINGS[0],
     roof: ROOFS.find((r) => r.id === brief.roof) ?? ROOFS[0],

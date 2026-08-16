@@ -135,6 +135,15 @@ export function useProjectIntake() {
     [brief, busy, guided, guidedStep, turns]
   );
 
+  /** Single-select boards. Tapping the current pick clears it. */
+  const selectStyle = useCallback((id: string) => {
+    setBrief((prev) => ({ ...prev, style: prev.style === id ? '' : id }));
+  }, []);
+
+  const selectPalette = useCallback((id: string) => {
+    setBrief((prev) => ({ ...prev, palette: prev.palette === id ? '' : id }));
+  }, []);
+
   /** Visitor tapped a material tile. Not model-driven — this is their choice. */
   const toggleMaterial = useCallback((id: string) => {
     setBrief((prev) => ({
@@ -166,6 +175,8 @@ export function useProjectIntake() {
     guided,
     notice,
     send,
+    selectStyle,
+    selectPalette,
     toggleMaterial,
     reset,
     /** Enough captured to draw and price it. */
