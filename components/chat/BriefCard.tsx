@@ -71,7 +71,7 @@ export default function BriefCard({
           hasDeck={resolved.addOns.includes('deck')}
           hasLoft={resolved.addOns.includes('loft')}
           hasFireplace={resolved.addOns.includes('fireplace')}
-          isInterior={summary.isInterior}
+          scene={summary.scene}
         />
         <p className="border-t border-bone/10 px-5 py-3 text-center text-xs text-bone/45">
           Visual reference — a stylised sketch from what you described.

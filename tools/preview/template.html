@@ -1039,7 +1039,11 @@ function sketch() {
   const ratio = Math.min(1, Math.max(0, (state.sqft - t.min) / (t.max - t.min)));
   const on = id => activeAddOns().includes(id);
 
-  if (INTERIOR.includes(state.buildType)) return interiorSVG(cl, ratio);
+  // Each interior type gets its own room. Routing them all to one scene meant
+  // asking for a bathroom drew you a kitchen.
+  if (state.buildType === 'kitchen') return interiorSVG(cl, ratio);
+  if (state.buildType === 'bath') return bathSVG(cl, ratio);
+  if (state.buildType === 'reno') return roomSVG(cl, ratio);
 
   const W = 800, H = 520, groundY = 430;
   const bodyW = 210 + ratio * 330;
@@ -1176,11 +1180,113 @@ function interiorSVG(cl, ratio) {
     s += `<line x1="${cx + dx}" y1="${ceilY}" x2="${cx + dx}" y2="${floorY - 14}" stroke="#2B2E33" stroke-width="2"/>`;
     s += `<circle cx="${cx + dx}" cy="${floorY - 6}" r="11" fill="#F2C879" opacity=".9"/><circle cx="${cx + dx}" cy="${floorY - 6}" r="26" fill="#F2C879" opacity=".12"/>`;
   });
-  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Sketch of a renovated room roughly ${state.sqft} square feet, with ${cl.label.toLowerCase()} cabinetry." style="width:100%;height:auto">
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Sketch of a renovated kitchen roughly ${state.sqft} square feet, with ${joinery(cl.label)} cabinetry, a chimney hood, an island and pendant lighting." style="width:100%;height:auto">
     <defs>
       <linearGradient id="wallGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E6E1D8"/><stop offset="100%" stop-color="#CFC8BC"/></linearGradient>
       <linearGradient id="winGlow" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#BBD3D8"/><stop offset="100%" stop-color="#8FA98C"/></linearGradient>
       <linearGradient id="floorGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C6A177"/><stop offset="100%" stop-color="#A9855C"/></linearGradient>
+    </defs>${s}</svg>`;
+}
+
+/* Swatch names are written for exterior cladding; drop the material noun indoors. */
+const joinery = label => label.toLowerCase().replace(/ (board|white)$/, '');
+
+/* ── Bathroom: vanity, mirror, tub behind a reeded glass screen ── */
+function bathSVG(cl, ratio) {
+  const W = 800, H = 520, floorY = 405, ceilY = 60;
+  const roomW = 430 + ratio * 250;
+  const cx = W / 2, left = cx - roomW / 2, right = cx + roomW / 2;
+  const tubW = roomW * 0.46, tubLeft = left + 14, tubRight = tubLeft + tubW;
+  const vanityW = Math.min(roomW * 0.34, 190), vanityLeft = right - vanityW - 18;
+  let s = `<rect width="${W}" height="${H}" fill="#1B1917"/>`;
+  s += `<rect x="${left}" y="${ceilY}" width="${roomW}" height="${floorY - ceilY}" fill="url(#bathWall)"/>`;
+  s += `<rect x="${tubLeft}" y="${ceilY + 20}" width="${tubW}" height="${floorY - ceilY - 20}" fill="url(#marble)"/>`;
+  s += '<g stroke="#B9B0A6" stroke-opacity=".55" stroke-width="1.2">';
+  for (let i = 1; i <= 5; i++) { const y = ceilY + 20 + ((floorY - ceilY - 20) / 5) * i; s += `<line x1="${tubLeft}" y1="${y}" x2="${tubRight}" y2="${y}"/>`; }
+  for (let i = 1; i <= 4; i++) { const x = tubLeft + (tubW / 4) * i; s += `<line x1="${x}" y1="${ceilY + 20}" x2="${x}" y2="${floorY}"/>`; }
+  s += '</g>';
+  // niche
+  s += `<rect x="${tubLeft + tubW * 0.16}" y="${floorY - 190}" width="${tubW * 0.42}" height="54" fill="#CFC7BC"/>`;
+  s += `<rect x="${tubLeft + tubW * 0.16 + 4}" y="${floorY - 186}" width="${tubW * 0.42 - 8}" height="46" fill="#B4ABA0"/>`;
+  s += `<rect x="${tubLeft + tubW * 0.16 + 4}" y="${floorY - 164}" width="${tubW * 0.42 - 8}" height="3" fill="#8E867C"/>`;
+  // tub
+  s += `<rect x="${tubLeft}" y="${floorY - 78}" width="${tubW}" height="78" fill="#F6F3EF"/>`;
+  s += `<rect x="${tubLeft}" y="${floorY - 78}" width="${tubW}" height="8" fill="#FFFFFF"/>`;
+  s += `<rect x="${tubLeft + 6}" y="${floorY - 68}" width="${tubW - 12}" height="62" fill="#EAE5DE"/>`;
+  // reeded screen
+  s += `<rect x="${tubLeft}" y="${floorY - 250}" width="${tubW}" height="176" fill="url(#reeded)"/>`;
+  s += '<g stroke="#FFFFFF" stroke-opacity=".5" stroke-width="1.5">';
+  for (let i = 0; i < 22; i++) { const x = tubLeft + (tubW / 22) * i + 3; s += `<line x1="${x}" y1="${floorY - 250}" x2="${x}" y2="${floorY - 74}"/>`; }
+  s += '</g>';
+  s += `<rect x="${tubLeft - 4}" y="${floorY - 254}" width="${tubW + 8}" height="8" fill="#22221F"/>`;
+  s += `<rect x="${tubLeft - 4}" y="${floorY - 254}" width="7" height="184" fill="#22221F"/>`;
+  s += `<rect x="${tubRight - 3}" y="${floorY - 254}" width="7" height="184" fill="#22221F"/>`;
+  s += `<rect x="${tubLeft + tubW / 2 - 3}" y="${floorY - 250}" width="5" height="176" fill="#22221F" opacity=".85"/>`;
+  s += `<rect x="${tubLeft + tubW * 0.18}" y="${floorY - 168}" width="${tubW * 0.3}" height="5" rx="2.5" fill="#22221F"/>`;
+  // vanity
+  s += `<rect x="${vanityLeft}" y="${floorY - 96}" width="${vanityW}" height="96" fill="${cl.hex}"/>`;
+  s += `<rect x="${vanityLeft - 5}" y="${floorY - 106}" width="${vanityW + 10}" height="12" fill="#F4F1EC"/>`;
+  s += '<g stroke="#000" stroke-opacity=".16" stroke-width="1.5">';
+  for (let i = 0; i < 9; i++) { const x = vanityLeft + (vanityW / 9) * (i + 0.5); s += `<line x1="${x}" y1="${floorY - 92}" x2="${x}" y2="${floorY}"/>`; }
+  s += '</g>';
+  s += `<rect x="${vanityLeft + vanityW * 0.22}" y="${floorY - 104}" width="${vanityW * 0.56}" height="9" rx="3" fill="#E7E2DA"/>`;
+  s += `<rect x="${vanityLeft + vanityW / 2 - 2}" y="${floorY - 128}" width="4" height="24" fill="#2B2E33"/>`;
+  s += `<rect x="${vanityLeft + vanityW / 2 - 2}" y="${floorY - 130}" width="22" height="4" fill="#2B2E33"/>`;
+  // mirror + sconce
+  s += `<rect x="${vanityLeft + 6}" y="${floorY - 262}" width="${vanityW - 12}" height="118" fill="#22221F"/>`;
+  s += `<rect x="${vanityLeft + 12}" y="${floorY - 256}" width="${vanityW - 24}" height="106" fill="#5C6A6B" opacity=".55"/>`;
+  s += `<rect x="${vanityLeft + 12}" y="${floorY - 256}" width="${vanityW - 24}" height="34" fill="#7E8C8B" opacity=".35"/>`;
+  [0.3, 0.5, 0.7].forEach(t => {
+    s += `<circle cx="${vanityLeft + vanityW * t}" cy="${floorY - 282}" r="8" fill="#F2C879" opacity=".92"/>`;
+    s += `<circle cx="${vanityLeft + vanityW * t}" cy="${floorY - 282}" r="20" fill="#F2C879" opacity=".13"/>`;
+  });
+  s += `<rect x="${vanityLeft + vanityW * 0.28}" y="${floorY - 292}" width="${vanityW * 0.44}" height="3" fill="#2B2E33"/>`;
+  // floor
+  s += `<rect x="0" y="${floorY}" width="${W}" height="${H - floorY}" fill="url(#bathFloor)"/>`;
+  s += '<g stroke="#8E867C" stroke-opacity=".35" stroke-width="1.5">';
+  for (let i = 0; i < 7; i++) s += `<line x1="${i * 130 - 90}" y1="${H}" x2="${cx - 150 + i * 55}" y2="${floorY}"/>`;
+  s += `<line x1="0" y1="${floorY + 42}" x2="${W}" y2="${floorY + 42}"/><line x1="0" y1="${floorY + 92}" x2="${W}" y2="${floorY + 92}"/></g>`;
+  s += `<rect x="0" y="${floorY}" width="${W}" height="${H - floorY}" fill="#1B1917" opacity=".1"/>`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Sketch of a renovated bathroom roughly ${state.sqft} square feet, with a ${joinery(cl.label)} vanity, a tiled tub surround behind a reeded glass screen, and a mirror over the sink." style="width:100%;height:auto">
+    <defs>
+      <linearGradient id="bathWall" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4A3446"/><stop offset="100%" stop-color="#3A2838"/></linearGradient>
+      <linearGradient id="marble" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#F2EEE9"/><stop offset="55%" stop-color="#E4DED6"/><stop offset="100%" stop-color="#EFEAE3"/></linearGradient>
+      <linearGradient id="bathFloor" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E0DAD2"/><stop offset="100%" stop-color="#C3BBB1"/></linearGradient>
+      <linearGradient id="reeded" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#DCE4E2" stop-opacity=".85"/><stop offset="100%" stop-color="#C2CCCB" stop-opacity=".7"/></linearGradient>
+    </defs>${s}</svg>`;
+}
+
+/* ── Generic room for a whole-home renovation ── */
+function roomSVG(cl, ratio) {
+  const W = 800, H = 520, floorY = 400, ceilY = 62;
+  const roomW = 470 + ratio * 250;
+  const cx = W / 2, left = cx - roomW / 2, right = cx + roomW / 2;
+  const winW = roomW * 0.26;
+  let s = `<rect width="${W}" height="${H}" fill="#1B1917"/>`;
+  s += `<rect x="${left}" y="${ceilY}" width="${roomW}" height="${floorY - ceilY}" fill="url(#roomWall)"/>`;
+  s += `<rect x="${left}" y="${ceilY}" width="${roomW}" height="9" fill="#F6F3EE"/>`;
+  [left + roomW * 0.1, right - roomW * 0.1 - winW].forEach(x => {
+    s += `<rect x="${x - 7}" y="${floorY - 232}" width="${winW + 14}" height="152" fill="#F6F3EE"/>`;
+    s += `<rect x="${x}" y="${floorY - 225}" width="${winW}" height="138" fill="url(#roomWin)"/>`;
+    s += `<line x1="${x + winW / 2}" y1="${floorY - 225}" x2="${x + winW / 2}" y2="${floorY - 87}" stroke="#F6F3EE" stroke-width="4"/>`;
+    s += `<line x1="${x}" y1="${floorY - 156}" x2="${x + winW}" y2="${floorY - 156}" stroke="#F6F3EE" stroke-width="4"/>`;
+    s += `<rect x="${x - 12}" y="${floorY - 80}" width="${winW + 24}" height="9" fill="#F6F3EE"/>`;
+  });
+  s += `<rect x="${cx - roomW * 0.13}" y="${floorY - 210}" width="${roomW * 0.26}" height="210" fill="${cl.hex}"/>`;
+  for (let i = 1; i <= 4; i++) s += `<rect x="${cx - roomW * 0.13}" y="${floorY - 210 + 44 * i}" width="${roomW * 0.26}" height="6" fill="#F4F1EC" opacity=".75"/>`;
+  s += `<rect x="${cx - roomW * 0.13}" y="${floorY - 216}" width="${roomW * 0.26}" height="9" fill="#F4F1EC"/>`;
+  s += `<rect x="${left}" y="${floorY - 16}" width="${roomW}" height="16" fill="#F6F3EE"/>`;
+  s += `<rect x="0" y="${floorY}" width="${W}" height="${H - floorY}" fill="url(#roomFloor)"/>`;
+  s += '<g stroke="#000" stroke-opacity=".13" stroke-width="1.5">';
+  for (let i = 0; i < 9; i++) s += `<line x1="${i * 100 - 60}" y1="${H}" x2="${cx - 200 + i * 60}" y2="${floorY}"/>`;
+  s += `</g><rect x="0" y="${floorY}" width="${W}" height="${H - floorY}" fill="#1B1917" opacity=".12"/>`;
+  s += `<line x1="${cx}" y1="${ceilY + 9}" x2="${cx}" y2="${ceilY + 42}" stroke="#2B2E33" stroke-width="2"/>`;
+  s += `<circle cx="${cx}" cy="${ceilY + 48}" r="11" fill="#F2C879" opacity=".9"/><circle cx="${cx}" cy="${ceilY + 48}" r="26" fill="#F2C879" opacity=".12"/>`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Sketch of a renovated room roughly ${state.sqft} square feet, with two trimmed windows, ${joinery(cl.label)} built-in shelving and wide plank floors." style="width:100%;height:auto">
+    <defs>
+      <linearGradient id="roomWall" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#EFEBE3"/><stop offset="100%" stop-color="#D8D2C8"/></linearGradient>
+      <linearGradient id="roomWin" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#BBD3D8"/><stop offset="100%" stop-color="#8FA98C"/></linearGradient>
+      <linearGradient id="roomFloor" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C6A177"/><stop offset="100%" stop-color="#A9855C"/></linearGradient>
     </defs>${s}</svg>`;
 }
 
@@ -1512,7 +1618,7 @@ function renderBrief() {
   // Namespace this SVG's gradient/clipPath ids so it doesn't inherit the
   // Design Studio sketch's clip paths (identical ids, different geometry).
   const drawing = sketch().replace(
-    /(id="|url\(#)(sky|glow|roofShade|wallClip|roofClip|wallGrad|winGlow|floorGrad)\b/g,
+    /(id="|url\(#)(sky|glow|roofShade|wallClip|roofClip|wallGrad|winGlow|floorGrad|bathWall|marble|bathFloor|reeded|roomWall|roomWin|roomFloor)\b/g,
     '$1$2-ik'
   );
   Object.assign(state, saved);

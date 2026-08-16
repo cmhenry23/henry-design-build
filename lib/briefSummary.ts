@@ -19,6 +19,22 @@ import {
 } from '@/lib/estimate';
 import { site } from '@/data/site';
 
+import type { PreviewScene } from '@/components/visualizer/CabinPreview';
+
+/** Which room the sketch should draw for each build type. */
+export const SCENE_BY_TYPE: Record<string, PreviewScene> = {
+  cottage: 'exterior',
+  tiny: 'exterior',
+  sauna: 'exterior',
+  kitchen: 'kitchen',
+  bath: 'bath',
+  reno: 'room',
+};
+
+export function sceneFor(buildType: string): PreviewScene {
+  return SCENE_BY_TYPE[buildType] ?? 'exterior';
+}
+
 const INTERIOR = ['kitchen', 'bath', 'reno'];
 
 export interface BriefSummary {
@@ -29,7 +45,10 @@ export interface BriefSummary {
   perSqFtLow: number;
   perSqFtHigh: number;
   typeLabel: string;
+  /** True for any indoor scene — drives which spec rows are relevant. */
   isInterior: boolean;
+  /** Which room the sketch draws. */
+  scene: PreviewScene;
   /** Plain-text project overview — the email body and the clipboard payload. */
   overview: string;
   /** Ready-to-open mailto: link. */
@@ -115,6 +134,7 @@ export function buildSummary(brief: Brief, projectId: string): BriefSummary {
     perSqFtHigh: estimate.perSqFtHigh,
     typeLabel: type.label,
     isInterior,
+    scene: sceneFor(r.buildType),
     overview,
     subject,
     mailto: `mailto:${site.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(

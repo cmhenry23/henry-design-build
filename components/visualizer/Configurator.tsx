@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import CabinPreview from '@/components/visualizer/CabinPreview';
+import { sceneFor } from '@/lib/briefSummary';
 import { site } from '@/data/site';
 import {
   ADD_ONS,
@@ -138,7 +139,7 @@ export default function Configurator() {
             hasDeck={activeAddOns.includes('deck')}
             hasLoft={activeAddOns.includes('loft')}
             hasFireplace={activeAddOns.includes('fireplace')}
-            isInterior={isInterior}
+            scene={sceneFor(buildType)}
           />
           <p className="border-t border-bone/10 px-5 py-3 text-center text-xs text-bone/45">
             A stylised sketch to make choices feel real — not an architectural drawing.

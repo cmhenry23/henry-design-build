@@ -11,6 +11,13 @@ import { useId } from 'react';
  * make choices feel real, not to represent a finished design.
  */
 
+/**
+ * Which room to draw. Every interior build type used to share one kitchen
+ * scene, so asking for a bathroom got you a picture of a kitchen — hence the
+ * scene is now explicit rather than a single `isInterior` boolean.
+ */
+export type PreviewScene = 'exterior' | 'kitchen' | 'bath' | 'room';
+
 interface PreviewProps {
   cladding: { hex: string; trim: string; label: string };
   roof: { hex: string; ribbed: boolean; label: string };
@@ -21,7 +28,7 @@ interface PreviewProps {
   hasDeck: boolean;
   hasLoft: boolean;
   hasFireplace: boolean;
-  isInterior: boolean; // renovation types draw a room instead of a building
+  scene: PreviewScene;
 }
 
 export default function CabinPreview({
@@ -34,15 +41,21 @@ export default function CabinPreview({
   hasDeck,
   hasLoft,
   hasFireplace,
-  isInterior,
+  scene,
 }: PreviewProps) {
   // Namespaces the gradient and clipPath ids. Without this, two previews on the
   // same page (the intake brief card and the configurator) would share the
   // first one's clip paths and draw each other's geometry.
   const uid = useId().replace(/:/g, '');
 
-  if (isInterior) {
-    return <InteriorPreview cladding={cladding} sqft={sqft} sizeRatio={sizeRatio} />;
+  if (scene === 'kitchen') {
+    return <KitchenPreview cladding={cladding} sqft={sqft} sizeRatio={sizeRatio} />;
+  }
+  if (scene === 'bath') {
+    return <BathPreview cladding={cladding} sqft={sqft} sizeRatio={sizeRatio} />;
+  }
+  if (scene === 'room') {
+    return <RoomPreview cladding={cladding} sqft={sqft} sizeRatio={sizeRatio} />;
   }
 
   const VB_W = 800;
@@ -375,9 +388,17 @@ export default function CabinPreview({
   );
 }
 
-/* ── Interior sketch for kitchen / bath / renovation types ── */
+/**
+ * Swatch names are written for exterior cladding ("Charcoal board"), which
+ * reads oddly on indoor joinery. Drop the material noun for interior scenes.
+ */
+function joinery(label: string) {
+  return label.toLowerCase().replace(/ (board|white)$/, '');
+}
 
-function InteriorPreview({
+/* ── Kitchen: counter run, chimney hood, island, pendants ── */
+
+function KitchenPreview({
   cladding,
   sqft,
   sizeRatio,
@@ -401,7 +422,7 @@ function InteriorPreview({
       viewBox={`0 0 ${VB_W} ${VB_H}`}
       className="h-auto w-full"
       role="img"
-      aria-label={`Sketch of a renovated room roughly ${sqft} square feet, with ${cladding.label.toLowerCase()} cabinetry.`}
+      aria-label={`Sketch of a renovated kitchen roughly ${sqft} square feet, with ${joinery(cladding.label)} cabinetry, a chimney hood, an island and pendant lighting.`}
     >
       <defs>
         <linearGradient id={`wallGrad-${uid}`} x1="0" y1="0" x2="0" y2="1">
@@ -515,6 +536,273 @@ function InteriorPreview({
           <circle cx={cx + dx} cy={floorY - 6} r="26" fill="#F2C879" opacity="0.12" />
         </g>
       ))}
+    </svg>
+  );
+}
+
+/* ── Bathroom: vanity, mirror, sconce, tub behind a reeded glass screen ──
+   Drawn after the Aubergine Bath project — deep wall colour, large-format
+   porcelain, reeded glass in a black frame, and a recessed niche. */
+
+function BathPreview({
+  cladding,
+  sqft,
+  sizeRatio,
+}: {
+  cladding: { hex: string; trim: string; label: string };
+  sqft: number;
+  sizeRatio: number;
+}) {
+  const uid = useId().replace(/:/g, '');
+  const VB_W = 800;
+  const VB_H = 520;
+  const floorY = 405;
+  const ceilY = 60;
+  const roomW = 430 + sizeRatio * 250;
+  const cx = VB_W / 2;
+  const left = cx - roomW / 2;
+  const right = cx + roomW / 2;
+
+  // Tub + screen on the left, vanity on the right.
+  const tubW = roomW * 0.46;
+  const tubLeft = left + 14;
+  const tubRight = tubLeft + tubW;
+  const vanityW = Math.min(roomW * 0.34, 190);
+  const vanityLeft = right - vanityW - 18;
+
+  const tileRows = 5;
+  const tileCols = 4;
+
+  return (
+    <svg
+      viewBox={`0 0 ${VB_W} ${VB_H}`}
+      className="h-auto w-full"
+      role="img"
+      aria-label={`Sketch of a renovated bathroom roughly ${sqft} square feet, with a ${joinery(cladding.label)} vanity, a tiled tub surround behind a reeded glass screen, and a mirror over the sink.`}
+    >
+      <defs>
+        <linearGradient id={`bathWall-${uid}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#4A3446" />
+          <stop offset="100%" stopColor="#3A2838" />
+        </linearGradient>
+        <linearGradient id={`marble-${uid}`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#F2EEE9" />
+          <stop offset="55%" stopColor="#E4DED6" />
+          <stop offset="100%" stopColor="#EFEAE3" />
+        </linearGradient>
+        <linearGradient id={`bathFloor-${uid}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#E0DAD2" />
+          <stop offset="100%" stopColor="#C3BBB1" />
+        </linearGradient>
+        <linearGradient id={`reeded-${uid}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#DCE4E2" stopOpacity="0.85" />
+          <stop offset="100%" stopColor="#C2CCCB" stopOpacity="0.7" />
+        </linearGradient>
+      </defs>
+
+      <rect width={VB_W} height={VB_H} fill="#1B1917" />
+
+      {/* Painted walls */}
+      <rect x={left} y={ceilY} width={roomW} height={floorY - ceilY} fill={`url(#bathWall-${uid})`} />
+
+      {/* Tiled wet wall behind the tub */}
+      <rect x={tubLeft} y={ceilY + 20} width={tubW} height={floorY - ceilY - 20} fill={`url(#marble-${uid})`} />
+      <g stroke="#B9B0A6" strokeOpacity="0.55" strokeWidth="1.2">
+        {Array.from({ length: tileRows }).map((_, i) => (
+          <line
+            key={`h${i}`}
+            x1={tubLeft}
+            y1={ceilY + 20 + ((floorY - ceilY - 20) / tileRows) * (i + 1)}
+            x2={tubRight}
+            y2={ceilY + 20 + ((floorY - ceilY - 20) / tileRows) * (i + 1)}
+          />
+        ))}
+        {Array.from({ length: tileCols }).map((_, i) => (
+          <line
+            key={`v${i}`}
+            x1={tubLeft + (tubW / tileCols) * (i + 1)}
+            y1={ceilY + 20}
+            x2={tubLeft + (tubW / tileCols) * (i + 1)}
+            y2={floorY}
+          />
+        ))}
+      </g>
+
+      {/* Recessed niche */}
+      <rect x={tubLeft + tubW * 0.16} y={floorY - 190} width={tubW * 0.42} height="54" fill="#CFC7BC" />
+      <rect x={tubLeft + tubW * 0.16 + 4} y={floorY - 186} width={tubW * 0.42 - 8} height="46" fill="#B4ABA0" />
+      <rect x={tubLeft + tubW * 0.16 + 4} y={floorY - 164} width={tubW * 0.42 - 8} height="3" fill="#8E867C" />
+
+      {/* Tub */}
+      <rect x={tubLeft} y={floorY - 78} width={tubW} height="78" fill="#F6F3EF" />
+      <rect x={tubLeft} y={floorY - 78} width={tubW} height="8" fill="#FFFFFF" />
+      <rect x={tubLeft + 6} y={floorY - 68} width={tubW - 12} height="62" fill="#EAE5DE" />
+
+      {/* Reeded glass screen in a black frame */}
+      <rect x={tubLeft} y={floorY - 250} width={tubW} height="176" fill={`url(#reeded-${uid})`} />
+      <g stroke="#FFFFFF" strokeOpacity="0.5" strokeWidth="1.5">
+        {Array.from({ length: 22 }).map((_, i) => (
+          <line
+            key={i}
+            x1={tubLeft + (tubW / 22) * i + 3}
+            y1={floorY - 250}
+            x2={tubLeft + (tubW / 22) * i + 3}
+            y2={floorY - 74}
+          />
+        ))}
+      </g>
+      <rect x={tubLeft - 4} y={floorY - 254} width={tubW + 8} height="8" fill="#22221F" />
+      <rect x={tubLeft - 4} y={floorY - 254} width="7" height="184" fill="#22221F" />
+      <rect x={tubRight - 3} y={floorY - 254} width="7" height="184" fill="#22221F" />
+      <rect x={tubLeft + tubW / 2 - 3} y={floorY - 250} width="5" height="176" fill="#22221F" opacity="0.85" />
+      <rect x={tubLeft + tubW * 0.18} y={floorY - 168} width={tubW * 0.3} height="5" rx="2.5" fill="#22221F" />
+
+      {/* Vanity — cladding colour stands in for the cabinetry */}
+      <rect x={vanityLeft} y={floorY - 96} width={vanityW} height="96" fill={cladding.hex} />
+      <rect x={vanityLeft - 5} y={floorY - 106} width={vanityW + 10} height="12" fill="#F4F1EC" />
+      {/* Fluted front */}
+      <g stroke="#000" strokeOpacity="0.16" strokeWidth="1.5">
+        {Array.from({ length: 9 }).map((_, i) => (
+          <line
+            key={i}
+            x1={vanityLeft + (vanityW / 9) * (i + 0.5)}
+            y1={floorY - 92}
+            x2={vanityLeft + (vanityW / 9) * (i + 0.5)}
+            y2={floorY}
+          />
+        ))}
+      </g>
+      {/* Basin + tap */}
+      <rect x={vanityLeft + vanityW * 0.22} y={floorY - 104} width={vanityW * 0.56} height="9" rx="3" fill="#E7E2DA" />
+      <rect x={vanityLeft + vanityW / 2 - 2} y={floorY - 128} width="4" height="24" fill="#2B2E33" />
+      <rect x={vanityLeft + vanityW / 2 - 2} y={floorY - 130} width="22" height="4" fill="#2B2E33" />
+
+      {/* Mirror + sconce */}
+      <rect x={vanityLeft + 6} y={floorY - 262} width={vanityW - 12} height="118" fill="#22221F" />
+      <rect x={vanityLeft + 12} y={floorY - 256} width={vanityW - 24} height="106" fill="#5C6A6B" opacity="0.55" />
+      <rect x={vanityLeft + 12} y={floorY - 256} width={vanityW - 24} height="34" fill="#7E8C8B" opacity="0.35" />
+      {[0.3, 0.5, 0.7].map((t) => (
+        <g key={t}>
+          <circle cx={vanityLeft + vanityW * t} cy={floorY - 282} r="8" fill="#F2C879" opacity="0.92" />
+          <circle cx={vanityLeft + vanityW * t} cy={floorY - 282} r="20" fill="#F2C879" opacity="0.13" />
+        </g>
+      ))}
+      <rect x={vanityLeft + vanityW * 0.28} y={floorY - 292} width={vanityW * 0.44} height="3" fill="#2B2E33" />
+
+      {/* Floor */}
+      <rect x="0" y={floorY} width={VB_W} height={VB_H - floorY} fill={`url(#bathFloor-${uid})`} />
+      <g stroke="#8E867C" strokeOpacity="0.35" strokeWidth="1.5">
+        {Array.from({ length: 7 }).map((_, i) => (
+          <line key={i} x1={i * 130 - 90} y1={VB_H} x2={cx - 150 + i * 55} y2={floorY} />
+        ))}
+        <line x1="0" y1={floorY + 42} x2={VB_W} y2={floorY + 42} />
+        <line x1="0" y1={floorY + 92} x2={VB_W} y2={floorY + 92} />
+      </g>
+      <rect x="0" y={floorY} width={VB_W} height={VB_H - floorY} fill="#1B1917" opacity="0.1" />
+    </svg>
+  );
+}
+
+/* ── Generic room: the neutral scene for a whole-home renovation ── */
+
+function RoomPreview({
+  cladding,
+  sqft,
+  sizeRatio,
+}: {
+  cladding: { hex: string; trim: string; label: string };
+  sqft: number;
+  sizeRatio: number;
+}) {
+  const uid = useId().replace(/:/g, '');
+  const VB_W = 800;
+  const VB_H = 520;
+  const floorY = 400;
+  const ceilY = 62;
+  const roomW = 470 + sizeRatio * 250;
+  const cx = VB_W / 2;
+  const left = cx - roomW / 2;
+  const right = cx + roomW / 2;
+
+  const winW = roomW * 0.26;
+
+  return (
+    <svg
+      viewBox={`0 0 ${VB_W} ${VB_H}`}
+      className="h-auto w-full"
+      role="img"
+      aria-label={`Sketch of a renovated room roughly ${sqft} square feet, with two trimmed windows, ${joinery(cladding.label)} built-in shelving and wide plank floors.`}
+    >
+      <defs>
+        <linearGradient id={`roomWall-${uid}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#EFEBE3" />
+          <stop offset="100%" stopColor="#D8D2C8" />
+        </linearGradient>
+        <linearGradient id={`roomWin-${uid}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#BBD3D8" />
+          <stop offset="100%" stopColor="#8FA98C" />
+        </linearGradient>
+        <linearGradient id={`roomFloor-${uid}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#C6A177" />
+          <stop offset="100%" stopColor="#A9855C" />
+        </linearGradient>
+      </defs>
+
+      <rect width={VB_W} height={VB_H} fill="#1B1917" />
+      <rect x={left} y={ceilY} width={roomW} height={floorY - ceilY} fill={`url(#roomWall-${uid})`} />
+
+      {/* Ceiling line + cornice */}
+      <rect x={left} y={ceilY} width={roomW} height="9" fill="#F6F3EE" />
+
+      {/* Two trimmed windows */}
+      {[left + roomW * 0.1, right - roomW * 0.1 - winW].map((x, i) => (
+        <g key={i}>
+          <rect x={x - 7} y={floorY - 232} width={winW + 14} height="152" fill="#F6F3EE" />
+          <rect x={x} y={floorY - 225} width={winW} height="138" fill={`url(#roomWin-${uid})`} />
+          <line
+            x1={x + winW / 2}
+            y1={floorY - 225}
+            x2={x + winW / 2}
+            y2={floorY - 87}
+            stroke="#F6F3EE"
+            strokeWidth="4"
+          />
+          <line x1={x} y1={floorY - 156} x2={x + winW} y2={floorY - 156} stroke="#F6F3EE" strokeWidth="4" />
+          <rect x={x - 12} y={floorY - 80} width={winW + 24} height="9" fill="#F6F3EE" />
+        </g>
+      ))}
+
+      {/* Built-in shelving between the windows — cladding colour as the joinery */}
+      <rect x={cx - roomW * 0.13} y={floorY - 210} width={roomW * 0.26} height="210" fill={cladding.hex} />
+      {Array.from({ length: 4 }).map((_, i) => (
+        <rect
+          key={i}
+          x={cx - roomW * 0.13}
+          y={floorY - 210 + 44 * (i + 1)}
+          width={roomW * 0.26}
+          height="6"
+          fill="#F4F1EC"
+          opacity="0.75"
+        />
+      ))}
+      <rect x={cx - roomW * 0.13} y={floorY - 216} width={roomW * 0.26} height="9" fill="#F4F1EC" />
+
+      {/* Baseboard */}
+      <rect x={left} y={floorY - 16} width={roomW} height="16" fill="#F6F3EE" />
+
+      {/* Floor */}
+      <rect x="0" y={floorY} width={VB_W} height={VB_H - floorY} fill={`url(#roomFloor-${uid})`} />
+      <g stroke="#000" strokeOpacity="0.13" strokeWidth="1.5">
+        {Array.from({ length: 9 }).map((_, i) => (
+          <line key={i} x1={i * 100 - 60} y1={VB_H} x2={cx - 200 + i * 60} y2={floorY} />
+        ))}
+      </g>
+      <rect x="0" y={floorY} width={VB_W} height={VB_H - floorY} fill="#1B1917" opacity="0.12" />
+
+      {/* Ceiling fixture */}
+      <line x1={cx} y1={ceilY + 9} x2={cx} y2={ceilY + 42} stroke="#2B2E33" strokeWidth="2" />
+      <circle cx={cx} cy={ceilY + 48} r="11" fill="#F2C879" opacity="0.9" />
+      <circle cx={cx} cy={ceilY + 48} r="26" fill="#F2C879" opacity="0.12" />
     </svg>
   );
 }
