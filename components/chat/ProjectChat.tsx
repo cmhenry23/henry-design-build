@@ -36,6 +36,8 @@ export default function ProjectChat() {
           notice={intake.notice}
           guided={intake.guided}
           onSend={intake.send}
+          brief={intake.brief}
+          onToggleMaterial={intake.toggleMaterial}
           className="flex-1"
         />
       </div>

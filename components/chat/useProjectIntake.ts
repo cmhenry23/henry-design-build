@@ -135,6 +135,16 @@ export function useProjectIntake() {
     [brief, busy, guided, guidedStep, turns]
   );
 
+  /** Visitor tapped a material tile. Not model-driven — this is their choice. */
+  const toggleMaterial = useCallback((id: string) => {
+    setBrief((prev) => ({
+      ...prev,
+      materials: prev.materials.includes(id)
+        ? prev.materials.filter((m) => m !== id)
+        : [...prev.materials, id],
+    }));
+  }, []);
+
   const reset = useCallback(() => {
     setTurns([{ role: 'assistant', content: OPENING }]);
     setChips(OPENING_CHIPS);
@@ -156,6 +166,7 @@ export function useProjectIntake() {
     guided,
     notice,
     send,
+    toggleMaterial,
     reset,
     /** Enough captured to draw and price it. */
     ready: projectId !== null && isPriceable(brief),

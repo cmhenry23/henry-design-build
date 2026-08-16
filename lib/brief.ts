@@ -38,6 +38,8 @@ export interface Brief {
   access: SiteAccessId | typeof UNKNOWN;
   season: SeasonId | typeof UNKNOWN;
   addOns: string[];
+  /** Material ids the visitor tapped in the chat. Feeds the render + the email. */
+  materials: string[];
   cladding: string;
   roof: string;
   pitch: string;
@@ -56,6 +58,7 @@ export const EMPTY_BRIEF: Brief = {
   access: UNKNOWN,
   season: UNKNOWN,
   addOns: [],
+  materials: [],
   cladding: 'charcoal',
   roof: 'steel-black',
   pitch: 'classic',
@@ -86,6 +89,7 @@ export function resolveBrief(brief: Brief) {
     addOns: brief.addOns.filter((id) =>
       ADD_ONS.find((a) => a.id === id)?.appliesTo.includes(buildType)
     ),
+    materials: brief.materials ?? [],
     cladding: CLADDINGS.find((c) => c.id === brief.cladding) ?? CLADDINGS[0],
     roof: ROOFS.find((r) => r.id === brief.roof) ?? ROOFS[0],
     pitch: PITCHES.find((p) => p.id === brief.pitch) ?? PITCHES[1],

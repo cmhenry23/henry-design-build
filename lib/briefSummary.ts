@@ -6,6 +6,7 @@
  * never disagree about what was captured or what the range was.
  */
 
+import { materialById } from '@/data/materials';
 import { resolveBrief, type Brief } from '@/lib/brief';
 import {
   ADD_ONS,
@@ -93,6 +94,12 @@ export function buildSummary(brief: Brief, projectId: string): BriefSummary {
     rows.push({
       label: 'Add-ons',
       value: r.addOns.map((id) => ADD_ONS.find((a) => a.id === id)!.label).join(', '),
+    });
+  }
+  if (r.materials.length) {
+    rows.push({
+      label: 'Materials liked',
+      value: r.materials.map((id) => materialById(id)?.name ?? id).join(', '),
     });
   }
   if (brief.location) rows.push({ label: 'Location', value: brief.location });

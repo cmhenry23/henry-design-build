@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import MaterialBoard from '@/components/chat/MaterialBoard';
 import type { Turn } from '@/components/chat/useProjectIntake';
+import { UNKNOWN, type Brief } from '@/lib/brief';
 
 /**
  * The conversation surface itself — log, quick replies, composer.
@@ -14,6 +16,8 @@ export default function ChatThread({
   notice,
   guided,
   onSend,
+  brief,
+  onToggleMaterial,
   className = '',
 }: {
   turns: Turn[];
@@ -22,6 +26,8 @@ export default function ChatThread({
   notice: string | null;
   guided: boolean;
   onSend: (text: string) => void;
+  brief: Brief;
+  onToggleMaterial: (id: string) => void;
   className?: string;
 }) {
   const [input, setInput] = useState('');
@@ -72,6 +78,17 @@ export default function ChatThread({
               <span className="sr-only">Thinking</span>
             </p>
           </div>
+        )}
+
+        {/* Materials appear in the conversation as soon as we know what's
+            being built, so the visitor can point at what they like rather
+            than having to describe it. */}
+        {brief.buildType !== UNKNOWN && (
+          <MaterialBoard
+            buildType={brief.buildType}
+            selected={brief.materials}
+            onToggle={onToggleMaterial}
+          />
         )}
 
         <div ref={endRef} />

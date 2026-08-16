@@ -13,6 +13,7 @@
  * prevents that.
  */
 
+import { materialById } from '@/data/materials';
 import { resolveBrief, type Brief } from '@/lib/brief';
 import { ADD_ONS, BUILD_TYPES, FINISH_LEVELS } from '@/lib/estimate';
 
@@ -79,6 +80,17 @@ export function buildImagePrompt(brief: Brief): string {
 
   for (const id of r.addOns) {
     if (ADD_ON_NOTES[id]) parts.push(ADD_ON_NOTES[id]);
+  }
+
+  // Materials the visitor actually tapped. These are concrete choices, so they
+  // carry more weight than the build-type defaults.
+  const picked = r.materials.map((id) => materialById(id)).filter(Boolean);
+  if (picked.length) {
+    parts.push(
+      `The client specifically chose these materials, so feature them prominently: ${picked
+        .map((m) => m!.name.toLowerCase())
+        .join(', ')}.`
+    );
   }
 
   // Anything the visitor said in their own words outranks the defaults above —

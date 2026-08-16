@@ -163,6 +163,31 @@ instance and each visitor can regenerate 4 times. **Image generation is a paid
 model** — the key must belong to a project with billing enabled, or the API
 returns 429/403.
 
+### Material board in the chat
+
+As soon as the chat knows what's being built, it shows a grid of the materials
+Ryan actually builds with — filtered to that build type. Tapping a few tells us
+what the visitor likes; those picks feed the final render prompt **and** appear
+in Ryan's email as a "Materials liked" line.
+
+**These images are generated once, not per conversation.** There are only ~16
+materials and they never vary by visitor, so generating them live would cost
+~$0.13 each on every chat, add seconds of latency, and produce a slightly
+different cedar every time. Instead:
+
+```bash
+GEMINI_API_KEY=... node tools/materials/generate.mjs
+```
+
+That renders every material in `data/materials.ts` to `public/materials/` —
+about $2 for the full set of 16. Commit the results and they ship as static
+files: free, instant, and identical for everyone. Re-runs skip what already
+exists, so fixing one bad material costs one image (`--force` to redo all,
+`--only=clear-cedar` for a single one).
+
+Until you run it, tiles fall back to each material's colour swatch — the board
+is useful either way.
+
 ### Cost
 
 The route uses `claude-opus-5` at `effort: "low"`, caps history at 24 turns, and
