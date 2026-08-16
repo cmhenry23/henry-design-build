@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "preview": "next build && node tools/preview/build-preview.mjs"
+    "preview": "next build && node tools/preview/build-preview.mjs",
+    "check:gemini": "node tools/check-gemini.mjs",
+    "materials": "node tools/materials/generate.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.117.1",

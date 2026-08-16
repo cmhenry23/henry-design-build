@@ -163,6 +163,31 @@ instance and each visitor can regenerate 4 times. **Image generation is a paid
 model** — the key must belong to a project with billing enabled, or the API
 returns 429/403.
 
+### Testing image generation
+
+Before touching the UI, check the key from the command line — it separates a
+bad key from a billing problem from a bad model id, which all look identical
+from inside the app:
+
+```bash
+GEMINI_API_KEY=your-key npm run check:gemini
+```
+
+It makes one cheap text call (is the key valid?) then one real image call
+(~$0.13 if it succeeds, nothing if it fails), and prints the diagnosis. Add
+`--save` to write the test image to disk and actually look at it.
+
+> **Free-tier keys will fail here.** Image generation is a paid model — the
+> free-tier quota for it is zero, so even the first request returns
+> "quota exceeded". Enable billing at
+> [console.cloud.google.com/billing](https://console.cloud.google.com/billing),
+> then confirm a non-zero limit at [ai.dev/rate-limit](https://ai.dev/rate-limit).
+
+Once that passes, test the real thing: open `/start`, answer three questions
+(what, how big, how far), and the style image generates automatically above the
+scale sketch. If it fails there, the error names the cause on screen — it no
+longer hides behind a generic message.
+
 ### Material board in the chat
 
 As soon as the chat knows what's being built, it shows a grid of the materials
