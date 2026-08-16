@@ -68,7 +68,7 @@ export default function SiteHeader() {
         </nav>
 
         <div className="hidden lg:block">
-          <Link href="/contact" className="btn-primary !px-6 !py-3">
+          <Link href="/start" className="btn-primary !px-6 !py-3">
             Start a project
           </Link>
         </div>
@@ -117,7 +117,7 @@ export default function SiteHeader() {
                 {item.label}
               </Link>
             ))}
-            <Link href="/contact" className="btn-cedar mt-6 w-full">
+            <Link href="/start" className="btn-cedar mt-6 w-full">
               Start a project
             </Link>
             <a

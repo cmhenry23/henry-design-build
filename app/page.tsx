@@ -270,11 +270,11 @@ export default function HomePage() {
             Together we will make your house a home.
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-3">
-            <Link href="/contact" className="btn-primary">
+            <Link href="/start" className="btn-primary">
               Start a project
             </Link>
-            <Link href="/visualizer" className="btn-ghost-light">
-              Try the Design Studio
+            <Link href="/contact" className="btn-ghost-light">
+              Send us a message
             </Link>
           </div>
         </Reveal>

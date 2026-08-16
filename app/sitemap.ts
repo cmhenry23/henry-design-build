@@ -3,7 +3,7 @@ import { projects } from '@/data/projects';
 import { site } from '@/data/site';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const routes = ['', '/portfolio', '/visualizer', '/about', '/faq', '/contact'].map((path) => ({
+  const routes = ['', '/portfolio', '/visualizer', '/start', '/about', '/faq', '/contact'].map((path) => ({
     url: `${site.url}${path}`,
     lastModified: new Date(),
     changeFrequency: 'monthly' as const,

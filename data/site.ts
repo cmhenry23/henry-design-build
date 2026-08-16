@@ -40,6 +40,7 @@ export const nav = [
   { href: '/', label: 'Home' },
   { href: '/portfolio', label: 'Portfolio' },
   { href: '/visualizer', label: 'Design Studio' },
+  { href: '/start', label: 'Start' },
   { href: '/about', label: 'About' },
   { href: '/faq', label: 'FAQ' },
   { href: '/contact', label: 'Contact' },
