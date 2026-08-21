@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -35,14 +36,15 @@ export default function SiteHeader() {
       }`}
     >
       <div className="shell flex h-[4.5rem] items-center justify-between gap-6">
-        <Link href="/" className="group flex items-baseline gap-2.5" aria-label={`${site.name} home`}>
-          <span className="font-display text-[1.05rem] font-extrabold uppercase leading-none tracking-[-0.02em]">
-            Henry
-          </span>
-          <span className="h-3 w-px bg-ink/30" aria-hidden="true" />
-          <span className="font-display text-[0.72rem] font-semibold uppercase leading-none tracking-[0.2em] text-ink/60 transition-colors group-hover:text-ink">
-            Design Build
-          </span>
+        <Link href="/" className="flex items-center" aria-label={`${site.name} home`}>
+          <Image
+            src="/brand/logo.png"
+            alt={site.name}
+            width={900}
+            height={391}
+            priority
+            className="h-9 w-auto sm:h-10"
+          />
         </Link>
 
         <nav className="hidden items-center gap-8 lg:flex" aria-label="Main">
