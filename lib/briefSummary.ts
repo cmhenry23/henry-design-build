@@ -100,17 +100,33 @@ export function buildSummary(brief: Brief, projectId: string): BriefSummary {
   }
   const styleDef = styleById(r.style);
   if (styleDef) rows.push({ label: 'Style', value: styleDef.name });
-  const paletteDef = paletteById(r.palette);
-  if (paletteDef) {
+  if (r.customPalette) {
     rows.push({
       label: 'Palette',
-      value: `${paletteDef.name} (${paletteDef.colours.map((c) => `${c.name} ${c.hex}`).join(', ')})`,
+      value: `Custom mix — dominant ${r.customPalette.dominant}, secondary ${r.customPalette.secondary}, accent ${r.customPalette.accent}`,
     });
+  } else {
+    const paletteDef = paletteById(r.palette);
+    if (paletteDef) {
+      rows.push({
+        label: 'Palette',
+        value: `${paletteDef.name} (${paletteDef.colours.map((c) => `${c.name} ${c.hex}`).join(', ')})`,
+      });
+    }
   }
   if (r.materials.length) {
     rows.push({
       label: 'Materials liked',
       value: r.materials.map((id) => materialById(id)?.name ?? id).join(', '),
+    });
+  }
+  if (r.customMaterials.length) {
+    const named = r.customMaterials.filter((m) => m.name).map((m) => m.name);
+    rows.push({
+      label: 'Materials dropped in',
+      value: named.length
+        ? `${r.customMaterials.length} photo${r.customMaterials.length > 1 ? 's' : ''} (${named.join(', ')})`
+        : `${r.customMaterials.length} reference photo${r.customMaterials.length > 1 ? 's' : ''}`,
     });
   }
   if (brief.location) rows.push({ label: 'Location', value: brief.location });

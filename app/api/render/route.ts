@@ -2,6 +2,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { GoogleGenAI } from '@google/genai';
 import { NextResponse } from 'next/server';
 import { EMPTY_BRIEF, type Brief } from '@/lib/brief';
+import { ACCEPTED_IMAGE_MIME_TYPES, MAX_IMAGE_B64_LEN, parseImageDataUrl } from '@/lib/dataUrl';
 import {
   RENDER_SCHEMA,
   RENDER_SYSTEM,
@@ -30,25 +31,6 @@ function overLimit() {
   if (hits.length >= MAX_PER_WINDOW) return true;
   hits.push(now);
   return false;
-}
-
-const MIME_TYPES: Record<string, string> = {
-  jpeg: 'image/jpeg',
-  jpg: 'image/jpeg',
-  png: 'image/png',
-  webp: 'image/webp',
-};
-
-/** Accepts only the three formats the browser-side resizer ever produces. */
-const CLAUDE_MEDIA_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
-
-/** ~8 MB of actual image bytes, expressed as a base64 string length. */
-const MAX_B64_LEN = 8 * 1024 * 1024 * 1.37;
-
-function parseDataUrl(dataUrl: string): { mimeType: string; data: string } | null {
-  const match = /^data:image\/(jpeg|jpg|png|webp);base64,([\s\S]+)$/.exec(dataUrl.trim());
-  if (!match) return null;
-  return { mimeType: MIME_TYPES[match[1]], data: match[2] };
 }
 
 export async function POST(request: Request) {
@@ -89,14 +71,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'no_photo', stage: 'local' }, { status: 400 });
   }
 
-  const parsed = parseDataUrl(dataUrl);
+  const parsed = parseImageDataUrl(dataUrl);
   if (!parsed) {
     return NextResponse.json({ error: 'bad_photo_format', stage: 'local' }, { status: 400 });
   }
-  if (parsed.data.length > MAX_B64_LEN) {
+  if (parsed.data.length > MAX_IMAGE_B64_LEN) {
     return NextResponse.json({ error: 'photo_too_large', stage: 'local' }, { status: 413 });
   }
-  if (!CLAUDE_MEDIA_TYPES.has(parsed.mimeType)) {
+  if (!ACCEPTED_IMAGE_MIME_TYPES.has(parsed.mimeType)) {
     return NextResponse.json({ error: 'bad_photo_format', stage: 'local' }, { status: 400 });
   }
 
@@ -106,6 +88,14 @@ export async function POST(request: Request) {
     depth: Number(body.dimensions?.depth) || 0,
   };
   const ideas = typeof body.ideas === 'string' ? body.ideas : '';
+
+  // Custom material reference photos — parsed and capped the same way as the
+  // main photo. A bad or oversized one is dropped rather than failing the
+  // whole request; the render still works without it.
+  const customMaterialImages = (brief.customMaterials ?? [])
+    .slice(0, 3)
+    .map((m) => parseImageDataUrl(m.dataUrl))
+    .filter((p): p is NonNullable<typeof p> => !!p && p.data.length <= MAX_IMAGE_B64_LEN && ACCEPTED_IMAGE_MIME_TYPES.has(p.mimeType));
 
   // ── Step 1: Claude looks at the photo, reads the brief, writes one edit instruction ──
   let observed: string;
@@ -135,6 +125,14 @@ export async function POST(request: Request) {
                 data: parsed.data,
               },
             },
+            ...customMaterialImages.map((m) => ({
+              type: 'image' as const,
+              source: {
+                type: 'base64' as const,
+                media_type: m.mimeType as 'image/jpeg' | 'image/png' | 'image/webp',
+                data: m.data,
+              },
+            })),
             { type: 'text', text: buildRenderUserText(brief, dimensions, ideas) },
           ],
         },
@@ -175,6 +173,11 @@ export async function POST(request: Request) {
       model: IMAGE_MODEL,
       input: [
         { type: 'image', data: parsed.data, mime_type: parsed.mimeType },
+        ...customMaterialImages.map((m) => ({
+          type: 'image' as const,
+          data: m.data,
+          mime_type: m.mimeType,
+        })),
         { type: 'text', text: finalizeEditPrompt(editPrompt) },
       ],
       response_format: {

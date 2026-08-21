@@ -89,8 +89,16 @@ export function buildImagePrompt(brief: Brief): string {
   const style = styleById(r.style);
   if (style) parts.push(`Design style — ${style.promptFragment}.`);
 
-  const palette = paletteById(r.palette);
-  if (palette) parts.push(`Use ${palette.promptFragment}.`);
+  // A hand-mixed palette is a more specific choice than a preset, so it wins
+  // when both are somehow present.
+  if (r.customPalette) {
+    parts.push(
+      `Use a custom colour palette the client mixed themselves — dominant colour ${r.customPalette.dominant}, secondary colour ${r.customPalette.secondary}, accent colour ${r.customPalette.accent}. Match these hex values as closely as the medium allows.`
+    );
+  } else {
+    const palette = paletteById(r.palette);
+    if (palette) parts.push(`Use ${palette.promptFragment}.`);
+  }
 
   // Materials the visitor actually tapped. These are concrete choices, so they
   // carry more weight than the build-type defaults.
@@ -100,6 +108,20 @@ export function buildImagePrompt(brief: Brief): string {
       `The client specifically chose these materials, so feature them prominently: ${picked
         .map((m) => m!.name.toLowerCase())
         .join(', ')}.`
+    );
+  }
+  if (r.customMaterials.length) {
+    parts.push(
+      `The client also attached ${r.customMaterials.length} reference photo${
+        r.customMaterials.length > 1 ? 's' : ''
+      } of material${r.customMaterials.length > 1 ? 's' : ''} they want used${
+        r.customMaterials.some((m) => m.name)
+          ? ` (${r.customMaterials
+              .filter((m) => m.name)
+              .map((m) => m.name)
+              .join(', ')})`
+          : ''
+      } — match the material shown in those photos as closely as possible.`
     );
   }
 

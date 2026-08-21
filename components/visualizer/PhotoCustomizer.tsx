@@ -1,7 +1,8 @@
 'use client';
 
 import { useCallback, useRef, useState } from 'react';
-import type { Brief } from '@/lib/brief';
+import type { Brief, CustomMaterial, CustomPaletteColors } from '@/lib/brief';
+import { resizeToDataUrl } from '@/lib/imageResize';
 
 type State =
   | { status: 'idle' }
@@ -27,37 +28,7 @@ const MESSAGES: Record<string, string> = {
 
 const TERMINAL = ['no_api_key', 'billing_required', 'bad_api_key', 'model_unavailable', 'bad_photo_format'];
 
-/** Longest edge after client-side resize — keeps the upload small and the render fast. */
-const MAX_EDGE = 1600;
 const MAX_FILE_BYTES = 15 * 1024 * 1024;
-
-function resizeToDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    const objectUrl = URL.createObjectURL(file);
-    img.onload = () => {
-      URL.revokeObjectURL(objectUrl);
-      const scale = Math.min(1, MAX_EDGE / Math.max(img.width, img.height));
-      const w = Math.round(img.width * scale);
-      const h = Math.round(img.height * scale);
-      const canvas = document.createElement('canvas');
-      canvas.width = w;
-      canvas.height = h;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) {
-        reject(new Error('canvas unavailable'));
-        return;
-      }
-      ctx.drawImage(img, 0, 0, w, h);
-      resolve(canvas.toDataURL('image/jpeg', 0.85));
-    };
-    img.onerror = () => {
-      URL.revokeObjectURL(objectUrl);
-      reject(new Error('could not read that image'));
-    };
-    img.src = objectUrl;
-  });
-}
 
 /**
  * Upload a real photo of your space, add rough dimensions and what you want

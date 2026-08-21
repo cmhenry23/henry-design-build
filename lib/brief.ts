@@ -30,6 +30,28 @@ import {
 /** `'unknown'` is used instead of null so the JSON schema stays simple. */
 export const UNKNOWN = 'unknown' as const;
 
+/**
+ * A palette the visitor mixed themselves instead of picking a preset.
+ * Configurator-only — the chat never sets this (typing a hex code isn't a
+ * conversational thing to ask for), so it's absent from BRIEF_SCHEMA below.
+ */
+export interface CustomPaletteColors {
+  dominant: string;
+  secondary: string;
+  accent: string;
+}
+
+/**
+ * A material the visitor dropped in as a photo rather than picking from the
+ * fixed board — a tile sample, a paint chip, a fabric swatch. Same
+ * Configurator-only rule as CustomPaletteColors.
+ */
+export interface CustomMaterial {
+  id: string;
+  name: string;
+  dataUrl: string;
+}
+
 export interface Brief {
   buildType: BuildTypeId | typeof UNKNOWN;
   /** 0 means not established yet. */
@@ -42,8 +64,12 @@ export interface Brief {
   style: string;
   /** Colour palette id. */
   palette: string;
+  /** A palette the visitor mixed themselves. Overrides `palette` when set. */
+  customPalette: CustomPaletteColors | null;
   /** Material ids the visitor tapped in the chat. Feeds the render + the email. */
   materials: string[];
+  /** Materials the visitor dropped in as photos rather than picking from the board. */
+  customMaterials: CustomMaterial[];
   cladding: string;
   roof: string;
   pitch: string;
@@ -64,7 +90,9 @@ export const EMPTY_BRIEF: Brief = {
   addOns: [],
   style: '',
   palette: '',
+  customPalette: null,
   materials: [],
+  customMaterials: [],
   cladding: 'charcoal',
   roof: 'steel-black',
   pitch: 'classic',
@@ -97,7 +125,9 @@ export function resolveBrief(brief: Brief) {
     ),
     style: brief.style ?? '',
     palette: brief.palette ?? '',
+    customPalette: brief.customPalette ?? null,
     materials: brief.materials ?? [],
+    customMaterials: brief.customMaterials ?? [],
     cladding: CLADDINGS.find((c) => c.id === brief.cladding) ?? CLADDINGS[0],
     roof: ROOFS.find((r) => r.id === brief.roof) ?? ROOFS[0],
     pitch: PITCHES.find((p) => p.id === brief.pitch) ?? PITCHES[1],

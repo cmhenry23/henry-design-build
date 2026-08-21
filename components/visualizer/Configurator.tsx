@@ -3,13 +3,14 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import MaterialBoard from '@/components/chat/MaterialBoard';
-import PaletteBoard from '@/components/chat/PaletteBoard';
 import StyleBoard from '@/components/chat/StyleBoard';
 import StyleImage from '@/components/chat/StyleImage';
 import CabinPreview from '@/components/visualizer/CabinPreview';
+import ColorPaletteBuilder from '@/components/visualizer/ColorPaletteBuilder';
 import FloorPlan from '@/components/visualizer/FloorPlan';
+import MaterialDropzone from '@/components/visualizer/MaterialDropzone';
 import PhotoCustomizer from '@/components/visualizer/PhotoCustomizer';
-import { EMPTY_BRIEF, resolveBrief, type Brief } from '@/lib/brief';
+import { EMPTY_BRIEF, resolveBrief, type Brief, type CustomMaterial, type CustomPaletteColors } from '@/lib/brief';
 import { buildSummary } from '@/lib/briefSummary';
 import { makeProjectId } from '@/lib/projectId';
 import { buildSketchUpScript, sketchupFilename } from '@/lib/sketchup';
@@ -46,7 +47,9 @@ export default function Configurator() {
   const [pitch, setPitch] = useState(PITCHES[1].id);
   const [style, setStyle] = useState('');
   const [palette, setPalette] = useState('');
+  const [customPalette, setCustomPalette] = useState<CustomPaletteColors | null>(null);
   const [materials, setMaterials] = useState<string[]>([]);
+  const [customMaterials, setCustomMaterials] = useState<CustomMaterial[]>([]);
   const [copied, setCopied] = useState(false);
   const [mode, setMode] = useState<PreviewMode>('elevation');
   const [projectId, setProjectId] = useState<string | null>(null);
@@ -69,12 +72,29 @@ export default function Configurator() {
       addOns: activeAddOns,
       style,
       palette,
+      customPalette,
       materials,
+      customMaterials,
       cladding,
       roof,
       pitch,
     }),
-    [buildType, sqft, finish, access, season, activeAddOns, style, palette, materials, cladding, roof, pitch]
+    [
+      buildType,
+      sqft,
+      finish,
+      access,
+      season,
+      activeAddOns,
+      style,
+      palette,
+      customPalette,
+      materials,
+      customMaterials,
+      cladding,
+      roof,
+      pitch,
+    ]
   );
 
   const resolved = useMemo(() => resolveBrief(brief), [brief]);
@@ -114,6 +134,18 @@ export default function Configurator() {
 
   function toggleMaterial(id: string) {
     setMaterials((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+  }
+
+  function addCustomMaterial(m: CustomMaterial) {
+    setCustomMaterials((prev) => [...prev, m]);
+  }
+
+  function removeCustomMaterial(id: string) {
+    setCustomMaterials((prev) => prev.filter((m) => m.id !== id));
+  }
+
+  function renameCustomMaterial(id: string, name: string) {
+    setCustomMaterials((prev) => prev.map((m) => (m.id === id ? { ...m, name } : m)));
   }
 
   async function copySummary() {
@@ -275,12 +307,26 @@ export default function Configurator() {
 
           {/* Palette */}
           <Field label="Colour palette" step={nextStep()}>
-            <PaletteBoard buildType={buildType} selected={palette} onSelect={setPalette} />
+            <ColorPaletteBuilder
+              buildType={buildType}
+              preset={palette}
+              onSelectPreset={setPalette}
+              custom={customPalette}
+              onChangeCustom={setCustomPalette}
+            />
           </Field>
 
           {/* Materials */}
           <Field label="Materials" step={nextStep()}>
-            <MaterialBoard buildType={buildType} selected={materials} onToggle={toggleMaterial} />
+            <div className="space-y-4">
+              <MaterialBoard buildType={buildType} selected={materials} onToggle={toggleMaterial} />
+              <MaterialDropzone
+                materials={customMaterials}
+                onAdd={addCustomMaterial}
+                onRemove={removeCustomMaterial}
+                onRename={renameCustomMaterial}
+              />
+            </div>
           </Field>
 
           {/* Finish */}

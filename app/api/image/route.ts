@@ -1,6 +1,7 @@
 import { GoogleGenAI } from '@google/genai';
 import { NextResponse } from 'next/server';
 import { EMPTY_BRIEF, isPriceable, type Brief } from '@/lib/brief';
+import { ACCEPTED_IMAGE_MIME_TYPES, MAX_IMAGE_B64_LEN, parseImageDataUrl } from '@/lib/dataUrl';
 import { aspectFor, buildImagePrompt } from '@/lib/imagePrompt';
 
 export const runtime = 'nodejs';
@@ -68,11 +69,39 @@ export async function POST(request: Request) {
 
   const prompt = buildImagePrompt(brief);
 
+  // Custom material reference photos, if the visitor dropped any in. A bad
+  // or oversized one is silently dropped rather than failing the whole
+  // request — the render still works from the text prompt alone.
+  const customMaterialImages = (brief.customMaterials ?? [])
+    .slice(0, 3)
+    .map((m) => parseImageDataUrl(m.dataUrl))
+    .filter(
+      (p): p is NonNullable<typeof p> =>
+        !!p && p.data.length <= MAX_IMAGE_B64_LEN && ACCEPTED_IMAGE_MIME_TYPES.has(p.mimeType)
+    );
+
   try {
     const ai = new GoogleGenAI({ apiKey });
     const interaction = await ai.interactions.create({
       model: MODEL,
-      input: prompt,
+      // Plain text when there's nothing to attach — keeps the common case
+      // identical to before this feature existed. Reference images only
+      // when the visitor actually dropped a material photo in.
+      input: customMaterialImages.length
+        ? [
+            ...customMaterialImages.map((m) => ({
+              type: 'image' as const,
+              data: m.data,
+              mime_type: m.mimeType,
+            })),
+            {
+              type: 'text' as const,
+              text: `${prompt} The client attached ${customMaterialImages.length} reference photo${
+                customMaterialImages.length > 1 ? 's' : ''
+              } of material${customMaterialImages.length > 1 ? 's' : ''} they want used — match what is shown in those photos as closely as possible.`,
+            },
+          ]
+        : prompt,
       response_format: {
         type: 'image',
         mime_type: 'image/jpeg',
