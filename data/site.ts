@@ -99,7 +99,7 @@ export const faqs = [
   },
   {
     q: 'What makes Henry different?',
-    a: 'We believe you are not a customer, you are another human with a dream. A dream to make your house a home. We take pride in making that process not just stress free, but a memorable experience. We truly love the work we do, and it shows in every detail.',
+    a: 'We believe you are not a customer — you are another human with a dream to make your house a home. We take pride in making that process not just stress-free, but memorable. We love the work we do, and it shows in every detail.',
   },
   {
     q: 'What does your process look like?',

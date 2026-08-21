@@ -49,13 +49,13 @@ export default function AboutPage() {
             <div className="mt-8 space-y-5 leading-relaxed text-ink/75">
               <p>
                 As the owner and founder of {site.name}, I bring a lifelong obsession with building
-                — and a passion for crafting exceptional, one-of-a-kind homes that truly reflect
-                each client&rsquo;s vision and lifestyle.
+                — and a passion for crafting exceptional homes that truly reflect each
+                client&rsquo;s vision and lifestyle.
               </p>
               <p>
                 With deep expertise in design-build processes, I lead every project from concept to
-                completion, blending innovative design with meticulous craftsmanship to create
-                unique homes and environments.
+                completion, blending innovative design with meticulous craftsmanship to build homes
+                that last.
               </p>
               <p>
                 My drive comes from the belief that no two homes should ever feel ordinary. Every
