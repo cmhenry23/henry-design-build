@@ -88,10 +88,6 @@
     @apply btn border border-bone/30 text-bone hover:border-cedar hover:bg-cedar hover:text-ink;
   }
 
-  .rule {
-    @apply h-px w-full bg-ink/12;
-  }
-
   .card-light {
     @apply border border-ink/12 bg-white/60;
   }

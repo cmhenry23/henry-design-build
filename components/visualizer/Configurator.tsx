@@ -1,10 +1,17 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import MaterialBoard from '@/components/chat/MaterialBoard';
+import PaletteBoard from '@/components/chat/PaletteBoard';
+import StyleBoard from '@/components/chat/StyleBoard';
+import StyleImage from '@/components/chat/StyleImage';
 import CabinPreview from '@/components/visualizer/CabinPreview';
-import { sceneFor } from '@/lib/briefSummary';
-import { site } from '@/data/site';
+import FloorPlan from '@/components/visualizer/FloorPlan';
+import { EMPTY_BRIEF, resolveBrief, type Brief } from '@/lib/brief';
+import { buildSummary } from '@/lib/briefSummary';
+import { makeProjectId } from '@/lib/projectId';
+import { buildSketchUpScript, sketchupFilename } from '@/lib/sketchup';
 import {
   ADD_ONS,
   BUILD_TYPES,
@@ -24,6 +31,7 @@ import {
 } from '@/lib/estimate';
 
 const INTERIOR_TYPES: BuildTypeId[] = ['kitchen', 'bath', 'reno'];
+type PreviewMode = 'elevation' | 'plan' | 'render';
 
 export default function Configurator() {
   const [buildType, setBuildType] = useState<BuildTypeId>('cottage');
@@ -35,20 +43,55 @@ export default function Configurator() {
   const [cladding, setCladding] = useState(CLADDINGS[0].id);
   const [roof, setRoof] = useState(ROOFS[0].id);
   const [pitch, setPitch] = useState(PITCHES[1].id);
+  const [style, setStyle] = useState('');
+  const [palette, setPalette] = useState('');
+  const [materials, setMaterials] = useState<string[]>([]);
   const [copied, setCopied] = useState(false);
+  const [mode, setMode] = useState<PreviewMode>('elevation');
+  const [projectId, setProjectId] = useState<string | null>(null);
+  const [skDownloaded, setSkDownloaded] = useState(false);
 
   const type = BUILD_TYPES.find((t) => t.id === buildType)!;
-  const claddingOpt = CLADDINGS.find((c) => c.id === cladding)!;
-  const roofOpt = ROOFS.find((r) => r.id === roof)!;
-  const pitchOpt = PITCHES.find((p) => p.id === pitch)!;
   const isInterior = INTERIOR_TYPES.includes(buildType);
 
   const availableAddOns = ADD_ONS.filter((a) => a.appliesTo.includes(buildType));
   const activeAddOns = addOns.filter((id) => availableAddOns.some((a) => a.id === id));
 
+  const brief: Brief = useMemo(
+    () => ({
+      ...EMPTY_BRIEF,
+      buildType,
+      sqft,
+      finish,
+      access,
+      season,
+      addOns: activeAddOns,
+      style,
+      palette,
+      materials,
+      cladding,
+      roof,
+      pitch,
+    }),
+    [buildType, sqft, finish, access, season, activeAddOns, style, palette, materials, cladding, roof, pitch]
+  );
+
+  const resolved = useMemo(() => resolveBrief(brief), [brief]);
+
+  // Mint a project reference once, the same way the chat does — a stable
+  // code to quote back if the visitor emails or calls about this concept.
+  useEffect(() => {
+    if (!projectId) setProjectId(makeProjectId(JSON.stringify({ buildType, sqft })));
+  }, [projectId, buildType, sqft]);
+
   const estimate = useMemo(
     () => calculateEstimate({ buildType, sqft, finish, access, season, addOns: activeAddOns }),
     [buildType, sqft, finish, access, season, activeAddOns]
+  );
+
+  const summary = useMemo(
+    () => buildSummary(brief, projectId ?? 'HDB-DRAFT'),
+    [brief, projectId]
   );
 
   const sizeRatio = Math.min(1, Math.max(0, (sqft - type.min) / (type.max - type.min)));
@@ -61,58 +104,20 @@ export default function Configurator() {
     setAddOns((prev) =>
       prev.filter((a) => ADD_ONS.find((x) => x.id === a)?.appliesTo.includes(id))
     );
+    setMode((m) => (m === 'plan' || m === 'render' ? m : 'elevation'));
   }
 
   function toggleAddOn(id: string) {
     setAddOns((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   }
 
-  /** Human-readable summary the visitor can copy into an email to Ryan. */
-  const summary = useMemo(() => {
-    const lines = [
-      `Design Studio concept — ${site.name}`,
-      '',
-      `Project type: ${type.label}`,
-      `Approximate size: ${sqft.toLocaleString()} sq ft`,
-      `Finish level: ${FINISH_LEVELS.find((f) => f.id === finish)!.label}`,
-    ];
-    if (type.showsSeason) lines.push(`Use: ${SEASONS.find((s) => s.id === season)!.label}`);
-    if (type.showsAccess) lines.push(`Site access: ${SITE_ACCESS.find((a) => a.id === access)!.label}`);
-    if (!isInterior) {
-      lines.push(`Cladding: ${claddingOpt.label}`);
-      lines.push(`Roof: ${roofOpt.label} (${pitchOpt.label.toLowerCase()} pitch)`);
-    }
-    if (activeAddOns.length) {
-      lines.push(
-        `Add-ons: ${activeAddOns
-          .map((id) => availableAddOns.find((a) => a.id === id)!.label)
-          .join(', ')}`
-      );
-    }
-    lines.push('');
-    lines.push(
-      `Planning range shown by the tool: ${formatCAD(estimate.low)} – ${formatCAD(estimate.high)}`
-    );
-    lines.push('(Planning range only — not a quote.)');
-    return lines.join('\n');
-  }, [
-    type,
-    sqft,
-    finish,
-    season,
-    access,
-    isInterior,
-    claddingOpt,
-    roofOpt,
-    pitchOpt,
-    activeAddOns,
-    availableAddOns,
-    estimate,
-  ]);
+  function toggleMaterial(id: string) {
+    setMaterials((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+  }
 
   async function copySummary() {
     try {
-      await navigator.clipboard.writeText(summary);
+      await navigator.clipboard.writeText(summary.overview);
       setCopied(true);
       setTimeout(() => setCopied(false), 2200);
     } catch {
@@ -120,35 +125,91 @@ export default function Configurator() {
     }
   }
 
-  const mailto = `mailto:${site.email}?subject=${encodeURIComponent(
-    `Design Studio concept — ${type.label}`
-  )}&body=${encodeURIComponent(summary)}`;
+  function downloadSketchUp() {
+    const script = buildSketchUpScript(resolved, projectId ?? 'HDB-DRAFT');
+    const blob = new Blob([script], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = sketchupFilename(projectId ?? 'HDB-DRAFT');
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    setSkDownloaded(true);
+  }
+
+  let stepN = 0;
+  const nextStep = () => String(++stepN).padStart(2, '0');
 
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_23rem] lg:gap-12">
       {/* ── Left column: preview + controls ── */}
       <div className="min-w-0">
         <div className="overflow-hidden border border-ink/12 bg-ink">
-          <CabinPreview
-            cladding={claddingOpt}
-            roof={roofOpt}
-            pitch={pitchOpt.value}
-            sqft={sqft}
-            sizeRatio={sizeRatio}
-            windows={windows}
-            hasDeck={activeAddOns.includes('deck')}
-            hasLoft={activeAddOns.includes('loft')}
-            hasFireplace={activeAddOns.includes('fireplace')}
-            scene={sceneFor(buildType)}
-          />
+          <div className="flex border-b border-bone/10">
+            {(
+              [
+                ['elevation', 'Elevation'],
+                ['plan', 'Floor plan'],
+                ['render', 'AI rendering'],
+              ] as [PreviewMode, string][]
+            ).map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => setMode(id)}
+                aria-pressed={mode === id}
+                className={`flex-1 px-4 py-3 font-display text-[0.68rem] font-bold uppercase tracking-[0.12em] transition-colors ${
+                  mode === id ? 'bg-bone text-ink' : 'text-bone/50 hover:text-bone'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {/* All three stay mounted so switching tabs never loses a
+              generated rendering or resets its loading state — only
+              visibility toggles. */}
+          <div className={mode === 'elevation' ? '' : 'hidden'}>
+            <CabinPreview
+              cladding={resolved.cladding}
+              roof={resolved.roof}
+              pitch={resolved.pitch.value}
+              sqft={sqft}
+              sizeRatio={sizeRatio}
+              windows={windows}
+              hasDeck={activeAddOns.includes('deck')}
+              hasLoft={activeAddOns.includes('loft')}
+              hasFireplace={activeAddOns.includes('fireplace')}
+              scene={summary.scene}
+            />
+          </div>
+          <div className={mode === 'plan' ? '' : 'hidden'}>
+            <FloorPlan
+              buildType={buildType}
+              sqft={sqft}
+              scene={summary.scene}
+              windows={windows}
+              hasDeck={activeAddOns.includes('deck')}
+              hasLoft={activeAddOns.includes('loft')}
+            />
+          </div>
+          <div className={mode === 'render' ? '' : 'hidden'}>
+            <StyleImage brief={brief} auto={false} />
+          </div>
+
           <p className="border-t border-bone/10 px-5 py-3 text-center text-xs text-bone/45">
-            A stylised sketch to make choices feel real — not an architectural drawing.
+            {mode === 'elevation' && 'A stylised sketch to make choices feel real — not an architectural drawing.'}
+            {mode === 'plan' && 'A rough room breakdown, scaled to your numbers — not a real floor plan.'}
+            {mode === 'render' && 'An AI image generated from your exact choices — a style reference, not a design.'}
           </p>
         </div>
 
         <div className="mt-10 space-y-10">
           {/* Build type */}
-          <Field label="What are you building?" step="01">
+          <Field label="What are you building?" step={nextStep()}>
             <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
               {BUILD_TYPES.map((t) => (
                 <button
@@ -178,7 +239,7 @@ export default function Configurator() {
           </Field>
 
           {/* Size */}
-          <Field label="How big, roughly?" step="02">
+          <Field label="How big, roughly?" step={nextStep()}>
             <div className="flex items-baseline justify-between">
               <span className="font-display text-4xl font-extrabold tracking-[-0.02em]">
                 {sqft.toLocaleString()}
@@ -206,8 +267,23 @@ export default function Configurator() {
             </p>
           </Field>
 
+          {/* Style */}
+          <Field label="Style" step={nextStep()}>
+            <StyleBoard buildType={buildType} selected={style} onSelect={setStyle} />
+          </Field>
+
+          {/* Palette */}
+          <Field label="Colour palette" step={nextStep()}>
+            <PaletteBoard buildType={buildType} selected={palette} onSelect={setPalette} />
+          </Field>
+
+          {/* Materials */}
+          <Field label="Materials" step={nextStep()}>
+            <MaterialBoard buildType={buildType} selected={materials} onToggle={toggleMaterial} />
+          </Field>
+
           {/* Finish */}
-          <Field label="How far do you want to take the finish?" step="03">
+          <Field label="How far do you want to take the finish?" step={nextStep()}>
             <div className="grid gap-2 sm:grid-cols-3">
               {FINISH_LEVELS.map((f) => (
                 <button
@@ -232,7 +308,7 @@ export default function Configurator() {
 
           {/* Season + access */}
           {(type.showsSeason || type.showsAccess) && (
-            <Field label="Tell us about the site" step="04">
+            <Field label="Tell us about the site" step={nextStep()}>
               <div className="grid gap-6 sm:grid-cols-2">
                 {type.showsSeason && (
                   <div>
@@ -272,7 +348,7 @@ export default function Configurator() {
 
           {/* Exterior look */}
           {!isInterior && (
-            <Field label="Pick the look" step={type.showsSeason || type.showsAccess ? '05' : '04'}>
+            <Field label="Pick the look" step={nextStep()}>
               <div className="space-y-7">
                 <div>
                   <p className="eyebrow mb-3 text-ink/45">Cladding</p>
@@ -351,7 +427,7 @@ export default function Configurator() {
 
           {/* Add-ons */}
           {availableAddOns.length > 0 && (
-            <Field label="Anything else?" step={isInterior ? '04' : '06'}>
+            <Field label="Anything else?" step={nextStep()}>
               <div className="grid gap-2 sm:grid-cols-2">
                 {availableAddOns.map((a) => {
                   const on = activeAddOns.includes(a.id);
@@ -385,6 +461,31 @@ export default function Configurator() {
               </div>
             </Field>
           )}
+
+          {/* SketchUp export — exterior builds only, since it draws a standalone
+              massing shell (walls + roof), which doesn't make sense for a
+              kitchen, bath or whole-room renovation inside an existing house. */}
+          {!isInterior && (
+            <Field label="Open it in SketchUp" step={nextStep()}>
+              <div className="border border-ink/15 bg-white/50 p-6">
+                <p className="text-sm leading-relaxed text-ink/70">
+                  Download a real, to-scale 3D starting shape built from the exact numbers above —
+                  footprint, wall height and roof pitch. Open it in SketchUp to rotate it, walk
+                  through it, and keep building on it yourself, or send it to Ryan as a starting
+                  point for a proper model.
+                </p>
+                <button type="button" onClick={downloadSketchUp} className="btn-cedar mt-5">
+                  {skDownloaded ? 'Download again (.rb)' : 'Download SketchUp file (.rb)'}
+                </button>
+                <p className="mt-4 text-xs leading-relaxed text-ink/45">
+                  Opens via SketchUp&rsquo;s Ruby Console (Window ▸ Ruby Console — needs SketchUp
+                  Pro or Studio, not the free web app). It builds walls, a roof and, if you picked
+                  them, a deck and a loft floor — no windows or doors cut in yet, so treat it as a
+                  rough massing model, not a finished design.
+                </p>
+              </div>
+            </Field>
+          )}
         </div>
       </div>
 
@@ -405,6 +506,15 @@ export default function Configurator() {
             </p>
           </div>
 
+          {projectId && (
+            <div className="border-b border-bone/12 px-7 py-4">
+              <p className="eyebrow text-bone/40">Reference</p>
+              <p className="mt-1.5 font-display text-base font-extrabold tracking-[0.04em] text-cedar">
+                {projectId}
+              </p>
+            </div>
+          )}
+
           <div className="border-b border-bone/12 p-7">
             <p className="eyebrow mb-4 text-bone/40">What&rsquo;s in it</p>
             <ul className="space-y-3 text-sm">
@@ -420,7 +530,7 @@ export default function Configurator() {
           </div>
 
           <div className="space-y-3 p-7">
-            <a href={mailto} className="btn-cedar w-full">
+            <a href={summary.mailto} className="btn-cedar w-full">
               Send this to Ryan
             </a>
             <button type="button" onClick={copySummary} className="btn-ghost-dark w-full">

@@ -101,6 +101,17 @@ export default function StyleImage({
           </div>
         )}
 
+        {state.status === 'idle' && !auto && (
+          <div className="px-6 py-14 text-center">
+            <p className="mx-auto max-w-xs text-sm leading-relaxed text-bone/55">
+              A photoreal AI image of this exact configuration — cladding, roof, style, the lot.
+            </p>
+            <button type="button" onClick={generate} className="btn-cedar mt-5 !px-6 !py-2.5">
+              Generate a rendering
+            </button>
+          </div>
+        )}
+
         {state.status === 'ready' && (
           // eslint-disable-next-line @next/next/no-img-element -- data: URI, nothing for the optimizer to do
           <img
