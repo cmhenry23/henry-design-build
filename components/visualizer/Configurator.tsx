@@ -8,6 +8,7 @@ import StyleBoard from '@/components/chat/StyleBoard';
 import StyleImage from '@/components/chat/StyleImage';
 import CabinPreview from '@/components/visualizer/CabinPreview';
 import FloorPlan from '@/components/visualizer/FloorPlan';
+import PhotoCustomizer from '@/components/visualizer/PhotoCustomizer';
 import { EMPTY_BRIEF, resolveBrief, type Brief } from '@/lib/brief';
 import { buildSummary } from '@/lib/briefSummary';
 import { makeProjectId } from '@/lib/projectId';
@@ -461,6 +462,11 @@ export default function Configurator() {
               </div>
             </Field>
           )}
+
+          {/* Photo customizer — works for any build type, interior or exterior. */}
+          <Field label="Customize from your own photo" step={nextStep()}>
+            <PhotoCustomizer brief={brief} />
+          </Field>
 
           {/* SketchUp export — exterior builds only, since it draws a standalone
               massing shell (walls + roof), which doesn't make sense for a
