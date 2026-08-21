@@ -5,14 +5,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: '#14110F',
-        char: '#221F1C',
-        stone: '#3A3532',
-        bone: '#F6F2EB',
-        sand: '#E8E0D3',
-        cedar: '#C9A06A',
-        brass: '#B8863B',
-        moss: '#40563F',
+        ink: '#000000',
+        char: '#0B0D10',
+        stone: '#26282C',
+        bone: '#EAEAEE',
+        sand: '#F5F5F7',
+        cedar: '#8EB6DC',
+        brass: '#6E9AC4',
+        moss: '#1C2B3A',
       },
       fontFamily: {
         display: ['var(--font-display)', 'ui-sans-serif', 'system-ui'],
