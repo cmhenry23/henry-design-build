@@ -56,8 +56,8 @@ export default function SiteHeader() {
                 key={item.href}
                 href={item.href}
                 aria-current={active ? 'page' : undefined}
-                className={`relative font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] transition-colors ${
-                  active ? 'text-ink' : 'text-ink/55 hover:text-ink'
+                className={`relative font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-cedar transition-colors hover:text-brass ${
+                  active ? 'text-brass' : ''
                 }`}
               >
                 {item.label}
@@ -113,7 +113,7 @@ export default function SiteHeader() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="animate-rise border-b border-ink/8 py-4 font-display text-2xl font-extrabold uppercase tracking-[-0.01em]"
+                className="animate-rise border-b border-ink/8 py-4 font-display text-2xl font-extrabold uppercase tracking-[-0.01em] text-cedar"
                 style={{ animationDelay: `${i * 45}ms` }}
               >
                 {item.label}
