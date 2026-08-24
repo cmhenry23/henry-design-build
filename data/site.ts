@@ -10,7 +10,7 @@ export const site = {
   name: 'Henry Design Build',
   shortName: 'HDB',
   tagline: 'Where your vision becomes home',
-  subTagline: 'Small team. Big heart.',
+  subTagline: 'Real craftsmanship. Real care.',
   url: 'https://www.henrydb.ca',
 
   // TODO: confirm the real business email before launch.
@@ -75,7 +75,7 @@ export const processSteps = [
   {
     step: '02',
     title: 'Design',
-    body: 'Ryan gives you an estimate on the cost of the scope of work. We want to hear your questions and any more ideas you may have. Then we go through samples and options together, and plan a starting date.',
+    body: 'We give you an estimate on the cost of the scope of work. We want to hear your questions and any more ideas you may have. Then we go through samples and options together, and plan a starting date.',
   },
   {
     step: '03',
@@ -96,7 +96,7 @@ export const faqs = [
   },
   {
     q: 'How do I get started?',
-    a: 'Getting started is simple. Reach out through our contact form or schedule a call — Ryan will walk you through the next steps and answer any questions along the way.',
+    a: 'Getting started is simple. Reach out through our contact form or schedule a call — we will walk you through the next steps and answer any questions along the way.',
   },
   {
     q: 'What makes Henry different?',
@@ -104,7 +104,7 @@ export const faqs = [
   },
   {
     q: 'What does your process look like?',
-    a: 'Four stages: first meeting, design, build, done. You can read the detail of each stage on our About page — but the short version is that Ryan is on your project from the first conversation to the final walkthrough.',
+    a: 'Four stages: first meeting, design, build, done. You can read the detail of each stage on our About page — but the short version is that we stay hands-on with your project from the first conversation to the final walkthrough.',
   },
   {
     q: 'Do you work from your own drawings, or can I bring an architect?',

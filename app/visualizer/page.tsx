@@ -47,7 +47,7 @@ export default function VisualizerPage() {
             },
             {
               t: 'What happens next',
-              b: 'Send your concept over and Ryan will come out, walk the site, and go through the scope with you. The estimate that comes out of that meeting is a real one.',
+              b: 'Send your concept over and we will come out, walk the site, and go through the scope with you. The estimate that comes out of that meeting is a real one.',
             },
           ].map((item) => (
             <div key={item.t}>

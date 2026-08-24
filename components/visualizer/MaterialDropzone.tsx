@@ -139,7 +139,7 @@ export default function MaterialDropzone({
         <p className="mt-3 text-[0.7rem] leading-relaxed text-ink/45">
           These inform the AI rendering and photo customizer above, but aren&rsquo;t attached to
           the emailed summary — mailto links can&rsquo;t carry photos. Attach them yourself if you
-          want Ryan to see the actual image.
+          want us to see the actual image.
         </p>
       )}
     </div>

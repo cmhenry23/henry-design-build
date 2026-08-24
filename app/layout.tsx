@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     default: `${site.name} — ${site.tagline}`,
     template: `%s — ${site.name}`,
   },
-  description: `Custom cottages, tiny homes, saunas, kitchens and renovations across ${site.serviceArea}. Design-build led hands-on by ${site.owner.name}.`,
+  description: `Custom cottages, tiny homes, saunas, kitchens and renovations across ${site.serviceArea}. Design-build led hands-on by our team.`,
   keywords: [
     'custom cottage builder',
     'tiny home builder',

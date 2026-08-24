@@ -17,9 +17,9 @@ export default function AboutPage() {
         <div className="shell pb-20 pt-24 sm:pb-24 sm:pt-32">
           <p className="eyebrow text-cedar">About</p>
           <h1 className="h-hero mt-7 max-w-4xl">
-            Small team.
+            Real craftsmanship.
             <br />
-            <span className="text-cedar">Big heart.</span>
+            <span className="text-cedar">Real care.</span>
           </h1>
         </div>
       </section>
@@ -48,19 +48,18 @@ export default function AboutPage() {
 
             <div className="mt-8 space-y-5 leading-relaxed text-ink/75">
               <p>
-                As the owner and founder of {site.name}, I bring a lifelong obsession with building
-                — and a passion for crafting exceptional homes that truly reflect each
-                client&rsquo;s vision and lifestyle.
+                {site.owner.name} founded {site.name} out of a lifelong obsession with building —
+                and a passion for crafting exceptional homes that truly reflect each client&rsquo;s
+                vision and lifestyle.
               </p>
               <p>
-                With deep expertise in design-build processes, I lead every project from concept to
-                completion, blending innovative design with meticulous craftsmanship to build homes
-                that last.
+                With deep expertise in design-build processes, he leads every project personally,
+                from concept to completion, blending innovative design with meticulous
+                craftsmanship to build homes that last.
               </p>
               <p>
-                My drive comes from the belief that no two homes should ever feel ordinary. Every
-                build is an opportunity to transform ideas into an extraordinary, one-of-a-kind
-                reality.
+                The belief driving it all: no two homes should ever feel ordinary. Every build is
+                an opportunity to create something extraordinary.
               </p>
             </div>
 
@@ -87,7 +86,7 @@ export default function AboutPage() {
         <div className="shell">
           <Reveal>
             <p className="eyebrow text-ink/40">The process</p>
-            <h2 className="h-section mt-5 max-w-2xl">Four stages, one carpenter</h2>
+            <h2 className="h-section mt-5 max-w-2xl">Four stages, no surprises</h2>
           </Reveal>
 
           <ol className="mt-16 space-y-px border border-ink/12 bg-ink/12">

@@ -53,7 +53,7 @@ export default function Testimonials() {
             </h2>
           </div>
           <p className="max-w-xs text-sm leading-relaxed text-bone/50">
-            Every project ends with a walkthrough, and every client gets Ryan&rsquo;s number
+            Every project ends with a walkthrough, and every client gets a direct line
             afterwards. These are the people who used it.
           </p>
         </div>

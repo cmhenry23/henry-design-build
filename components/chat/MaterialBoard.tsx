@@ -48,8 +48,8 @@ export default function MaterialBoard({
       </ul>
 
       <p className="mt-3 text-[0.7rem] leading-relaxed text-ink/45">
-        These are real materials from Ryan&rsquo;s finished projects — not a catalogue. Picking a
-        few sharpens what we send him.
+        These are real materials from our finished projects — not a catalogue. Picking a few
+        sharpens what we build from.
       </p>
     </section>
   );

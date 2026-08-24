@@ -40,7 +40,7 @@ export default function HomePage() {
             style={{ animationDelay: '180ms' }}
           >
             Custom cottages, tiny homes, saunas and renovations across {site.serviceArea} — designed
-            and built hands-on by {site.owner.name}, from the first cut to the final flourish.
+            and built hands-on by our team, from the first cut to the final flourish.
           </p>
           <div
             className="mt-11 flex animate-rise flex-wrap gap-3"
@@ -57,7 +57,7 @@ export default function HomePage() {
           <dl className="mt-20 grid max-w-2xl grid-cols-3 gap-6 border-t border-bone/15 pt-8">
             {[
               { k: site.yearsExperience, v: 'Years building' },
-              { k: '1', v: 'Lead carpenter, start to finish' },
+              { k: String(projects.length), v: 'Projects completed' },
               { k: '100%', v: 'Hands-on oversight' },
             ].map((stat) => (
               <div key={stat.v}>
@@ -97,17 +97,18 @@ export default function HomePage() {
           <Reveal>
             <p className="eyebrow text-ink/40">Our story</p>
             <h2 className="h-section mt-5">
-              Not a firm.
+              Hands-on.
               <br />
-              A carpenter.
+              Every time.
             </h2>
           </Reveal>
 
           <Reveal delay={120} className="space-y-6 text-[1.05rem] leading-relaxed text-ink/75">
             <p>
-              {site.name} isn&rsquo;t a big firm with layers of management. It&rsquo;s{' '}
-              {site.owner.name} — founder, lead carpenter, and your direct partner — forging homes
-              that capture your family&rsquo;s heritage.
+              {site.name} is a design-build team built around direct, hands-on craftsmanship — no
+              layers of management, no subcontracted decisions, no guesswork. {site.owner.name},
+              founder and lead carpenter, leads every project personally, forging homes that
+              capture your family&rsquo;s heritage.
             </p>
             <p>
               Every project gets hands-on oversight from the first cut to the final flourish,
@@ -224,14 +225,14 @@ export default function HomePage() {
             <p className="lede mt-7 text-ink/70">
               Choose what you&rsquo;re building, how big, how far you want to take the finish, and
               what the outside looks like. Watch it draw itself as you go, get an honest planning
-              range, and send the whole thing to Ryan in one click.
+              range, and send the whole thing to our team in one click.
             </p>
             <ul className="mt-8 space-y-3">
               {[
                 'Live sketch that updates as you choose',
                 'Cladding, roof, pitch and add-ons',
                 'A budget range, clearly labelled as a range',
-                'Send your concept straight to Ryan',
+                'Send your concept straight to our team',
               ].map((item) => (
                 <li key={item} className="flex gap-3 text-sm text-ink/70">
                   <span className="mt-[0.45rem] h-1 w-1 shrink-0 bg-cedar" aria-hidden="true" />

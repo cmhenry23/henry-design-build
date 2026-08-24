@@ -523,8 +523,8 @@ export default function Configurator() {
                 <p className="text-sm leading-relaxed text-ink/70">
                   Download a real, to-scale 3D starting shape built from the exact numbers above —
                   footprint, wall height and roof pitch. Open it in SketchUp to rotate it, walk
-                  through it, and keep building on it yourself, or send it to Ryan as a starting
-                  point for a proper model.
+                  through it, and keep building on it yourself, or send it to our team as a
+                  starting point for a proper model.
                 </p>
                 <button type="button" onClick={downloadSketchUp} className="btn-cedar mt-5">
                   {skDownloaded ? 'Download again (.rb)' : 'Download SketchUp file (.rb)'}
@@ -583,7 +583,7 @@ export default function Configurator() {
 
           <div className="space-y-3 p-7">
             <a href={summary.mailto} className="btn-cedar w-full">
-              Send this to Ryan
+              Send this to us
             </a>
             <button type="button" onClick={copySummary} className="btn-ghost-dark w-full">
               {copied ? 'Copied to clipboard' : 'Copy the summary'}

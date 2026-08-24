@@ -124,7 +124,7 @@ export function useProjectIntake() {
             {
               role: 'assistant',
               content:
-                "That's everything I need. Your project overview and planning range are ready — send them over to Ryan whenever you like.",
+                "That's everything I need. Your project overview and planning range are ready — send them over to us whenever you like.",
             },
           ]);
           setChips([]);
@@ -248,7 +248,7 @@ export const GUIDED: GuidedStep[] = [
     freeform: (b, answer) => ({ ...b, timeline: answer }),
   },
   {
-    question: 'Last thing — what email should Ryan reply to? Type it, or skip.',
+    question: 'Last thing — what email should we reply to? Type it, or skip.',
     options: [{ label: 'Skip', value: '' }],
     apply: (b) => b,
     freeform: (b, answer) => (answer.includes('@') ? { ...b, email: answer.trim() } : b),

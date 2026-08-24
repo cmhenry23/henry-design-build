@@ -6,7 +6,7 @@ import { site } from '@/data/site';
 
 export const metadata: Metadata = {
   title: 'Portfolio',
-  description: `Cottages, saunas, kitchens, bathrooms and finish carpentry built by ${site.owner.name} across ${site.serviceArea}.`,
+  description: `Cottages, saunas, kitchens, bathrooms and finish carpentry built by our team across ${site.serviceArea}.`,
 };
 
 export default function PortfolioPage() {

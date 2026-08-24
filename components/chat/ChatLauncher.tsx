@@ -76,7 +76,7 @@ export default function ChatLauncher() {
       >
         <span aria-hidden="true">{open ? <IconClose /> : summary ? <IconMail /> : <IconChat />}</span>
         <span className="hidden sm:inline">
-          {open ? 'Close' : summary ? 'Send to Ryan' : "Let's talk"}
+          {open ? 'Close' : summary ? 'Send to us' : "Let's talk"}
         </span>
         <span className="sm:hidden">{open ? 'Close' : summary ? 'Send' : 'Talk'}</span>
         {summary && !open && (
@@ -173,7 +173,7 @@ export default function ChatLauncher() {
             {summary && view === 'overview' && (
               <div className="shrink-0 border-t border-ink/12 p-4">
                 <a href={summary.mailto} className="btn-cedar w-full">
-                  Email this to Ryan
+                  Email this to us
                 </a>
                 <p className="mt-3 text-center text-[0.7rem] leading-relaxed text-ink/45">
                   Opens your mail app with the full overview and range filled in. Or write to{' '}

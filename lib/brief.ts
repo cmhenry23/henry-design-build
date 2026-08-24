@@ -182,7 +182,7 @@ export const BRIEF_SCHEMA = {
         notes: {
           type: 'string',
           description:
-            'Everything they said that does not fit a field above, in their own words. Ryan reads this.',
+            'Everything they said that does not fit a field above, in their own words. Our team reads this.',
         },
       },
       required: [

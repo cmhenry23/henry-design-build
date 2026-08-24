@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import ProjectChat from '@/components/chat/ProjectChat';
-import { site } from '@/data/site';
 
 export const metadata: Metadata = {
   title: 'Start a project',
@@ -23,8 +22,8 @@ export default function StartPage() {
           </h1>
           <p className="lede mt-8 max-w-xl text-bone/65">
             A short conversation — a couple of minutes, no forms. At the end you get a project
-            reference, a sketch of what you described, and a planning range. Send it to{' '}
-            {site.owner.name} in one click, or keep it for yourself.
+            reference, a sketch of what you described, and a planning range. Send it to our team
+            in one click, or keep it for yourself.
           </p>
         </div>
       </section>
@@ -42,7 +41,7 @@ export default function StartPage() {
             },
             {
               t: 'What the reference is for',
-              b: 'Your project gets a code like HDB-2608-K7QR. Quote it in an email or on the phone and Ryan can pull up exactly what you described, without you repeating yourself.',
+              b: 'Your project gets a code like HDB-2608-K7QR. Quote it in an email or on the phone and we can pull up exactly what you described, without you repeating yourself.',
             },
             {
               t: 'What happens to what you type',

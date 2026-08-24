@@ -30,7 +30,7 @@ export default function FaqPage() {
           <p className="eyebrow text-cedar">FAQ</p>
           <h1 className="h-hero mt-7">Questions</h1>
           <p className="lede mt-8 max-w-xl text-bone/65">
-            If yours isn&rsquo;t here, just ask. Ryan answers his own email.
+            If yours isn&rsquo;t here, just ask. We answer our own email.
           </p>
         </div>
       </section>
@@ -62,7 +62,7 @@ export default function FaqPage() {
           <p className="text-ink/60">Still wondering about something?</p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link href="/contact" className="btn-primary">
-              Ask Ryan directly
+              Ask us directly
             </Link>
             <Link href="/visualizer" className="btn-ghost-light">
               Try the Design Studio

@@ -116,7 +116,7 @@ export default function BriefCard({
             this spec.
           </p>
           <p className="mt-4 text-xs leading-relaxed text-bone/60">
-            A planning range, not a quote. Real numbers come after Ryan walks the site.
+            A planning range, not a quote. Real numbers come after we walk the site.
           </p>
         </div>
       </div>
@@ -129,7 +129,7 @@ export default function BriefCard({
         ) : (
           <>
             <a href={summary.mailto} className="btn-primary flex-1">
-              Email this to Ryan
+              Email this to us
             </a>
             <Link href="/visualizer" className="btn-ghost-light flex-1">
               Adjust it yourself

@@ -230,7 +230,7 @@ export default function PhotoCustomizer({ brief }: { brief: Brief }) {
 
           <div className="mt-4 border border-cedar/40 bg-cedar/10 p-4 text-xs leading-relaxed text-ink/70">
             <strong className="font-display uppercase tracking-wider">Style reference —</strong> this
-            is an AI edit of your photo, not a design, a plan, or something Ryan has priced. It
+            is an AI edit of your photo, not a design, a plan, or something we&rsquo;ve priced. It
             exists to check we&rsquo;re picturing the same thing.
           </div>
         </div>

@@ -4,7 +4,7 @@ import { processSteps, site } from '@/data/site';
 
 export const metadata: Metadata = {
   title: 'Contact',
-  description: `Get in touch with ${site.name}. Tell us about your project and ${site.owner.name} will get back to you.`,
+  description: `Get in touch with ${site.name}. Tell us about your project and our team will get back to you.`,
 };
 
 export default function ContactPage() {
