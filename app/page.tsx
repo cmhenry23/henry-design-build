@@ -57,7 +57,7 @@ export default function HomePage() {
           <dl className="mt-20 grid max-w-2xl grid-cols-3 gap-6 border-t border-bone/15 pt-8">
             {[
               { k: site.yearsExperience, v: 'Years building' },
-              { k: String(projects.length), v: 'Projects completed' },
+              { k: '2', v: 'Brothers' },
               { k: '100%', v: 'Hands-on oversight' },
             ].map((stat) => (
               <div key={stat.v}>
