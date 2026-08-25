@@ -7,7 +7,7 @@ import { processSteps, site } from '@/data/site';
 
 export const metadata: Metadata = {
   title: 'About',
-  description: `${site.owner.name} — ${site.owner.role} at ${site.name}. How we work, and what our four-stage process looks like.`,
+  description: `${site.owner.name} and ${site.partner.name} of ${site.name}. How we work, and what our four-stage process looks like.`,
 };
 
 export default function AboutPage() {
@@ -24,12 +24,12 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Ryan */}
+      {/* Ryan + Cam */}
       <section className="shell py-20 sm:py-28">
         <div className="grid gap-14 lg:grid-cols-[1fr_1.15fr] lg:gap-20">
           <Reveal className="relative aspect-[4/5] overflow-hidden bg-sand">
-            {/* TODO: replace with a portrait of Ryan on site. A photo of the
-                person is the single highest-converting image on this page. */}
+            {/* TODO: replace with a portrait of Ryan and Cam on site. A photo of
+                the people is the single highest-converting image on this page. */}
             <Image
               src="/portfolio/real-log-stair.jpg"
               alt="A hand-peeled log stair with treads cantilevered off a single scribed post"
@@ -41,21 +41,19 @@ export default function AboutPage() {
 
           <Reveal delay={120}>
             <p className="eyebrow text-ink/40">Our team</p>
-            <h2 className="h-section mt-5">{site.owner.name}</h2>
-            <p className="mt-3 font-display text-sm font-semibold uppercase tracking-[0.14em] text-cedar">
-              {site.owner.role}
-            </p>
+            <h2 className="h-section mt-5">Two brothers, one standard</h2>
 
             <div className="mt-8 space-y-5 leading-relaxed text-ink/75">
               <p>
-                {site.owner.name} founded {site.name} out of a lifelong obsession with building —
-                and a passion for crafting exceptional homes that truly reflect each client&rsquo;s
-                vision and lifestyle.
+                {site.owner.name} and {site.partner.name} founded {site.name} out of a shared,
+                lifelong obsession with building — and a belief that homes should be built by the
+                people who actually show up, not a rotating cast of subcontractors.
               </p>
               <p>
-                With deep expertise in design-build processes, he leads every project personally,
-                from concept to completion, blending innovative design with meticulous
-                craftsmanship to build homes that last.
+                {site.owner.name.split(' ')[0]} leads every build personally as lead carpenter,
+                from concept to completion. {site.partner.name.split(' ')[0]} runs sales and works
+                the tools right alongside him — he&rsquo;s usually the first person you&rsquo;ll
+                talk to, and one of the hands on site.
               </p>
               <p>
                 The belief driving it all: no two homes should ever feel ordinary. Every build is
@@ -63,10 +61,26 @@ export default function AboutPage() {
               </p>
             </div>
 
-            <ul className="mt-10 grid gap-px border border-ink/12 bg-ink/12 sm:grid-cols-3">
+            <ul className="mt-10 grid gap-px border border-ink/12 bg-ink/12 sm:grid-cols-2">
+              {[
+                { name: site.owner.name, role: site.owner.role },
+                { name: site.partner.name, role: site.partner.role },
+              ].map((person) => (
+                <li key={person.name} className="bg-bone p-6">
+                  <p className="font-display text-[0.8rem] font-bold uppercase leading-snug tracking-[0.05em]">
+                    {person.name}
+                  </p>
+                  <p className="mt-1 text-[0.7rem] uppercase tracking-[0.1em] text-ink/50">
+                    {person.role}
+                  </p>
+                </li>
+              ))}
+            </ul>
+
+            <ul className="mt-4 grid gap-px border border-ink/12 bg-ink/12 sm:grid-cols-3">
               {[
                 `${site.yearsExperience} years professional experience`,
-                'A lifelong obsession',
+                'A family business',
                 'Learning from the best',
               ].map((item) => (
                 <li

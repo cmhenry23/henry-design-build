@@ -77,7 +77,7 @@ export default function SiteFooter() {
             &copy; {new Date().getFullYear()} {site.name}. All rights reserved.
           </p>
           <p>
-            {site.owner.name} — {site.owner.role}
+            {site.owner.name} &amp; {site.partner.name}
           </p>
         </div>
       </div>

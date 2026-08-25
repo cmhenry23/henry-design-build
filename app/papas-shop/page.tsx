@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { formatCAD } from '@/lib/estimate';
 import { categories, furniture, PLACEHOLDER } from '@/data/furniture';
@@ -12,8 +13,21 @@ export const metadata: Metadata = {
 export default function PapasShopPage() {
   return (
     <>
-      <section className="bg-ink text-bone">
-        <div className="shell pb-20 pt-24 sm:pb-24 sm:pt-32">
+      <section className="relative -mt-[4.5rem] flex min-h-[70svh] items-end overflow-hidden bg-ink pt-[4.5rem]">
+        <Image
+          src="/shop/papas-shop-hero.jpg"
+          alt="Papa in his workshop, surrounded by hand tools, lumber and a drill press"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover opacity-60"
+        />
+        <div
+          className="absolute inset-0 bg-gradient-to-t from-ink via-ink/60 to-ink/30"
+          aria-hidden="true"
+        />
+
+        <div className="shell relative w-full pb-20 pt-24 text-bone">
           <p className="eyebrow text-cedar">Papa&rsquo;s Shop</p>
           <h1 className="h-hero mt-7 max-w-4xl">
             Furniture,

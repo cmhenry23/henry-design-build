@@ -34,6 +34,12 @@ export const site = {
     name: 'Ryan Henry',
     role: 'Founder & Lead Carpenter',
   },
+
+  // Ryan's brother — runs sales and works the tools alongside him.
+  partner: {
+    name: 'Cam Henry',
+    role: 'Sales & Carpenter',
+  },
 } as const;
 
 export const nav = [
