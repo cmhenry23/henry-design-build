@@ -31,8 +31,8 @@ export default function AboutPage() {
             {/* TODO: replace with a portrait of Ryan on site. A photo of the
                 person is the single highest-converting image on this page. */}
             <Image
-              src="/portfolio/cabin-window-trim.jpg"
-              alt="Cedar window with a deep site-built jamb and hand tools resting on the sill"
+              src="/portfolio/real-log-stair.jpg"
+              alt="A hand-peeled log stair with treads cantilevered off a single scribed post"
               fill
               sizes="(max-width: 1024px) 100vw, 45vw"
               className="object-cover"

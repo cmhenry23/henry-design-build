@@ -14,8 +14,8 @@ export default function HomePage() {
       {/* ── Hero ── */}
       <section className="relative -mt-[4.5rem] flex min-h-[92svh] items-end overflow-hidden bg-ink pt-[4.5rem]">
         <Image
-          src="/portfolio/cabin-exterior-dusk.jpg"
-          alt="A charcoal-clad cabin with a steep gable roof standing in the trees at dusk"
+          src="/portfolio/real-cabin-exterior.jpg"
+          alt="A dark board-and-batten cabin exterior with a light blue door, photographed at dusk"
           fill
           priority
           sizes="100vw"
@@ -247,8 +247,8 @@ export default function HomePage() {
 
           <Reveal delay={140} className="relative aspect-[4/3] overflow-hidden">
             <Image
-              src="/portfolio/cabin-timber-frame.jpg"
-              alt="A timber frame cabin shell with roof sheathing standing among evergreens"
+              src="/portfolio/real-fireplace-mantel.jpg"
+              alt="A fieldstone fireplace with a hand-hewn timber mantel"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
