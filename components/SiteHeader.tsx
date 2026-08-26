@@ -32,7 +32,7 @@ export default function SiteHeader() {
   return (
     <header
       className={`sticky top-0 z-50 transition-all duration-300 ${
-        scrolled ? 'border-b border-ink/10 bg-bone/90 backdrop-blur-md' : 'bg-transparent'
+        scrolled ? 'border-b border-ink/10 bg-cedar/25 backdrop-blur-md' : 'bg-cedar/10'
       }`}
     >
       <div className="shell flex h-[4.5rem] items-center justify-between gap-6">
