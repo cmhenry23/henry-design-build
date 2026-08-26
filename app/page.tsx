@@ -111,15 +111,8 @@ export default function HomePage() {
               A home is more than a structure. It&rsquo;s where traditions root, families gather,
               and legacy grows.
             </p>
-            <Link
-              href="/about"
-              className="group inline-flex items-center gap-3 pt-2 font-display text-[0.72rem] font-bold uppercase tracking-[0.16em] text-brass underline decoration-brass/40 decoration-2 underline-offset-4 transition-colors hover:text-cedar hover:decoration-cedar"
-            >
+            <Link href="/about" className="btn-ghost-light mt-3">
               Meet your builders
-              <span
-                className="h-px w-8 bg-current transition-all duration-200 group-hover:w-12"
-                aria-hidden="true"
-              />
             </Link>
           </Reveal>
         </div>
