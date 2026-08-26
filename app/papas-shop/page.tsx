@@ -20,7 +20,7 @@ export default function PapasShopPage() {
           fill
           priority
           sizes="100vw"
-          className="object-cover opacity-60"
+          className="object-cover object-[70%_15%] opacity-60"
         />
         <div
           className="absolute inset-0 bg-gradient-to-t from-ink via-ink/60 to-ink/30"
