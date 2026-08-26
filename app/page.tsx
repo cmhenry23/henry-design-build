@@ -115,7 +115,7 @@ export default function HomePage() {
               href="/about"
               className="inline-flex items-center gap-3 pt-2 font-display text-[0.72rem] font-bold uppercase tracking-[0.16em]"
             >
-              Meet Ryan
+              Meet your builders
               <span className="h-px w-8 bg-cedar" aria-hidden="true" />
             </Link>
           </Reveal>

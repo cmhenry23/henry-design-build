@@ -31,7 +31,7 @@ export default function SiteHeader() {
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
+      className={`sticky top-0 z-[80] transition-all duration-300 ${
         scrolled ? 'border-b border-ink/10 bg-cedar/25 backdrop-blur-md' : 'bg-cedar/10'
       }`}
     >
@@ -108,7 +108,7 @@ export default function SiteHeader() {
       {open && (
         <div
           id="mobile-menu"
-          className="fixed inset-x-0 top-[4.5rem] bottom-0 z-40 border-t border-ink/10 bg-bone lg:hidden"
+          className="fixed inset-x-0 top-[4.5rem] bottom-0 z-[70] overflow-y-auto border-t border-ink/10 bg-bone lg:hidden"
         >
           <nav className="shell flex flex-col gap-1 py-8" aria-label="Mobile">
             {nav.map((item, i) => (

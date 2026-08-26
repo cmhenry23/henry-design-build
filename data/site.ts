@@ -32,13 +32,13 @@ export const site = {
 
   owner: {
     name: 'Ryan Henry',
-    role: 'Founder & Lead Carpenter',
+    role: 'Founder & Red Seal Carpenter',
   },
 
   // Ryan's brother — runs sales and works the tools alongside him.
   partner: {
     name: 'Cam Henry',
-    role: 'Sales & Carpenter',
+    role: 'Head of Sales & Carpenter',
   },
 } as const;
 

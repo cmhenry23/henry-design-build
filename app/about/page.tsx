@@ -45,19 +45,33 @@ export default function AboutPage() {
 
             <div className="mt-8 space-y-5 leading-relaxed text-ink/75">
               <p>
-                {site.owner.name} and {site.partner.name} founded {site.name} out of a shared,
-                lifelong obsession with building — and a belief that homes should be built by the
-                people who actually show up, not a rotating cast of subcontractors.
+                {site.name} was started by two brothers who grew up with sawdust in our shoes and
+                a job site as our second home. Our dad renovated every house we lived in — not
+                because it was easy, but because he believed a home should be shaped by the hands
+                of the people who love it. Long before we could legally work, we were right there
+                beside him on weekends and summers, sweeping up scraps, holding boards steady, and
+                slowly learning what it really takes to build something that lasts.
               </p>
               <p>
-                {site.owner.name.split(' ')[0]} leads every build personally as lead carpenter,
-                from concept to completion. {site.partner.name.split(' ')[0]} runs sales and works
-                the tools right alongside him — he&rsquo;s usually the first person you&rsquo;ll
-                talk to, and one of the hands on site.
+                I&rsquo;m {site.owner.name}, founder of {site.name} and a Red Seal certified
+                carpenter. My brother {site.partner.name} is our head of sales and a carpenter in
+                his own right. Together, we bring that same family spirit to every project — from
+                the first cup of coffee where we talk through your vision, to the final walkthrough
+                when we hand you the keys.
               </p>
               <p>
-                The belief driving it all: no two homes should ever feel ordinary. Every build is
-                an opportunity to create something extraordinary.
+                We know inviting someone into your home to build or renovate is a big deal. Too
+                many contractors leave families guessing — about timelines, about budgets, about
+                what&rsquo;s actually happening behind those plastic sheets. That&rsquo;s not how
+                we were raised, and it&rsquo;s not how we work. Growing up, our father made every
+                renovation feel less like a construction project and more like part of the family
+                story. We&rsquo;ve built our business the same way: honest conversations, fair
+                pricing, and craftsmanship you can trust — so the process feels as comfortable as
+                the home we&rsquo;re building for you.
+              </p>
+              <p className="font-display text-xl font-bold uppercase leading-snug tracking-[-0.01em] text-ink">
+                Because at the end of the day, we&rsquo;re not just building houses. We&rsquo;re
+                building the place where your family&rsquo;s next chapter happens.
               </p>
             </div>
 
