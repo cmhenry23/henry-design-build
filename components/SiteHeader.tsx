@@ -80,26 +80,30 @@ export default function SiteHeader() {
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="flex h-11 w-11 items-center justify-center lg:hidden"
+          className={`flex h-11 w-11 items-center justify-center rounded-sm border transition-colors lg:hidden ${
+            scrolled
+              ? 'border-ink/15 bg-ink/5 hover:bg-ink/10'
+              : 'border-bone/25 bg-bone/10 hover:bg-bone/20'
+          }`}
           aria-expanded={open}
           aria-controls="mobile-menu"
           aria-label={open ? 'Close menu' : 'Open menu'}
         >
           <span className="relative block h-4 w-6" aria-hidden="true">
             <span
-              className={`absolute left-0 block h-[2px] w-6 bg-ink transition-all duration-300 ${
-                open ? 'top-[7px] rotate-45' : 'top-0'
-              }`}
+              className={`absolute left-0 block h-[2px] w-6 transition-all duration-300 ${
+                scrolled ? 'bg-ink' : 'bg-bone'
+              } ${open ? 'top-[7px] rotate-45' : 'top-0'}`}
             />
             <span
-              className={`absolute left-0 top-[7px] block h-[2px] w-6 bg-ink transition-all duration-200 ${
-                open ? 'opacity-0' : 'opacity-100'
-              }`}
+              className={`absolute left-0 top-[7px] block h-[2px] w-6 transition-all duration-200 ${
+                scrolled ? 'bg-ink' : 'bg-bone'
+              } ${open ? 'opacity-0' : 'opacity-100'}`}
             />
             <span
-              className={`absolute left-0 block h-[2px] w-6 bg-ink transition-all duration-300 ${
-                open ? 'top-[7px] -rotate-45' : 'top-[14px]'
-              }`}
+              className={`absolute left-0 block h-[2px] w-6 transition-all duration-300 ${
+                scrolled ? 'bg-ink' : 'bg-bone'
+              } ${open ? 'top-[7px] -rotate-45' : 'top-[14px]'}`}
             />
           </span>
         </button>
