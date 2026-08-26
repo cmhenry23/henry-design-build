@@ -17,9 +17,7 @@ export default function AboutPage() {
         <div className="shell pb-20 pt-24 sm:pb-24 sm:pt-32">
           <p className="eyebrow text-cedar">About</p>
           <h1 className="h-hero mt-7 max-w-4xl">
-            Real craftsmanship.
-            <br />
-            <span className="text-cedar">Real care.</span>
+            Real <span className="text-cedar">craftsmanship.</span>
           </h1>
         </div>
       </section>

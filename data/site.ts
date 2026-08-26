@@ -10,7 +10,7 @@ export const site = {
   name: 'Henry Design Build',
   shortName: 'HDB',
   tagline: 'Where your vision becomes home',
-  subTagline: 'Real craftsmanship. Real care.',
+  subTagline: 'Real craftsmanship.',
   url: 'https://www.henrydb.ca',
 
   // TODO: confirm the real business email before launch.
@@ -60,12 +60,20 @@ export const services = [
     body: 'Four-season cabins, bunkies and boathouses built for the way a family actually uses the lake — and detailed so they still look right in thirty years.',
   },
   {
-    title: 'Tiny homes & saunas',
-    body: 'Small footprints, no wasted inches. Cedar-lined saunas, guest bunkies and studio builds finished to the same standard as the main house.',
+    title: 'Tiny homes & bunkies',
+    body: 'Small footprints, no wasted inches. Guest bunkies, studio builds and backyard suites finished to the same standard as the main house.',
   },
   {
     title: 'Kitchens & baths',
     body: 'The two rooms that decide how a house feels. Full gut-and-rebuild including layout, cabinetry, tile, waterproofing and finish carpentry.',
+  },
+  {
+    title: 'Custom carpentry',
+    body: 'Built-ins, staircases, mantels and site-built millwork — the details that separate a house from a home, made to fit the space exactly.',
+  },
+  {
+    title: 'Outdoor living spaces',
+    body: 'Decks, covered porches and three-season rooms built to extend the house outward, not just add square footage.',
   },
   {
     title: 'Renovations & restoration',

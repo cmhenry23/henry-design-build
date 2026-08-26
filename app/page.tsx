@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import InstagramFeed from '@/components/InstagramFeed';
 import Reveal from '@/components/Reveal';
 import Testimonials from '@/components/Testimonials';
 import { projects } from '@/data/projects';
@@ -246,6 +247,25 @@ export default function HomePage() {
       </section>
 
       <Testimonials />
+
+      {/* ── Instagram ── */}
+      <section className="border-t border-ink/10 bg-sand py-24 sm:py-32">
+        <div className="shell">
+          <Reveal className="text-center">
+            <p className="eyebrow text-ink/40">On site</p>
+            <h2 className="h-section mx-auto mt-5 max-w-2xl">
+              Follow the builds as they happen
+            </h2>
+            <p className="lede mx-auto mt-6 max-w-xl text-ink/65">
+              {site.instagramHandle} — job-site photos, finished work and the odd sawdust-covered
+              update, posted as it happens.
+            </p>
+          </Reveal>
+          <div className="mt-14">
+            <InstagramFeed />
+          </div>
+        </div>
+      </section>
 
       {/* ── CTA ── */}
       <section className="shell py-24 text-center sm:py-32">
