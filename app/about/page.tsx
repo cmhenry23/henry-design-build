@@ -76,21 +76,6 @@ export default function AboutPage() {
                 </li>
               ))}
             </ul>
-
-            <ul className="mt-4 grid gap-px border border-ink/12 bg-ink/12 sm:grid-cols-3">
-              {[
-                `${site.yearsExperience} years professional experience`,
-                'A family business',
-                'Learning from the best',
-              ].map((item) => (
-                <li
-                  key={item}
-                  className="bg-bone p-6 font-display text-[0.72rem] font-bold uppercase leading-snug tracking-[0.1em]"
-                >
-                  {item}
-                </li>
-              ))}
-            </ul>
           </Reveal>
         </div>
       </section>

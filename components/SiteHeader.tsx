@@ -56,9 +56,11 @@ export default function SiteHeader() {
                 key={item.href}
                 href={item.href}
                 aria-current={active ? 'page' : undefined}
-                className={`relative font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-cedar transition-colors hover:text-brass ${
-                  active ? 'text-brass' : ''
-                }`}
+                className={`relative font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] transition-colors ${
+                  scrolled
+                    ? 'text-ink/70 hover:text-ink'
+                    : 'text-bone/85 hover:text-bone'
+                } ${active ? (scrolled ? 'text-ink' : 'text-bone') : ''}`}
               >
                 {item.label}
                 {active && (
@@ -113,7 +115,7 @@ export default function SiteHeader() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="animate-rise border-b border-ink/8 py-4 font-display text-2xl font-extrabold uppercase tracking-[-0.01em] text-cedar"
+                className="animate-rise border-b border-ink/8 py-4 font-display text-2xl font-extrabold uppercase tracking-[-0.01em] text-ink transition-colors hover:text-brass"
                 style={{ animationDelay: `${i * 45}ms` }}
               >
                 {item.label}

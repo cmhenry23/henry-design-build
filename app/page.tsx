@@ -54,20 +54,12 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <dl className="mt-20 grid max-w-2xl grid-cols-3 gap-6 border-t border-bone/15 pt-8">
-            {[
-              { k: site.yearsExperience, v: 'Years building' },
-              { k: '2', v: 'Brothers' },
-              { k: '100%', v: 'Hands-on oversight' },
-            ].map((stat) => (
-              <div key={stat.v}>
-                <dt className="font-display text-3xl font-extrabold tracking-[-0.02em] text-cedar sm:text-4xl">
-                  {stat.k}
-                </dt>
-                <dd className="mt-2 text-xs leading-snug text-bone/50">{stat.v}</dd>
-              </div>
-            ))}
-          </dl>
+          <div className="mt-20 max-w-xl border-t border-bone/15 pt-8">
+            <p className="text-sm leading-relaxed text-bone/55">
+              Every build led personally by the two brothers who founded {site.name} — no
+              subcontracted decisions, no rotating crews.
+            </p>
+          </div>
         </div>
       </section>
 

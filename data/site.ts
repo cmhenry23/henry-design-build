@@ -48,6 +48,7 @@ export const nav = [
   { href: '/visualizer', label: 'Design Studio' },
   { href: '/start', label: 'Start' },
   { href: '/about', label: 'About' },
+  { href: '/journal', label: 'Journal' },
   { href: '/papas-shop', label: "Papa's Shop" },
   { href: '/faq', label: 'FAQ' },
   { href: '/contact', label: 'Contact' },

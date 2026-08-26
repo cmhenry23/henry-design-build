@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import PortfolioBrowser from '@/components/PortfolioBrowser';
-import { projects } from '@/data/projects';
 import { site } from '@/data/site';
 
 export const metadata: Metadata = {
@@ -10,8 +9,6 @@ export const metadata: Metadata = {
 };
 
 export default function PortfolioPage() {
-  const photoCount = projects.reduce((n, p) => n + p.photos.length, 0);
-
   return (
     <>
       <section className="bg-ink text-bone">
@@ -26,21 +23,6 @@ export default function PortfolioPage() {
             With precision and skill. Every photo below is our own work — framed, clad, tiled and
             finished by the same hands that drew it up.
           </p>
-
-          <dl className="mt-16 flex flex-wrap gap-x-16 gap-y-8 border-t border-bone/15 pt-8">
-            {[
-              { k: String(projects.length), v: 'Projects documented' },
-              { k: String(photoCount), v: 'Photographs' },
-              { k: '4', v: 'Categories of work' },
-            ].map((stat) => (
-              <div key={stat.v}>
-                <dt className="font-display text-3xl font-extrabold tracking-[-0.02em] text-cedar">
-                  {stat.k}
-                </dt>
-                <dd className="mt-2 text-xs text-bone/50">{stat.v}</dd>
-              </div>
-            ))}
-          </dl>
         </div>
       </section>
 
