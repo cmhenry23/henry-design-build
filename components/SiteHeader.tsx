@@ -103,26 +103,27 @@ export default function SiteHeader() {
           // behind the header. Pages without one (or the moment right after
           // any scroll, while still over a dark hero) made it nearly
           // invisible. A solid button reads on every page, every time.
-          // Colour is sampled directly from the logo mark (#157FFB), not the
-          // site's paler "cedar" accent — a noticeably more saturated blue.
-          className="flex h-11 w-11 items-center justify-center rounded-sm bg-[#157FFB] transition-colors hover:bg-[#0f66c9] lg:hidden"
+          // Background stays solid ink for guaranteed contrast on every
+          // page/state; the bars themselves are the logo's sampled blue
+          // (#157FFB), not the site's paler "cedar" accent.
+          className="flex h-11 w-11 items-center justify-center rounded-sm bg-ink transition-colors hover:bg-stone lg:hidden"
           aria-expanded={open}
           aria-controls="mobile-menu"
           aria-label={open ? 'Close menu' : 'Open menu'}
         >
           <span className="relative block h-4 w-6" aria-hidden="true">
             <span
-              className={`absolute left-0 block h-[2px] w-6 bg-bone transition-all duration-300 ${
+              className={`absolute left-0 block h-[2px] w-6 bg-[#157FFB] transition-all duration-300 ${
                 open ? 'top-[7px] rotate-45' : 'top-0'
               }`}
             />
             <span
-              className={`absolute left-0 top-[7px] block h-[2px] w-6 bg-bone transition-all duration-200 ${
+              className={`absolute left-0 top-[7px] block h-[2px] w-6 bg-[#157FFB] transition-all duration-200 ${
                 open ? 'opacity-0' : 'opacity-100'
               }`}
             />
             <span
-              className={`absolute left-0 block h-[2px] w-6 bg-bone transition-all duration-300 ${
+              className={`absolute left-0 block h-[2px] w-6 bg-[#157FFB] transition-all duration-300 ${
                 open ? 'top-[7px] -rotate-45' : 'top-[14px]'
               }`}
             />
