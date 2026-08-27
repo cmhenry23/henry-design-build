@@ -13,7 +13,12 @@ export default function SiteHeader() {
   const headerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    // Threshold is deliberately well past a typical header height, not just
+    // a few pixels — hero sections run tall (up to 92svh), and flipping to
+    // the "scrolled" ink-on-light styling while still deep inside a dark
+    // hero image made the header briefly unreadable right after the very
+    // first scroll tick.
+    const onScroll = () => setScrolled(window.scrollY > 140);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
@@ -92,30 +97,32 @@ export default function SiteHeader() {
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className={`flex h-11 w-11 items-center justify-center rounded-sm border transition-colors lg:hidden ${
-            scrolled
-              ? 'border-ink/15 bg-ink/5 hover:bg-ink/10'
-              : 'border-bone/25 bg-bone/10 hover:bg-bone/20'
-          }`}
+          // Deliberately NOT scroll- or page-dependent: this used to switch
+          // between a light and a dark transparent style based on scroll
+          // position, which assumed every page has a dark hero sitting
+          // behind the header. Pages without one (or the moment right after
+          // any scroll, while still over a dark hero) made it nearly
+          // invisible. A solid button reads on every page, every time.
+          className="flex h-11 w-11 items-center justify-center rounded-sm bg-ink transition-colors hover:bg-stone lg:hidden"
           aria-expanded={open}
           aria-controls="mobile-menu"
           aria-label={open ? 'Close menu' : 'Open menu'}
         >
           <span className="relative block h-4 w-6" aria-hidden="true">
             <span
-              className={`absolute left-0 block h-[2px] w-6 transition-all duration-300 ${
-                scrolled ? 'bg-ink' : 'bg-bone'
-              } ${open ? 'top-[7px] rotate-45' : 'top-0'}`}
+              className={`absolute left-0 block h-[2px] w-6 bg-bone transition-all duration-300 ${
+                open ? 'top-[7px] rotate-45' : 'top-0'
+              }`}
             />
             <span
-              className={`absolute left-0 top-[7px] block h-[2px] w-6 transition-all duration-200 ${
-                scrolled ? 'bg-ink' : 'bg-bone'
-              } ${open ? 'opacity-0' : 'opacity-100'}`}
+              className={`absolute left-0 top-[7px] block h-[2px] w-6 bg-bone transition-all duration-200 ${
+                open ? 'opacity-0' : 'opacity-100'
+              }`}
             />
             <span
-              className={`absolute left-0 block h-[2px] w-6 transition-all duration-300 ${
-                scrolled ? 'bg-ink' : 'bg-bone'
-              } ${open ? 'top-[7px] -rotate-45' : 'top-[14px]'}`}
+              className={`absolute left-0 block h-[2px] w-6 bg-bone transition-all duration-300 ${
+                open ? 'top-[7px] -rotate-45' : 'top-[14px]'
+              }`}
             />
           </span>
         </button>

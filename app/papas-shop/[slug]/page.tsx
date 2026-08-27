@@ -30,6 +30,21 @@ export default function FurnitureItemPage({ params }: { params: { slug: string }
 
   return (
     <>
+      {/* Slim dark band behind the header — every other detail page has a
+          hero here for the sticky transparent header to sit against; this
+          one didn't, which made the header hard to see at the top of the
+          page. */}
+      <div className="-mt-[4.5rem] bg-ink pt-[4.5rem]">
+        <div className="shell py-6">
+          <Link
+            href="/papas-shop"
+            className="inline-flex items-center gap-2 font-display text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-bone/60 transition-colors hover:text-cedar"
+          >
+            ← Back to Papa&rsquo;s Shop
+          </Link>
+        </div>
+      </div>
+
       {PLACEHOLDER && (
         <div className="shell mt-6">
           <div className="border border-cedar/40 bg-cedar/10 p-4 text-xs leading-relaxed text-ink/75" role="note">
@@ -40,14 +55,7 @@ export default function FurnitureItemPage({ params }: { params: { slug: string }
       )}
 
       <section className="shell py-12 sm:py-16">
-        <Link
-          href="/papas-shop"
-          className="inline-flex items-center gap-2 font-display text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-ink/50 transition-colors hover:text-cedar"
-        >
-          ← Back to Papa&rsquo;s Shop
-        </Link>
-
-        <div className="mt-8 grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
+        <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
           <div className="space-y-3">
             <div className="relative aspect-square overflow-hidden bg-sand">
               {item.photos[0] ? (
