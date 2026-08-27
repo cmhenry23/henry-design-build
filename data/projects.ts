@@ -52,7 +52,7 @@ export interface Project {
 export const projects: Project[] = [
   {
     slug: 'cedar-sauna-cabin',
-    title: 'The Cedar Sauna Cabin',
+    title: 'The Cabin',
     category: 'Cottages & Cabins',
     location: 'TODO: confirm location',
     year: 'TODO: confirm year',
@@ -358,7 +358,7 @@ export const projects: Project[] = [
       { label: 'Scope', value: 'One-off hand-hewn mantel' },
       { label: 'Method', value: 'Hand-hewn with slick and chisel' },
       { label: 'Finish', value: 'Blackened and burnished face, natural top' },
-      { label: 'Installed', value: 'Cedar Sauna Cabin fireplace' },
+      { label: 'Installed', value: 'The Cabin fireplace' },
     ],
     highlights: [
       'Hewn entirely by hand — no router, no texture roller',

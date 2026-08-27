@@ -4,7 +4,7 @@
  * The point of this file is that the renders should look like *Ryan's* work,
  * not like a stock AI interior. Every material below is taken from the real
  * projects in data/projects.ts — the charcoal board cladding and steep gable
- * of the Cedar Sauna Cabin, the deep grey shaker and honed quartz of the
+ * of the Cabin, the deep grey shaker and honed quartz of the
  * Forest Kitchen, the plum walls and reeded glass of the Aubergine Bath.
  *
  * Left generic, these models default to a recognisable house style (warm

@@ -146,7 +146,7 @@ the key; a key is not tied to a model. The default lives in
 without touching code.
 
 The prompt is built in `lib/imagePrompt.ts` from Ryan's *real* material
-palette — the charcoal cladding and steep gable of the Cedar Sauna Cabin, the
+palette — the charcoal cladding and steep gable of the Cabin, the
 grey shaker and honed quartz of the Forest Kitchen, the plum walls and reeded
 glass of the Aubergine Bath — plus an explicit negative prompt. Left generic,
 these models default to a house style (cream walls, terracotta, mid-century
