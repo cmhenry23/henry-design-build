@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { journalPosts, parsePostDate, PLACEHOLDER } from '@/data/journal';
+import { journalPosts, parsePostDate } from '@/data/journal';
 import { site } from '@/data/site';
 
 export const metadata: Metadata = {
@@ -32,29 +32,6 @@ export default function JournalPage() {
           </p>
         </div>
       </section>
-
-      {PLACEHOLDER && (
-        <div className="shell mt-10">
-          <div
-            className="flex items-start gap-4 border border-cedar/40 bg-cedar/10 p-5 text-sm leading-relaxed text-ink"
-            role="note"
-          >
-            <span className="mt-0.5 font-display text-base font-bold text-brass" aria-hidden="true">
-              !
-            </span>
-            <p>
-              <strong className="font-display uppercase tracking-wider">
-                Placeholder posts —
-              </strong>{' '}
-              examples showing the page&rsquo;s layout, not real articles. Replace them in{' '}
-              <code className="bg-ink/10 px-1.5 py-0.5 text-xs">data/journal.ts</code> with real
-              writing, then set{' '}
-              <code className="bg-ink/10 px-1.5 py-0.5 text-xs">PLACEHOLDER = false</code> to
-              remove this notice.
-            </p>
-          </div>
-        </div>
-      )}
 
       <section className="shell py-16 sm:py-20">
         {journalPosts.length === 0 ? (

@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getJournalPost, journalPosts, parsePostDate, PLACEHOLDER } from '@/data/journal';
+import { getJournalPost, journalPosts, parsePostDate } from '@/data/journal';
 
 export function generateStaticParams() {
   return journalPosts.map((p) => ({ slug: p.slug }));
@@ -63,23 +63,44 @@ export default function JournalPostPage({ params }: { params: { slug: string } }
         </div>
       </section>
 
-      {PLACEHOLDER && (
-        <div className="shell mt-6">
-          <div
-            className="border border-cedar/40 bg-cedar/10 p-4 text-xs leading-relaxed text-ink/75"
-            role="note"
-          >
-            <strong className="font-display uppercase tracking-wider">Placeholder post —</strong>{' '}
-            an example, not something Ryan or Cam has actually published.
-          </div>
-        </div>
-      )}
-
       <article className="shell py-16 sm:py-20">
-        <div className="mx-auto max-w-2xl space-y-6 text-[1.05rem] leading-relaxed text-ink/80">
-          {post.body.map((paragraph, i) => (
-            <p key={i}>{paragraph}</p>
-          ))}
+        <div className="mx-auto max-w-2xl text-[1.05rem] leading-relaxed text-ink/80">
+          {post.body.map((block, i) => {
+            if (block.type === 'h2') {
+              return (
+                <h2
+                  key={i}
+                  className="mt-12 font-display text-2xl font-extrabold uppercase leading-snug tracking-[-0.01em] text-ink first:mt-0"
+                >
+                  {block.text}
+                </h2>
+              );
+            }
+            if (block.type === 'ul') {
+              return (
+                <ul key={i} className="mt-6 space-y-3">
+                  {block.items.map((item, j) => (
+                    <li key={j} className="flex gap-3">
+                      <span
+                        className="mt-[0.6rem] h-1 w-1 shrink-0 bg-cedar"
+                        aria-hidden="true"
+                      />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              );
+            }
+            return (
+              <p key={i} className="mt-6 first:mt-0">
+                {block.text}
+              </p>
+            );
+          })}
+
+          <p className="mt-10 border-l-2 border-cedar pl-6 font-display text-lg font-bold italic leading-snug text-ink">
+            {post.closing}
+          </p>
         </div>
 
         <div className="mx-auto mt-16 max-w-2xl border-t border-ink/10 pt-8">
