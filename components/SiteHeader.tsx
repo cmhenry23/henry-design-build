@@ -3,13 +3,14 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { nav, site } from '@/data/site';
 
 export default function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -21,16 +22,27 @@ export default function SiteHeader() {
   // Close the mobile menu whenever the route changes.
   useEffect(() => setOpen(false), [pathname]);
 
-  // Lock body scroll while the mobile menu is open.
+  // Close on a click outside the dropdown, or on Escape — standard dropdown
+  // behaviour now that this no longer takes over the whole screen.
   useEffect(() => {
-    document.body.style.overflow = open ? 'hidden' : '';
+    if (!open) return;
+    const onPointerDown = (e: PointerEvent) => {
+      if (headerRef.current && !headerRef.current.contains(e.target as Node)) setOpen(false);
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('pointerdown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown);
     return () => {
-      document.body.style.overflow = '';
+      document.removeEventListener('pointerdown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown);
     };
   }, [open]);
 
   return (
     <header
+      ref={headerRef}
       className={`sticky top-0 z-[80] transition-all duration-300 ${
         scrolled ? 'border-b border-ink/10 bg-cedar/25 backdrop-blur-md' : 'bg-cedar/10'
       }`}
@@ -112,27 +124,33 @@ export default function SiteHeader() {
       {open && (
         <div
           id="mobile-menu"
-          className="fixed inset-x-0 top-[4.5rem] bottom-0 z-[70] overflow-y-auto border-t border-ink/10 bg-bone lg:hidden"
+          className="absolute inset-x-0 top-full z-[70] max-h-[calc(100svh-4.5rem)] overflow-y-auto border-t border-ink/10 bg-bone shadow-[0_20px_40px_rgba(20,17,15,0.18)] lg:hidden"
         >
-          <nav className="shell flex flex-col gap-1 py-8" aria-label="Mobile">
-            {nav.map((item, i) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="animate-rise border-b border-ink/8 py-4 font-display text-2xl font-extrabold uppercase tracking-[-0.01em] text-ink transition-colors hover:text-brass"
-                style={{ animationDelay: `${i * 45}ms` }}
-              >
-                {item.label}
-              </Link>
-            ))}
-            <Link href="/start" className="btn-cedar mt-6 w-full">
+          <nav className="shell flex flex-col py-3" aria-label="Mobile">
+            {nav.map((item) => {
+              const active =
+                item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  aria-current={active ? 'page' : undefined}
+                  className={`border-b border-ink/8 py-3.5 font-display text-base font-bold uppercase tracking-[0.02em] transition-colors hover:text-brass ${
+                    active ? 'text-brass' : 'text-ink'
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+            <Link href="/start" className="btn-cedar mt-5 w-full text-center">
               Start a project
             </Link>
             <a
               href={site.instagram}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-4 text-center font-display text-[0.72rem] uppercase tracking-[0.18em] text-ink/55"
+              className="mb-1 mt-4 text-center font-display text-[0.7rem] uppercase tracking-[0.18em] text-ink/55"
             >
               {site.instagramHandle}
             </a>
