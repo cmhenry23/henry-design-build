@@ -103,7 +103,9 @@ export default function SiteHeader() {
           // behind the header. Pages without one (or the moment right after
           // any scroll, while still over a dark hero) made it nearly
           // invisible. A solid button reads on every page, every time.
-          className="flex h-11 w-11 items-center justify-center rounded-sm bg-ink transition-colors hover:bg-stone lg:hidden"
+          // Colour is sampled directly from the logo mark (#157FFB), not the
+          // site's paler "cedar" accent — a noticeably more saturated blue.
+          className="flex h-11 w-11 items-center justify-center rounded-sm bg-[#157FFB] transition-colors hover:bg-[#0f66c9] lg:hidden"
           aria-expanded={open}
           aria-controls="mobile-menu"
           aria-label={open ? 'Close menu' : 'Open menu'}
