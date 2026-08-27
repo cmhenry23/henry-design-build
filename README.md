@@ -148,7 +148,7 @@ without touching code.
 The prompt is built in `lib/imagePrompt.ts` from Ryan's *real* material
 palette — the charcoal cladding and steep gable of the Cabin, the
 grey shaker and honed quartz of the Forest Kitchen, the plum walls and reeded
-glass of the Aubergine Bath — plus an explicit negative prompt. Left generic,
+glass of the Soul Bath — plus an explicit negative prompt. Left generic,
 these models default to a house style (cream walls, terracotta, mid-century
 furniture) that looks nothing like a Canadian cottage-country build. That
 specificity is what makes the renders look like Ryan's work.

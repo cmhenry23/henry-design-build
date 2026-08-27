@@ -55,7 +55,7 @@ export const testimonials: Testimonial[] = [
       'He talked us out of two things we wanted because they would not have lasted. I have never had a contractor argue against spending our money before.',
     name: 'PLACEHOLDER — client name',
     detail: 'PLACEHOLDER — project type and town',
-    project: 'guest-bath-reset',
+    project: 'jack-and-jill-bath',
     rating: 5,
   },
   {

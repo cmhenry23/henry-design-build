@@ -9,6 +9,14 @@ import { useId } from 'react';
  *
  * This is deliberately a stylised sketch, not a rendering. It is here to
  * make choices feel real, not to represent a finished design.
+ *
+ * The exterior scene is also directly touch-interactive: the walls, roof
+ * and gable peak are tappable regions that cycle straight to the next
+ * cladding, roof material or pitch, and the chimney/gable/entry each carry
+ * a small always-visible badge that toggles that add-on. All of it is
+ * optional — every handler prop defaults to undefined, so the mini preview
+ * used elsewhere (e.g. the intake brief card) renders exactly as before
+ * with no tappable regions at all.
  */
 
 /**
@@ -29,6 +37,18 @@ interface PreviewProps {
   hasLoft: boolean;
   hasFireplace: boolean;
   scene: PreviewScene;
+  /** Tap the walls → next cladding colour. */
+  onCycleCladding?: () => void;
+  /** Tap the roof planes → next roof material. */
+  onCycleRoof?: () => void;
+  /** Tap the gable peak → next roof pitch. */
+  onCyclePitch?: () => void;
+  /** Tap the deck/entry badge — only rendered when provided. */
+  onToggleDeck?: () => void;
+  /** Tap the chimney badge — only rendered when provided. */
+  onToggleFireplace?: () => void;
+  /** Tap the gable-window badge — only rendered when provided. */
+  onToggleLoft?: () => void;
 }
 
 export default function CabinPreview({
@@ -42,6 +62,12 @@ export default function CabinPreview({
   hasLoft,
   hasFireplace,
   scene,
+  onCycleCladding,
+  onCycleRoof,
+  onCyclePitch,
+  onToggleDeck,
+  onToggleFireplace,
+  onToggleLoft,
 }: PreviewProps) {
   // Namespaces the gradient and clipPath ids. Without this, two previews on the
   // same page (the intake brief card and the configurator) would share the
@@ -61,6 +87,13 @@ export default function CabinPreview({
   const VB_W = 800;
   const VB_H = 520;
   const groundY = 430;
+
+  // Whether ANY tap-to-customize handler was passed in. Kept false for the
+  // read-only mini preview elsewhere (e.g. the chat intake brief card),
+  // which never passes these props — so it renders identically to before.
+  const interactive = Boolean(
+    onCycleCladding || onCycleRoof || onCyclePitch || onToggleDeck || onToggleFireplace || onToggleLoft
+  );
 
   // Building geometry
   const bodyW = 210 + sizeRatio * 330; // 210 → 540
@@ -118,10 +151,31 @@ export default function CabinPreview({
     <svg
       viewBox={`0 0 ${VB_W} ${VB_H}`}
       className="h-auto w-full"
-      role="img"
-      aria-label={`Sketch of a building with ${cladding.label.toLowerCase()} cladding and a ${roof.label.toLowerCase()} roof, approximately ${sqft} square feet${hasDeck ? ', with a deck' : ''}${hasLoft ? ', with a loft window' : ''}${hasFireplace ? ', with a chimney' : ''}.`}
+      // role="img" tells assistive tech to flatten everything inside into one
+      // image — correct for the read-only mini preview, but wrong here once
+      // there are real tappable controls inside, so it's dropped in favour
+      // of a <title> plus each hotspot's own aria-label.
+      role={interactive ? undefined : 'img'}
+      aria-label={
+        interactive
+          ? undefined
+          : `Sketch of a building with ${cladding.label.toLowerCase()} cladding and a ${roof.label.toLowerCase()} roof, approximately ${sqft} square feet${hasDeck ? ', with a deck' : ''}${hasLoft ? ', with a loft window' : ''}${hasFireplace ? ', with a chimney' : ''}.`
+      }
     >
+      {interactive && (
+        <title>{`Sketch of a building with ${cladding.label.toLowerCase()} cladding and a ${roof.label.toLowerCase()} roof, approximately ${sqft} square feet. Tap the walls, roof, gable peak or the pin icons to change them.`}</title>
+      )}
       <defs>
+        {interactive && (
+          <style>{`
+            .hdb-zone-${uid} { cursor: pointer; fill: transparent; transition: fill 150ms ease; }
+            .hdb-zone-${uid}:hover, .hdb-zone-${uid}:focus-visible { fill: rgba(255,255,255,0.12); outline: none; }
+            .hdb-badge-${uid} { cursor: pointer; transform-box: fill-box; transform-origin: center; transition: transform 150ms ease; }
+            .hdb-badge-${uid}:hover, .hdb-badge-${uid}:focus-visible { transform: scale(1.15); outline: none; }
+            .hdb-pitch-${uid} { cursor: pointer; transform-box: fill-box; transform-origin: center; transition: transform 150ms ease; }
+            .hdb-pitch-${uid}:hover, .hdb-pitch-${uid}:focus-visible { transform: scale(1.3); outline: none; }
+          `}</style>
+        )}
         <linearGradient id={`sky-${uid}`} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#1B2733" />
           <stop offset="55%" stopColor="#31414C" />
@@ -170,6 +224,34 @@ export default function CabinPreview({
       {/* Ground */}
       <rect x="0" y={groundY} width={VB_W} height={VB_H - groundY} fill="#232B24" />
       <rect x="0" y={groundY} width={VB_W} height="3" fill="#000" opacity="0.3" />
+
+      {/* Soft contact shadow under the footprint */}
+      <ellipse
+        cx={cx}
+        cy={groundY + 10}
+        rx={bodyW / 2 + 34}
+        ry="12"
+        fill="#000"
+        opacity="0.28"
+      />
+
+      {/* Walkway from the entry — only when there's no deck to reach the door from */}
+      {!hasDeck && (
+        <g opacity="0.9">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <rect
+              key={i}
+              x={cx - 15 + (i % 2 === 0 ? -3 : 3)}
+              y={groundY + 6 + i * 15}
+              width="30"
+              height="11"
+              rx="2"
+              fill="#8C8578"
+              opacity={0.85 - i * 0.12}
+            />
+          ))}
+        </g>
+      )}
 
       {/* Deck — railing splits either side of the door so the entry stays clear */}
       {hasDeck && (
@@ -229,6 +311,22 @@ export default function CabinPreview({
       {/* Corner trim boards */}
       <rect x={left} y={wallTop} width="9" height={wallH} fill={cladding.trim} opacity="0.9" />
       <rect x={right - 9} y={wallTop} width="9" height={wallH} fill={cladding.trim} opacity="0.9" />
+      {/* Frieze board — trim strip where the wall meets the eave */}
+      <rect x={left} y={wallTop} width={bodyW} height="6" fill={cladding.trim} opacity="0.85" />
+      {/* Foundation — poured band where the wall meets grade */}
+      <rect x={left - 4} y={groundY - 13} width={bodyW + 8} height="13" fill="#5C5A54" />
+      <rect x={left - 4} y={groundY - 13} width={bodyW + 8} height="2.5" fill="#000" opacity="0.2" />
+      <g stroke="#000" strokeOpacity="0.12" strokeWidth="1">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <line
+            key={i}
+            x1={left - 4 + ((bodyW + 8) / 6) * i}
+            y1={groundY - 13}
+            x2={left - 4 + ((bodyW + 8) / 6) * i}
+            y2={groundY}
+          />
+        ))}
+      </g>
 
       {/* Chimney */}
       {hasFireplace && (
@@ -303,6 +401,37 @@ export default function CabinPreview({
         stroke={cladding.trim}
         strokeWidth="5"
       />
+      {/* Gutter — thin line just under the fascia, both sides */}
+      <line
+        x1={left - eaveOverhang}
+        y1={wallTop + eaveOverhang * pitch + 5}
+        x2={right - eaveOverhang}
+        y2={wallTop + eaveOverhang * pitch + 5}
+        stroke="#000"
+        strokeOpacity="0.28"
+        strokeWidth="2"
+      />
+      {/* Ridge cap — small trim accent right at the peak */}
+      <rect x={cx - 13} y={ridgeY - 3} width="26" height="6" rx="1.5" fill={cladding.trim} opacity="0.9" />
+
+      {/* Gable vent — only when the loft window isn't using that space */}
+      {!(hasLoft && ridgeY < wallTop - 46) && ridgeY < wallTop - 34 && (
+        <g opacity="0.85">
+          <circle cx={cx} cy={wallTop - 24} r="11" fill={cladding.trim} />
+          <circle cx={cx} cy={wallTop - 24} r="7.5" fill="#000" opacity="0.3" />
+          {[0, 60, 120].map((deg) => (
+            <line
+              key={deg}
+              x1={cx + 7.5 * Math.cos((deg * Math.PI) / 180)}
+              y1={wallTop - 24 + 7.5 * Math.sin((deg * Math.PI) / 180)}
+              x2={cx - 7.5 * Math.cos((deg * Math.PI) / 180)}
+              y2={wallTop - 24 - 7.5 * Math.sin((deg * Math.PI) / 180)}
+              stroke={cladding.trim}
+              strokeWidth="1.5"
+            />
+          ))}
+        </g>
+      )}
 
       {/* Gable / loft window */}
       {hasLoft && ridgeY < wallTop - 46 && (
@@ -384,7 +513,127 @@ export default function CabinPreview({
         <rect x="-5" y="-26" width="4" height="26" rx="2" />
         <rect x="1" y="-26" width="4" height="26" rx="2" />
       </g>
+
+      {/* ── Touch-to-customize layer — drawn last so it sits on top ── */}
+      {interactive && (
+        <g>
+          {onCycleRoof && (
+            <polygon
+              className={`hdb-zone-${uid}`}
+              points={`${cx},${ridgeY} ${right + eaveOverhang},${wallTop + eaveOverhang * pitch} ${left - eaveOverhang},${wallTop + eaveOverhang * pitch}`}
+              role="button"
+              tabIndex={0}
+              aria-label={`Change roof material — currently ${roof.label.toLowerCase()}`}
+              onClick={onCycleRoof}
+              onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), onCycleRoof())}
+            />
+          )}
+          {onCycleCladding && (
+            <rect
+              className={`hdb-zone-${uid}`}
+              x={left}
+              y={wallTop}
+              width={bodyW}
+              height={wallH}
+              role="button"
+              tabIndex={0}
+              aria-label={`Change wall cladding — currently ${cladding.label.toLowerCase()}`}
+              onClick={onCycleCladding}
+              onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), onCycleCladding())}
+            />
+          )}
+          {onCyclePitch && (
+            <g
+              className={`hdb-pitch-${uid}`}
+              role="button"
+              tabIndex={0}
+              aria-label="Change roof pitch"
+              onClick={onCyclePitch}
+              onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), onCyclePitch())}
+            >
+              <circle cx={cx} cy={ridgeY} r="14" fill="#000" opacity="0.001" />
+              <circle cx={cx} cy={ridgeY - 16} r="4" fill="#F2C879" opacity="0.9" />
+              <circle cx={cx} cy={ridgeY - 16} r="9" fill="none" stroke="#F2C879" strokeWidth="1.5" opacity="0.55" />
+            </g>
+          )}
+          {onToggleFireplace && (
+            <ToggleBadge
+              uid={uid}
+              x={right - 48}
+              y={ridgeY - 10}
+              active={hasFireplace}
+              onClick={onToggleFireplace}
+              label={hasFireplace ? 'Remove the chimney' : 'Add a stone fireplace and chimney'}
+            />
+          )}
+          {onToggleLoft && (
+            <ToggleBadge
+              uid={uid}
+              x={cx + 46}
+              y={wallTop - 30}
+              active={hasLoft}
+              onClick={onToggleLoft}
+              label={hasLoft ? 'Remove the sleeping loft window' : 'Add a sleeping loft'}
+            />
+          )}
+          {onToggleDeck && (
+            <ToggleBadge
+              uid={uid}
+              x={cx}
+              y={groundY + 26}
+              active={hasDeck}
+              onClick={onToggleDeck}
+              label={hasDeck ? 'Remove the deck' : 'Add a deck or covered porch'}
+            />
+          )}
+        </g>
+      )}
     </svg>
+  );
+}
+
+/**
+ * A small always-visible "+" / "✓" pin used to toggle a boolean add-on
+ * (deck, chimney, loft) directly from the drawing. Unlike the wall/roof
+ * zones, this stays visible even before hover so it's discoverable on
+ * touch devices, which have no hover state at all.
+ */
+function ToggleBadge({
+  uid,
+  x,
+  y,
+  active,
+  onClick,
+  label,
+}: {
+  uid: string;
+  x: number;
+  y: number;
+  active: boolean;
+  onClick: () => void;
+  label: string;
+}) {
+  return (
+    <g
+      className={`hdb-badge-${uid}`}
+      transform={`translate(${x}, ${y})`}
+      role="button"
+      tabIndex={0}
+      aria-label={label}
+      aria-pressed={active}
+      onClick={onClick}
+      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), onClick())}
+    >
+      <circle r="13" fill={active ? '#F2C879' : '#0B0F0D'} stroke="#F2C879" strokeWidth="1.75" opacity="0.95" />
+      {active ? (
+        <path d="M -5 0 L -1.5 4 L 5.5 -5" fill="none" stroke="#0B0F0D" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+      ) : (
+        <>
+          <line x1="-5.5" y1="0" x2="5.5" y2="0" stroke="#F2C879" strokeWidth="2.2" strokeLinecap="round" />
+          <line x1="0" y1="-5.5" x2="0" y2="5.5" stroke="#F2C879" strokeWidth="2.2" strokeLinecap="round" />
+        </>
+      )}
+    </g>
   );
 }
 
@@ -541,7 +790,7 @@ function KitchenPreview({
 }
 
 /* ── Bathroom: vanity, mirror, sconce, tub behind a reeded glass screen ──
-   Drawn after the Aubergine Bath project — deep wall colour, large-format
+   Drawn after the Soul Bath project — deep wall colour, large-format
    porcelain, reeded glass in a black frame, and a recessed niche. */
 
 function BathPreview({

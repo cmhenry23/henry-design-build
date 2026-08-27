@@ -132,6 +132,14 @@ export default function Configurator() {
     setAddOns((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   }
 
+  // Backs the elevation drawing's tap-to-customize regions — tapping the
+  // walls or roof advances straight to the next option in the same list the
+  // swatch buttons below use, so the drawing and the form never disagree.
+  function cycleOption<T extends { id: string }>(list: T[], currentId: string, setter: (id: string) => void) {
+    const index = list.findIndex((item) => item.id === currentId);
+    setter(list[(index + 1) % list.length].id);
+  }
+
   function toggleMaterial(id: string) {
     setMaterials((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   }
@@ -217,6 +225,14 @@ export default function Configurator() {
               hasLoft={activeAddOns.includes('loft')}
               hasFireplace={activeAddOns.includes('fireplace')}
               scene={summary.scene}
+              onCycleCladding={() => cycleOption(CLADDINGS, cladding, setCladding)}
+              onCycleRoof={() => cycleOption(ROOFS, roof, setRoof)}
+              onCyclePitch={() => cycleOption(PITCHES, pitch, setPitch)}
+              onToggleDeck={availableAddOns.some((a) => a.id === 'deck') ? () => toggleAddOn('deck') : undefined}
+              onToggleFireplace={
+                availableAddOns.some((a) => a.id === 'fireplace') ? () => toggleAddOn('fireplace') : undefined
+              }
+              onToggleLoft={availableAddOns.some((a) => a.id === 'loft') ? () => toggleAddOn('loft') : undefined}
             />
           </div>
           <div className={mode === 'plan' ? '' : 'hidden'}>
@@ -234,7 +250,8 @@ export default function Configurator() {
           </div>
 
           <p className="border-t border-bone/10 px-5 py-3 text-center text-xs text-bone/45">
-            {mode === 'elevation' && 'A stylised sketch to make choices feel real — not an architectural drawing.'}
+            {mode === 'elevation' && !isInterior && 'Tap the walls, roof, gable peak or a pin to change it — a stylised sketch, not an architectural drawing.'}
+            {mode === 'elevation' && isInterior && 'A stylised sketch to make choices feel real — not an architectural drawing.'}
             {mode === 'plan' && 'A rough room breakdown, scaled to your numbers — not a real floor plan.'}
             {mode === 'render' && 'An AI image generated from your exact choices — a style reference, not a design.'}
           </p>

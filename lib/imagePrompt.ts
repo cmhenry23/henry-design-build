@@ -5,7 +5,7 @@
  * not like a stock AI interior. Every material below is taken from the real
  * projects in data/projects.ts — the charcoal board cladding and steep gable
  * of the Cabin, the deep grey shaker and honed quartz of the
- * Forest Kitchen, the plum walls and reeded glass of the Aubergine Bath.
+ * Forest Kitchen, the plum walls and reeded glass of the Soul Bath.
  *
  * Left generic, these models default to a recognisable house style (warm
  * cream walls, terracotta accents, mid-century furniture) that looks nothing
