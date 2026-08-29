@@ -113,6 +113,32 @@ export default function FloorPlan({
     setItems((prev) => prev.filter((it) => it.id !== id));
   }
 
+  /** Rotating a top-down rectangle 90° is just swapping its width and depth. */
+  function rotateItem(id: string) {
+    setItems((prev) =>
+      prev.map((it) => {
+        if (it.id !== id) return it;
+        const newWFt = it.hFt;
+        const newHFt = it.wFt;
+        return {
+          ...it,
+          wFt: newWFt,
+          hFt: newHFt,
+          xFt: clamp(it.xFt, newWFt / 2, width - newWFt / 2),
+          yFt: clamp(it.yFt, newHFt / 2, depth - newHFt / 2),
+        };
+      })
+    );
+  }
+
+  function renameItem(id: string, label: string) {
+    setItems((prev) => prev.map((it) => (it.id === id ? { ...it, label } : it)));
+  }
+
+  // Double-tap/double-click an item to rename it in place — see the
+  // <foreignObject> input rendered inline in <DraggableItem> below.
+  const [editingId, setEditingId] = useState<string | null>(null);
+
   return (
     <>
     <svg
@@ -283,9 +309,17 @@ export default function FloorPlan({
           scale={scale}
           width={width}
           depth={depth}
+          editing={editingId === item.id}
           onMove={(xFt, yFt) => moveItem(item.id, xFt, yFt)}
           onResize={(wFt, hFt) => resizeItem(item.id, wFt, hFt)}
+          onRotate={() => rotateItem(item.id)}
           onRemove={() => removeItem(item.id)}
+          onStartEdit={() => setEditingId(item.id)}
+          onRename={(label) => {
+            renameItem(item.id, label);
+            setEditingId(null);
+          }}
+          onCancelEdit={() => setEditingId(null)}
         />
       ))}
     </svg>
@@ -337,7 +371,8 @@ export default function FloorPlan({
       </form>
 
       <p className="mt-2 text-[0.68rem] leading-relaxed text-ink/40">
-        Drag the corner of anything you&rsquo;ve added to resize it.
+        Drag the corner to resize, tap the ⟳ to rotate it 90°, or double-click it to rename it —
+        dimensions update as you go.
       </p>
     </div>
     </>
@@ -529,9 +564,14 @@ function DraggableItem({
   scale,
   width,
   depth,
+  editing,
   onMove,
   onResize,
+  onRotate,
   onRemove,
+  onStartEdit,
+  onRename,
+  onCancelEdit,
 }: {
   item: PlacedItem;
   x0: number;
@@ -539,15 +579,21 @@ function DraggableItem({
   scale: number;
   width: number;
   depth: number;
+  editing: boolean;
   onMove: (xFt: number, yFt: number) => void;
   onResize: (wFt: number, hFt: number) => void;
+  onRotate: () => void;
   onRemove: () => void;
+  onStartEdit: () => void;
+  onRename: (label: string) => void;
+  onCancelEdit: () => void;
 }) {
   const startRef = useRef<{ x: number; y: number } | null>(null);
   const movedRef = useRef(false);
   const resizingRef = useRef(false);
   const def = ITEM_DEFS[item.type];
   const label = item.label ?? def.label;
+  const showDetail = item.type !== 'window';
 
   const cx = x0 + item.xFt * scale;
   const cy = y0 + item.yFt * scale;
@@ -654,12 +700,13 @@ function DraggableItem({
       <g
         role="button"
         tabIndex={0}
-        aria-label={`${label} — drag to move, or activate to remove it`}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onKeyDown={handleKeyDown}
-        style={{ cursor: 'grab', touchAction: 'none' }}
+        aria-label={`${label} — drag to move, activate to remove, or double-click to rename it`}
+        onPointerDown={editing ? undefined : handlePointerDown}
+        onPointerMove={editing ? undefined : handlePointerMove}
+        onPointerUp={editing ? undefined : handlePointerUp}
+        onKeyDown={editing ? undefined : handleKeyDown}
+        onDoubleClick={onStartEdit}
+        style={{ cursor: editing ? 'text' : 'grab', touchAction: 'none' }}
       >
         <rect
           x={cx - w / 2}
@@ -685,39 +732,126 @@ function DraggableItem({
             ))}
           </g>
         )}
-        {item.type !== 'window' && (
-          <text
-            x={cx}
-            y={cy}
-            textAnchor="middle"
-            dominantBaseline="middle"
-            fontSize="9"
-            fill={def.stroke}
-            opacity="0.75"
-            pointerEvents="none"
-            style={{ letterSpacing: '0.04em' }}
-          >
-            {label.toUpperCase()}
-          </text>
+        {showDetail && !editing && (
+          <>
+            <text
+              x={cx}
+              y={cy - 5}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              fontSize="9"
+              fill={def.stroke}
+              opacity="0.75"
+              pointerEvents="none"
+              style={{ letterSpacing: '0.04em' }}
+            >
+              {label.toUpperCase()}
+            </text>
+            <text
+              x={cx}
+              y={cy + 8}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              fontSize="8"
+              fill={def.stroke}
+              opacity="0.5"
+              pointerEvents="none"
+            >
+              {Math.max(1, Math.round(item.wFt))}&apos; × {Math.max(1, Math.round(item.hFt))}&apos;
+            </text>
+          </>
         )}
       </g>
-      <g
-        role="slider"
-        tabIndex={0}
-        aria-label={`Resize ${label}`}
-        onPointerDown={handleResizeDown}
-        onPointerMove={handleResizeMove}
-        onPointerUp={handleResizeUp}
-        onKeyDown={handleResizeKeyDown}
-        style={{ cursor: 'nwse-resize', touchAction: 'none' }}
-      >
-        <rect x={cx + w / 2 - 11} y={cy + h / 2 - 11} width="16" height="16" fill="#000" opacity="0.001" />
-        <path
-          d={`M ${cx + w / 2 - 7} ${cy + h / 2} L ${cx + w / 2} ${cy + h / 2 - 7} L ${cx + w / 2} ${cy + h / 2} Z`}
-          fill={def.stroke}
-          opacity="0.55"
-        />
-      </g>
+
+      {editing && (
+        <foreignObject x={cx - w / 2} y={cy - 11} width={Math.max(w, 70)} height="22">
+          <input
+            type="text"
+            defaultValue={label}
+            autoFocus
+            maxLength={24}
+            onFocus={(e) => e.currentTarget.select()}
+            // Commit directly on Enter rather than routing through blur() —
+            // a synthetic blur inside an SVG <foreignObject> doesn't
+            // reliably reach React's onBlur here. onBlur is kept as a
+            // fallback for genuinely clicking/tapping away.
+            onBlur={(e) => onRename(e.currentTarget.value.trim() || label)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                onRename(e.currentTarget.value.trim() || label);
+              } else if (e.key === 'Escape') {
+                onCancelEdit();
+              }
+              e.stopPropagation();
+            }}
+            style={{
+              width: '100%',
+              height: '100%',
+              fontSize: '9px',
+              textAlign: 'center',
+              border: `1.5px solid ${def.stroke}`,
+              outline: 'none',
+              fontFamily: 'inherit',
+              textTransform: 'uppercase',
+              letterSpacing: '0.04em',
+            }}
+          />
+        </foreignObject>
+      )}
+
+      {!editing && (
+        <g
+          role="slider"
+          tabIndex={0}
+          aria-label={`Resize ${label}`}
+          onPointerDown={handleResizeDown}
+          onPointerMove={handleResizeMove}
+          onPointerUp={handleResizeUp}
+          onKeyDown={handleResizeKeyDown}
+          style={{ cursor: 'nwse-resize', touchAction: 'none' }}
+        >
+          <rect x={cx + w / 2 - 11} y={cy + h / 2 - 11} width="16" height="16" fill="#000" opacity="0.001" />
+          <path
+            d={`M ${cx + w / 2 - 7} ${cy + h / 2} L ${cx + w / 2} ${cy + h / 2 - 7} L ${cx + w / 2} ${cy + h / 2} Z`}
+            fill={def.stroke}
+            opacity="0.55"
+          />
+        </g>
+      )}
+
+      {!editing && (
+        <g
+          role="button"
+          tabIndex={0}
+          aria-label={`Rotate ${label} 90 degrees`}
+          onClick={(e) => {
+            e.stopPropagation();
+            onRotate();
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              e.stopPropagation();
+              onRotate();
+            }
+          }}
+          style={{ cursor: 'pointer' }}
+        >
+          <circle cx={cx + w / 2 - 3} cy={cy - h / 2 + 3} r="9" fill="#fff" stroke={def.stroke} strokeWidth="1.25" />
+          <text
+            x={cx + w / 2 - 3}
+            y={cy - h / 2 + 3.5}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fontSize="10"
+            fill={def.stroke}
+            pointerEvents="none"
+          >
+            ⟳
+          </text>
+        </g>
+      )}
     </g>
   );
 }
