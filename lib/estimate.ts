@@ -256,6 +256,19 @@ export const PITCHES = [
   { id: 'steep', label: 'Steep A-frame', value: 0.78 },
 ];
 
+export const WINDOW_STYLES = [
+  { id: 'divided', label: 'Divided-lite', blurb: 'Classic four-pane grid — the cottage default.' },
+  { id: 'picture', label: 'Picture window', blurb: 'One large pane, minimal frame. Reads modern and open.' },
+  { id: 'modern', label: 'Black-frame modern', blurb: 'Slim black steel-look frame, single horizontal bar.' },
+];
+
+export const DOOR_COLORS = [
+  { id: 'white', label: 'White', hex: '#F2F0EC' },
+  { id: 'black', label: 'Matte black', hex: '#232322' },
+  { id: 'cedar', label: 'Cedar tone', hex: '#9A7147' },
+  { id: 'forest', label: 'Forest green', hex: '#3C4E3D' },
+];
+
 /* ── The calculation ── */
 
 export interface EstimateInput {

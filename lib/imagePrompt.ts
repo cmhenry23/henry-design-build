@@ -73,7 +73,7 @@ export function buildImagePrompt(brief: Brief): string {
     parts.push(
       `Cladding is ${r.cladding.label.toLowerCase()}; roof is ${r.roof.label.toLowerCase()} with a ${
         r.pitch.label.toLowerCase()
-      } pitch.`
+      } pitch. Windows are ${r.windowStyle.label.toLowerCase()} style. The front door is ${r.doorColor.label.toLowerCase()}.`
     );
   }
 

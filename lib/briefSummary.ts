@@ -91,6 +91,8 @@ export function buildSummary(brief: Brief, projectId: string): BriefSummary {
       label: 'Roof',
       value: `${r.roof.label} (${PITCHES.find((p) => p.id === r.pitch.id)!.label.toLowerCase()} pitch)`,
     });
+    rows.push({ label: 'Windows', value: r.windowStyle.label });
+    rows.push({ label: 'Door', value: r.doorColor.label });
   }
   if (r.addOns.length) {
     rows.push({

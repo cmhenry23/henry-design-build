@@ -18,12 +18,14 @@ import {
   ADD_ONS,
   BUILD_TYPES,
   CLADDINGS,
+  DOOR_COLORS,
   FINISH_LEVELS,
   PITCHES,
   PLACEHOLDER_PRICING,
   ROOFS,
   SEASONS,
   SITE_ACCESS,
+  WINDOW_STYLES,
   calculateEstimate,
   formatCAD,
   type BuildTypeId,
@@ -45,6 +47,9 @@ export default function Configurator() {
   const [cladding, setCladding] = useState(CLADDINGS[0].id);
   const [roof, setRoof] = useState(ROOFS[0].id);
   const [pitch, setPitch] = useState(PITCHES[1].id);
+  const [windowStyle, setWindowStyle] = useState(WINDOW_STYLES[0].id);
+  const [doorColor, setDoorColor] = useState(DOOR_COLORS[0].id);
+  const [notes, setNotes] = useState('');
   const [style, setStyle] = useState('');
   const [palette, setPalette] = useState('');
   const [customPalette, setCustomPalette] = useState<CustomPaletteColors | null>(null);
@@ -78,6 +83,9 @@ export default function Configurator() {
       cladding,
       roof,
       pitch,
+      windowStyle,
+      doorColor,
+      notes,
     }),
     [
       buildType,
@@ -94,6 +102,9 @@ export default function Configurator() {
       cladding,
       roof,
       pitch,
+      windowStyle,
+      doorColor,
+      notes,
     ]
   );
 
@@ -225,9 +236,13 @@ export default function Configurator() {
               hasLoft={activeAddOns.includes('loft')}
               hasFireplace={activeAddOns.includes('fireplace')}
               scene={summary.scene}
+              windowStyle={resolved.windowStyle.id}
+              doorColor={resolved.doorColor}
               onCycleCladding={() => cycleOption(CLADDINGS, cladding, setCladding)}
               onCycleRoof={() => cycleOption(ROOFS, roof, setRoof)}
               onCyclePitch={() => cycleOption(PITCHES, pitch, setPitch)}
+              onCycleWindowStyle={() => cycleOption(WINDOW_STYLES, windowStyle, setWindowStyle)}
+              onCycleDoorColor={() => cycleOption(DOOR_COLORS, doorColor, setDoorColor)}
               onToggleDeck={availableAddOns.some((a) => a.id === 'deck') ? () => toggleAddOn('deck') : undefined}
               onToggleFireplace={
                 availableAddOns.some((a) => a.id === 'fireplace') ? () => toggleAddOn('fireplace') : undefined
@@ -250,7 +265,7 @@ export default function Configurator() {
           </div>
 
           <p className="border-t border-bone/10 px-5 py-3 text-center text-xs text-bone/45">
-            {mode === 'elevation' && !isInterior && 'Tap the walls, roof, gable peak or a pin to change it — a stylised sketch, not an architectural drawing.'}
+            {mode === 'elevation' && !isInterior && 'Tap the walls, roof, gable peak, windows, door or a pin to change them — a stylised sketch, not an architectural drawing.'}
             {mode === 'elevation' && isInterior && 'A stylised sketch to make choices feel real — not an architectural drawing.'}
             {mode === 'plan' && 'A rough room breakdown, scaled to your numbers — not a real floor plan.'}
             {mode === 'render' && 'An AI image generated from your exact choices — a style reference, not a design.'}
@@ -314,6 +329,26 @@ export default function Configurator() {
             <p className="mt-2 text-xs text-ink/50">
               Not sure? Pick the closest room or building you already know the size of. We refine
               this at the first meeting.
+            </p>
+          </Field>
+
+          {/* Free-text description — supplements the swatches below rather
+              than replacing them. Reused as-is by lib/briefSummary.ts (the
+              emailed overview) and lib/imagePrompt.ts (the AI rendering),
+              so typing something here actually changes the outcome, not
+              just a comment box nobody reads. */}
+          <Field label="Anything specific in mind?" step={nextStep()}>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={3}
+              maxLength={600}
+              placeholder="A wraparound deck facing the lake, a mudroom by the side door, big windows over the sink — anything at all, in your own words."
+              className="w-full border border-ink/20 bg-white/60 px-4 py-3 text-sm leading-relaxed placeholder:text-ink/35 focus:border-ink focus:outline-none"
+            />
+            <p className="mt-2 text-xs text-ink/50">
+              Optional. Goes straight into the AI rendering and the project summary you can send
+              us — word for word.
             </p>
           </Field>
 
@@ -481,6 +516,63 @@ export default function Configurator() {
                         }`}
                       >
                         {p.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <p className="eyebrow mb-3 text-ink/45">Windows</p>
+                  <div className="flex flex-wrap gap-2">
+                    {WINDOW_STYLES.map((w) => (
+                      <button
+                        key={w.id}
+                        type="button"
+                        onClick={() => setWindowStyle(w.id)}
+                        aria-pressed={windowStyle === w.id}
+                        title={w.blurb}
+                        className={`border p-4 text-left transition-colors ${
+                          windowStyle === w.id
+                            ? 'border-ink bg-ink text-bone'
+                            : 'border-ink/15 bg-white/50 hover:border-ink/45'
+                        }`}
+                      >
+                        <span className="block font-display text-[0.78rem] font-bold uppercase tracking-[0.08em]">
+                          {w.label}
+                        </span>
+                        <span
+                          className={`mt-1.5 block text-xs leading-snug ${
+                            windowStyle === w.id ? 'text-bone/60' : 'text-ink/55'
+                          }`}
+                        >
+                          {w.blurb}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <p className="eyebrow mb-3 text-ink/45">Door colour</p>
+                  <div className="flex flex-wrap gap-2">
+                    {DOOR_COLORS.map((d) => (
+                      <button
+                        key={d.id}
+                        type="button"
+                        onClick={() => setDoorColor(d.id)}
+                        aria-pressed={doorColor === d.id}
+                        aria-label={d.label}
+                        title={d.label}
+                        className={`flex items-center gap-2.5 border py-2 pl-2 pr-4 transition-colors ${
+                          doorColor === d.id ? 'border-ink' : 'border-ink/15 hover:border-ink/45'
+                        }`}
+                      >
+                        <span
+                          className="h-7 w-7 border border-black/15"
+                          style={{ backgroundColor: d.hex }}
+                          aria-hidden="true"
+                        />
+                        <span className="text-xs font-medium">{d.label}</span>
                       </button>
                     ))}
                   </div>

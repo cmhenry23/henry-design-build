@@ -16,11 +16,13 @@ import {
   ADD_ONS,
   BUILD_TYPES,
   CLADDINGS,
+  DOOR_COLORS,
   FINISH_LEVELS,
   PITCHES,
   ROOFS,
   SEASONS,
   SITE_ACCESS,
+  WINDOW_STYLES,
   type BuildTypeId,
   type FinishLevelId,
   type SeasonId,
@@ -73,6 +75,9 @@ export interface Brief {
   cladding: string;
   roof: string;
   pitch: string;
+  /** Configurator-only visual choices — same reasoning as CustomPaletteColors. */
+  windowStyle: string;
+  doorColor: string;
   location: string;
   timeline: string;
   name: string;
@@ -96,6 +101,8 @@ export const EMPTY_BRIEF: Brief = {
   cladding: 'charcoal',
   roof: 'steel-black',
   pitch: 'classic',
+  windowStyle: 'divided',
+  doorColor: 'white',
   location: '',
   timeline: '',
   name: '',
@@ -131,6 +138,8 @@ export function resolveBrief(brief: Brief) {
     cladding: CLADDINGS.find((c) => c.id === brief.cladding) ?? CLADDINGS[0],
     roof: ROOFS.find((r) => r.id === brief.roof) ?? ROOFS[0],
     pitch: PITCHES.find((p) => p.id === brief.pitch) ?? PITCHES[1],
+    windowStyle: WINDOW_STYLES.find((w) => w.id === brief.windowStyle) ?? WINDOW_STYLES[0],
+    doorColor: DOOR_COLORS.find((d) => d.id === brief.doorColor) ?? DOOR_COLORS[0],
   };
 }
 

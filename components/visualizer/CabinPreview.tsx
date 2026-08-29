@@ -10,13 +10,14 @@ import { useId } from 'react';
  * This is deliberately a stylised sketch, not a rendering. It is here to
  * make choices feel real, not to represent a finished design.
  *
- * The exterior scene is also directly touch-interactive: the walls, roof
- * and gable peak are tappable regions that cycle straight to the next
- * cladding, roof material or pitch, and the chimney/gable/entry each carry
- * a small always-visible badge that toggles that add-on. All of it is
- * optional — every handler prop defaults to undefined, so the mini preview
- * used elsewhere (e.g. the intake brief card) renders exactly as before
- * with no tappable regions at all.
+ * The exterior scene is also directly touch-interactive: the walls, roof,
+ * gable peak, windows and door are all tappable regions that cycle
+ * straight to the next cladding, roof material, pitch, window style or
+ * door colour, and the chimney/gable/entry each carry a small
+ * always-visible badge that toggles that add-on. All of it is optional —
+ * every handler prop defaults to undefined, so the mini preview used
+ * elsewhere (e.g. the intake brief card) renders exactly as before with no
+ * tappable regions at all.
  */
 
 /**
@@ -37,12 +38,20 @@ interface PreviewProps {
   hasLoft: boolean;
   hasFireplace: boolean;
   scene: PreviewScene;
+  /** WINDOW_STYLES id — 'divided' (4-pane grid), 'picture' (single pane) or 'modern' (black frame). Defaults to 'divided'. */
+  windowStyle?: string;
+  /** Door fill colour + label for the hotspot's accessible name. Defaults to white. */
+  doorColor?: { hex: string; label: string };
   /** Tap the walls → next cladding colour. */
   onCycleCladding?: () => void;
   /** Tap the roof planes → next roof material. */
   onCycleRoof?: () => void;
   /** Tap the gable peak → next roof pitch. */
   onCyclePitch?: () => void;
+  /** Tap a window → next window style. */
+  onCycleWindowStyle?: () => void;
+  /** Tap the door → next door colour. */
+  onCycleDoorColor?: () => void;
   /** Tap the deck/entry badge — only rendered when provided. */
   onToggleDeck?: () => void;
   /** Tap the chimney badge — only rendered when provided. */
@@ -62,9 +71,13 @@ export default function CabinPreview({
   hasLoft,
   hasFireplace,
   scene,
+  windowStyle = 'divided',
+  doorColor = { hex: '#F2F0EC', label: 'white' },
   onCycleCladding,
   onCycleRoof,
   onCyclePitch,
+  onCycleWindowStyle,
+  onCycleDoorColor,
   onToggleDeck,
   onToggleFireplace,
   onToggleLoft,
@@ -92,7 +105,14 @@ export default function CabinPreview({
   // read-only mini preview elsewhere (e.g. the chat intake brief card),
   // which never passes these props — so it renders identically to before.
   const interactive = Boolean(
-    onCycleCladding || onCycleRoof || onCyclePitch || onToggleDeck || onToggleFireplace || onToggleLoft
+    onCycleCladding ||
+      onCycleRoof ||
+      onCyclePitch ||
+      onCycleWindowStyle ||
+      onCycleDoorColor ||
+      onToggleDeck ||
+      onToggleFireplace ||
+      onToggleLoft
   );
 
   // Building geometry
@@ -163,7 +183,7 @@ export default function CabinPreview({
       }
     >
       {interactive && (
-        <title>{`Sketch of a building with ${cladding.label.toLowerCase()} cladding and a ${roof.label.toLowerCase()} roof, approximately ${sqft} square feet. Tap the walls, roof, gable peak or the pin icons to change them.`}</title>
+        <title>{`Sketch of a building with ${cladding.label.toLowerCase()} cladding and a ${roof.label.toLowerCase()} roof, approximately ${sqft} square feet. Tap the walls, roof, gable peak, windows, door or the pin icons to change them.`}</title>
       )}
       <defs>
         {interactive && (
@@ -185,10 +205,19 @@ export default function CabinPreview({
           <stop offset="0%" stopColor="#F2C879" stopOpacity="0.95" />
           <stop offset="100%" stopColor="#E8A94F" stopOpacity="0.6" />
         </linearGradient>
+        {/* One-directional — light from the left, like real raking light,
+            instead of a symmetric vignette dark on both edges. */}
         <linearGradient id={`roofShade-${uid}`} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#000" stopOpacity="0.22" />
-          <stop offset="50%" stopColor="#000" stopOpacity="0" />
-          <stop offset="100%" stopColor="#000" stopOpacity="0.28" />
+          <stop offset="0%" stopColor="#fff" stopOpacity="0.1" />
+          <stop offset="45%" stopColor="#000" stopOpacity="0.05" />
+          <stop offset="100%" stopColor="#000" stopOpacity="0.4" />
+        </linearGradient>
+        {/* Same left-lit logic on the walls, so the building reads as one
+            lit volume rather than a flat colour swatch. */}
+        <linearGradient id={`wallShade-${uid}`} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#fff" stopOpacity="0.08" />
+          <stop offset="40%" stopColor="#000" stopOpacity="0" />
+          <stop offset="100%" stopColor="#000" stopOpacity="0.32" />
         </linearGradient>
         <clipPath id={`wallClip-${uid}`}>
           <rect x={left} y={wallTop} width={bodyW} height={wallH} />
@@ -204,26 +233,37 @@ export default function CabinPreview({
       <rect width={VB_W} height={VB_H} fill={`url(#sky-${uid})`} />
       <circle cx="655" cy="88" r="26" fill="#F6F2EB" opacity="0.14" />
 
-      {/* Far treeline */}
-      <g opacity="0.45" fill="#16211C">
-        {Array.from({ length: 30 }).map((_, i) => {
-          const x = i * 28 - 10;
+      {/* Far treeline — layered conifers, not flat triangles */}
+      <g opacity="0.45">
+        {Array.from({ length: 26 }).map((_, i) => {
+          const x = i * 32 - 10;
           const h = 74 + ((i * 37) % 62);
-          return <polygon key={i} points={`${x},${groundY} ${x + 15},${groundY - h} ${x + 30},${groundY}`} />;
+          const lean = ((i * 19) % 7) - 3;
+          return <Conifer key={i} x={x} baseY={groundY} h={h} w={h * 0.4} lean={lean} fill="#16211C" />;
         })}
       </g>
       {/* Near treeline */}
-      <g opacity="0.75" fill="#0E1714">
-        {Array.from({ length: 20 }).map((_, i) => {
-          const x = i * 43 - 20;
+      <g opacity="0.78">
+        {Array.from({ length: 17 }).map((_, i) => {
+          const x = i * 50 - 20;
           const h = 100 + ((i * 53) % 86);
-          return <polygon key={i} points={`${x},${groundY + 8} ${x + 22},${groundY - h} ${x + 44},${groundY + 8}`} />;
+          const lean = ((i * 23) % 9) - 4;
+          return <Conifer key={i} x={x} baseY={groundY + 6} h={h} w={h * 0.44} lean={lean} fill="#0E1714" />;
         })}
       </g>
 
       {/* Ground */}
       <rect x="0" y={groundY} width={VB_W} height={VB_H - groundY} fill="#232B24" />
       <rect x="0" y={groundY} width={VB_W} height="3" fill="#000" opacity="0.3" />
+      {/* Grass texture — short varied strokes instead of a flat colour block */}
+      <g stroke="#3A4A34" strokeWidth="1.2" strokeLinecap="round" opacity="0.4">
+        {Array.from({ length: 70 }).map((_, i) => {
+          const gx = (i * 47) % VB_W;
+          const gy = groundY + 8 + ((i * 31) % (VB_H - groundY - 12));
+          const glen = 3 + ((i * 13) % 5);
+          return <line key={i} x1={gx} y1={gy} x2={gx + 1.5} y2={gy - glen} />;
+        })}
+      </g>
 
       {/* Soft contact shadow under the footprint */}
       <ellipse
@@ -309,8 +349,11 @@ export default function CabinPreview({
         ))}
       </g>
       {/* Corner trim boards */}
-      <rect x={left} y={wallTop} width="9" height={wallH} fill={cladding.trim} opacity="0.9" />
-      <rect x={right - 9} y={wallTop} width="9" height={wallH} fill={cladding.trim} opacity="0.9" />
+      <rect x={left} y={wallTop} width="6" height={wallH} fill={cladding.trim} opacity="0.9" />
+      <rect x={right - 6} y={wallTop} width="6" height={wallH} fill={cladding.trim} opacity="0.9" />
+      {/* Directional light overlay — makes the wall read as a lit volume,
+          not a flat colour swatch */}
+      <rect x={left} y={wallTop} width={bodyW} height={wallH} fill={`url(#wallShade-${uid})`} />
       {/* Frieze board — trim strip where the wall meets the eave */}
       <rect x={left} y={wallTop} width={bodyW} height="6" fill={cladding.trim} opacity="0.85" />
       {/* Foundation — poured band where the wall meets grade */}
@@ -391,7 +434,7 @@ export default function CabinPreview({
         x2={cx}
         y2={ridgeY}
         stroke={cladding.trim}
-        strokeWidth="5"
+        strokeWidth="3.5"
       />
       <line
         x1={right + eaveOverhang}
@@ -399,7 +442,7 @@ export default function CabinPreview({
         x2={cx}
         y2={ridgeY}
         stroke={cladding.trim}
-        strokeWidth="5"
+        strokeWidth="3.5"
       />
       {/* Gutter — thin line just under the fascia, both sides */}
       <line
@@ -445,26 +488,25 @@ export default function CabinPreview({
       {/* Windows */}
       {[...leftWindows, ...rightWindows].map((x, i) => (
         <g key={i}>
-          <rect x={x - 3} y={groundY - 96} width={winW + 6} height={winH + 6} fill={cladding.trim} />
-          <rect x={x} y={groundY - 93} width={winW} height={winH} fill={`url(#glow-${uid})`} />
-          <line
-            x1={x + winW / 2}
-            y1={groundY - 93}
-            x2={x + winW / 2}
-            y2={groundY - 93 + winH}
-            stroke={cladding.trim}
-            strokeWidth="2"
+          <WindowPane
+            x={x}
+            y={groundY - 93}
+            w={winW}
+            h={winH}
+            uid={uid}
+            trim={cladding.trim}
+            style={windowStyle}
           />
           {/* Light spilling onto the ground */}
           <polygon
             points={`${x},${groundY} ${x + winW},${groundY} ${x + winW + 16},${groundY + 26} ${x - 16},${groundY + 26}`}
             fill="#F2C879"
-            opacity="0.07"
+            opacity="0.06"
           />
         </g>
       ))}
 
-      {/* Door */}
+      {/* Door — panel colour adapts so the inset detail still reads against a dark door */}
       <rect
         x={cx - doorW / 2 - 4}
         y={groundY - doorH - 4}
@@ -479,11 +521,17 @@ export default function CabinPreview({
         y={groundY - doorH}
         width={doorW}
         height={doorH}
-        fill="#F2F0EC"
+        fill={doorColor.hex}
         stroke="#000"
         strokeOpacity="0.22"
       />
-      <rect x={cx - doorW / 2 + 7} y={groundY - doorH + 9} width={doorW - 14} height="20" fill="#2B2E33" />
+      <rect
+        x={cx - doorW / 2 + 7}
+        y={groundY - doorH + 9}
+        width={doorW - 14}
+        height="20"
+        fill={isDarkHex(doorColor.hex) ? '#54514C' : '#2B2E33'}
+      />
       <line
         x1={cx - doorW / 2 + 7}
         y1={groundY - doorH + 19}
@@ -500,11 +548,11 @@ export default function CabinPreview({
         stroke="#F2F0EC"
         strokeWidth="1.5"
       />
-      <circle cx={cx + doorW / 2 - 8} cy={groundY - doorH / 2 + 6} r="2.5" fill="#8A8F94" />
+      <circle cx={cx + doorW / 2 - 8} cy={groundY - doorH / 2 + 6} r="2.5" fill="#C9CDCF" />
 
       {/* Sconce */}
-      <circle cx={cx} cy={wallTop + 22} r="4" fill="#F2C879" opacity="0.9" />
-      <circle cx={cx} cy={wallTop + 22} r="13" fill="#F2C879" opacity="0.14" />
+      <circle cx={cx} cy={wallTop + 22} r="3.5" fill="#F2C879" opacity="0.9" />
+      <circle cx={cx} cy={wallTop + 22} r="9" fill="#F2C879" opacity="0.12" />
 
       {/* Scale figure — gives the size slider meaning */}
       <g opacity="0.5" fill="#0B0F0D" transform={`translate(${right + 52}, ${groundY})`}>
@@ -556,6 +604,36 @@ export default function CabinPreview({
               <circle cx={cx} cy={ridgeY - 16} r="9" fill="none" stroke="#F2C879" strokeWidth="1.5" opacity="0.55" />
             </g>
           )}
+          {onCycleWindowStyle && (
+            <rect
+              className={`hdb-zone-${uid}`}
+              x={left + 4}
+              y={groundY - 100}
+              width={bodyW - 8}
+              height={winH + 14}
+              role="button"
+              tabIndex={0}
+              aria-label={`Change window style — currently ${windowStyle}`}
+              onClick={onCycleWindowStyle}
+              onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), onCycleWindowStyle())}
+            />
+          )}
+          {/* Drawn after the window zone so a tap directly on the door wins
+              the overlapping region between the two. */}
+          {onCycleDoorColor && (
+            <rect
+              className={`hdb-zone-${uid}`}
+              x={cx - doorW / 2 - 4}
+              y={groundY - doorH - 4}
+              width={doorW + 8}
+              height={doorH + 4}
+              role="button"
+              tabIndex={0}
+              aria-label={`Change door colour — currently ${doorColor.label}`}
+              onClick={onCycleDoorColor}
+              onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), onCycleDoorColor())}
+            />
+          )}
           {onToggleFireplace && (
             <ToggleBadge
               uid={uid}
@@ -589,6 +667,97 @@ export default function CabinPreview({
         </g>
       )}
     </svg>
+  );
+}
+
+/** True for a colour dark enough that light detail lines need a lighter backing to still read. */
+function isDarkHex(hex: string): boolean {
+  const c = hex.replace('#', '');
+  const r = parseInt(c.slice(0, 2), 16);
+  const g = parseInt(c.slice(2, 4), 16);
+  const b = parseInt(c.slice(4, 6), 16);
+  return 0.299 * r + 0.587 * g + 0.114 * b < 140;
+}
+
+/**
+ * One window: frame, glass with a soft interior glow, a faint diagonal
+ * reflection streak, and mullions that vary by style — a 2x2 grid for
+ * 'divided', none for 'picture', or a single black bar for 'modern'.
+ */
+function WindowPane({
+  x,
+  y,
+  w,
+  h,
+  uid,
+  trim,
+  style,
+}: {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  uid: string;
+  trim: string;
+  style: string;
+}) {
+  const frame = style === 'modern' ? '#232322' : trim;
+  const frameW = style === 'modern' ? 2.5 : 3;
+  return (
+    <g>
+      <rect x={x - frameW} y={y - frameW} width={w + frameW * 2} height={h + frameW * 2} fill={frame} />
+      <rect x={x} y={y} width={w} height={h} fill={`url(#glow-${uid})`} />
+      <polygon points={`${x},${y} ${x + w * 0.42},${y} ${x},${y + h * 0.55}`} fill="#fff" opacity="0.09" />
+      {style === 'divided' && (
+        <>
+          <line x1={x + w / 2} y1={y} x2={x + w / 2} y2={y + h} stroke={trim} strokeWidth="1.75" />
+          <line x1={x} y1={y + h / 2} x2={x + w} y2={y + h / 2} stroke={trim} strokeWidth="1.75" />
+        </>
+      )}
+      {style === 'modern' && (
+        <line x1={x} y1={y + h / 2} x2={x + w} y2={y + h / 2} stroke="#232322" strokeWidth="1.75" />
+      )}
+    </g>
+  );
+}
+
+/**
+ * A layered conifer silhouette — three overlapping, narrowing triangular
+ * tiers plus a trunk sliver, instead of one flat triangle. `lean` nudges the
+ * apex left/right a few pixels per tree so a whole treeline doesn't read as
+ * one shape stamped on repeat.
+ */
+function Conifer({
+  x,
+  baseY,
+  h,
+  w,
+  lean = 0,
+  fill,
+}: {
+  x: number;
+  baseY: number;
+  h: number;
+  w: number;
+  lean?: number;
+  fill: string;
+}) {
+  const tiers = [0, 0.5, 1].map((frac) => ({
+    tierW: w * (1 - frac * 0.55),
+    topY: baseY - h * (0.42 + frac * 0.5),
+    baseTierY: baseY - h * frac * 0.42,
+    apexX: x + lean * frac,
+  }));
+  return (
+    <g fill={fill}>
+      {tiers.map((t, i) => (
+        <polygon
+          key={i}
+          points={`${t.apexX},${t.topY} ${x + t.tierW / 2},${t.baseTierY} ${x - t.tierW / 2},${t.baseTierY}`}
+        />
+      ))}
+      <rect x={x - w * 0.04} y={baseY - h * 0.06} width={w * 0.08} height={h * 0.07} />
+    </g>
   );
 }
 
