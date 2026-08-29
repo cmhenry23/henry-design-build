@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { footprintFor } from '@/lib/geometry';
 import type { BuildTypeId } from '@/lib/estimate';
 import type { PreviewScene } from '@/components/visualizer/CabinPreview';
@@ -17,6 +17,12 @@ import type { PreviewScene } from '@/components/visualizer/CabinPreview';
  * genuinely editable: drag a wall to resize the rooms either side of it,
  * tap a wall (without dragging) to remove it, or add a new one. Dimensions
  * are computed live from wherever the walls actually are, not fixed text.
+ *
+ * On top of that — for every scene — the toolbar below lets a visitor drop
+ * in a room, a window, a run of cabinets or a fireplace and drag it
+ * anywhere on the plan. These are a separate, freeform layer from the
+ * structural walls above: they don't cut into the room breakdown, they're
+ * just markers you can place and move.
  */
 export default function FloorPlan({
   buildType,
@@ -54,14 +60,44 @@ export default function FloorPlan({
   const accent = '#4C7DA8';
   const wallW = 3;
 
+  // Freeform items — rooms, windows, cabinets, fireplaces — dropped in from
+  // the toolbar and dragged into place. Reset whenever the build type
+  // changes, so leftover items from a kitchen don't linger on a cottage.
+  const [items, setItems] = useState<PlacedItem[]>([]);
+  useEffect(() => setItems([]), [buildType]);
+
+  function addItem(type: ItemType) {
+    const def = ITEM_DEFS[type];
+    setItems((prev) => {
+      const n = prev.length;
+      const xFt = clamp(width / 2 + ((n % 3) - 1) * (def.wFt + 3), def.wFt / 2 + 1, width - def.wFt / 2 - 1);
+      const yFt = clamp(
+        depth / 2 + Math.floor(n / 3) * (def.hFt + 3) - depth / 4,
+        def.hFt / 2 + 1,
+        depth - def.hFt / 2 - 1
+      );
+      const id = `${type}-${Date.now()}-${n}`;
+      return [...prev, { id, type, xFt, yFt, wFt: def.wFt, hFt: def.hFt }];
+    });
+  }
+
+  function moveItem(id: string, xFt: number, yFt: number) {
+    setItems((prev) => prev.map((it) => (it.id === id ? { ...it, xFt, yFt } : it)));
+  }
+
+  function removeItem(id: string) {
+    setItems((prev) => prev.filter((it) => it.id !== id));
+  }
+
   return (
+    <>
     <svg
       viewBox={`0 0 ${VB_W} ${VB_H}`}
       className="h-auto w-full"
       role="img"
       aria-label={`Floor plan, approximately ${width} by ${depth} feet, ${sqft} square feet${
         scene === 'exterior' ? '. Interior walls are draggable — resize, add or remove them.' : ''
-      }`}
+      }${items.length ? `. ${items.length} item${items.length > 1 ? 's' : ''} placed on the plan — drag to move, tap to remove.` : ''}`}
     >
       <rect width={VB_W} height={VB_H} fill="#EAEAEE" />
 
@@ -211,7 +247,49 @@ export default function FloorPlan({
           10 ft
         </text>
       </g>
+
+      {/* Freeform items, dropped in from the toolbar — drawn last so they
+          sit on top of the structural walls and fixtures above. */}
+      {items.map((item) => (
+        <DraggableItem
+          key={item.id}
+          item={item}
+          x0={x0}
+          y0={y0}
+          scale={scale}
+          width={width}
+          depth={depth}
+          onMove={(xFt, yFt) => moveItem(item.id, xFt, yFt)}
+          onRemove={() => removeItem(item.id)}
+        />
+      ))}
     </svg>
+
+    <div className="flex flex-wrap items-center gap-2 border-t border-ink/10 bg-white/60 px-4 py-3">
+      <span className="mr-1 font-display text-[0.65rem] font-bold uppercase tracking-[0.12em] text-ink/45">
+        Add to the plan
+      </span>
+      {(Object.keys(ITEM_DEFS) as ItemType[]).map((type) => (
+        <button
+          key={type}
+          type="button"
+          onClick={() => addItem(type)}
+          className="border border-ink/20 bg-white px-3 py-1.5 text-xs font-medium text-ink/75 transition-colors hover:border-ink hover:bg-ink hover:text-bone"
+        >
+          + {ITEM_DEFS[type].label}
+        </button>
+      ))}
+      {items.length > 0 && (
+        <button
+          type="button"
+          onClick={() => setItems([])}
+          className="ml-auto text-xs text-ink/40 underline underline-offset-2 hover:text-ink/70"
+        >
+          Clear added items
+        </button>
+      )}
+    </div>
+    </>
   );
 }
 
@@ -361,6 +439,161 @@ function WallHandle({
 const clamp = (n: number, min: number, max: number) => Math.min(max, Math.max(min, n));
 
 const feet = (px: number, scale: number) => Math.max(1, Math.round(px / scale));
+
+/* ── Freeform items — added from the toolbar, dragged anywhere on the plan ── */
+
+type ItemType = 'room' | 'window' | 'cabinets' | 'fireplace';
+
+interface PlacedItem {
+  id: string;
+  type: ItemType;
+  /** Centre, in feet from the building's top-left corner. */
+  xFt: number;
+  yFt: number;
+  wFt: number;
+  hFt: number;
+}
+
+const ITEM_DEFS: Record<ItemType, { wFt: number; hFt: number; label: string; fill: string; stroke: string }> = {
+  room: { wFt: 10, hFt: 10, label: 'Room', fill: '#FFFFFF', stroke: '#14110F' },
+  window: { wFt: 3, hFt: 0.6, label: 'Window', fill: '#4C7DA8', stroke: '#14110F' },
+  cabinets: { wFt: 8, hFt: 2, label: 'Cabinets', fill: '#E8DFCF', stroke: '#14110F' },
+  fireplace: { wFt: 4, hFt: 2, label: 'Fireplace', fill: '#B7A99A', stroke: '#14110F' },
+};
+
+/**
+ * A dropped-in item, freely draggable in two dimensions (unlike
+ * `WallHandle`, which only slides along one axis). Same interaction model
+ * otherwise: a genuine drag moves it, a tap with no movement removes it.
+ */
+function DraggableItem({
+  item,
+  x0,
+  y0,
+  scale,
+  width,
+  depth,
+  onMove,
+  onRemove,
+}: {
+  item: PlacedItem;
+  x0: number;
+  y0: number;
+  scale: number;
+  width: number;
+  depth: number;
+  onMove: (xFt: number, yFt: number) => void;
+  onRemove: () => void;
+}) {
+  const startRef = useRef<{ x: number; y: number } | null>(null);
+  const movedRef = useRef(false);
+  const def = ITEM_DEFS[item.type];
+
+  const cx = x0 + item.xFt * scale;
+  const cy = y0 + item.yFt * scale;
+  const w = item.wFt * scale;
+  const h = item.hFt * scale;
+
+  function handlePointerDown(e: React.PointerEvent<SVGGElement>) {
+    e.stopPropagation();
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch {
+      /* proceed uncaptured */
+    }
+    startRef.current = { x: e.clientX, y: e.clientY };
+    movedRef.current = false;
+  }
+
+  function handlePointerMove(e: React.PointerEvent<SVGGElement>) {
+    if (!startRef.current) return;
+    const dx = e.clientX - startRef.current.x;
+    const dy = e.clientY - startRef.current.y;
+    if (Math.abs(dx) + Math.abs(dy) > 3) movedRef.current = true;
+    const svg = e.currentTarget.ownerSVGElement!;
+    const rect = svg.getBoundingClientRect();
+    const vb = svg.viewBox.baseVal;
+    const svgX = ((e.clientX - rect.left) / rect.width) * vb.width + vb.x;
+    const svgY = ((e.clientY - rect.top) / rect.height) * vb.height + vb.y;
+    const xFt = clamp((svgX - x0) / scale, item.wFt / 2, width - item.wFt / 2);
+    const yFt = clamp((svgY - y0) / scale, item.hFt / 2, depth - item.hFt / 2);
+    onMove(xFt, yFt);
+  }
+
+  function handlePointerUp(e: React.PointerEvent<SVGGElement>) {
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    } catch {
+      /* wasn't captured — nothing to release */
+    }
+    if (!movedRef.current) onRemove();
+    startRef.current = null;
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<SVGGElement>) {
+    const nudge = 0.5;
+    if (e.key === 'ArrowLeft') onMove(clamp(item.xFt - nudge, item.wFt / 2, width - item.wFt / 2), item.yFt);
+    else if (e.key === 'ArrowRight') onMove(clamp(item.xFt + nudge, item.wFt / 2, width - item.wFt / 2), item.yFt);
+    else if (e.key === 'ArrowUp') onMove(item.xFt, clamp(item.yFt - nudge, item.hFt / 2, depth - item.hFt / 2));
+    else if (e.key === 'ArrowDown') onMove(item.xFt, clamp(item.yFt + nudge, item.hFt / 2, depth - item.hFt / 2));
+    else if (e.key === 'Delete' || e.key === 'Backspace') onRemove();
+    else return;
+    e.preventDefault();
+  }
+
+  return (
+    <g
+      role="button"
+      tabIndex={0}
+      aria-label={`${def.label} — drag to move, or activate to remove it`}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onKeyDown={handleKeyDown}
+      style={{ cursor: 'grab', touchAction: 'none' }}
+    >
+      <rect
+        x={cx - w / 2}
+        y={cy - h / 2}
+        width={w}
+        height={h}
+        rx="2"
+        fill={def.fill}
+        stroke={def.stroke}
+        strokeWidth="1.5"
+        opacity="0.95"
+      />
+      {item.type === 'cabinets' && (
+        <g stroke={def.stroke} strokeOpacity="0.3" strokeWidth="1">
+          {Array.from({ length: Math.max(2, Math.round(item.wFt / 2)) }).map((_, i, arr) => (
+            <line
+              key={i}
+              x1={cx - w / 2 + ((i + 1) * w) / (arr.length + 1)}
+              y1={cy - h / 2}
+              x2={cx - w / 2 + ((i + 1) * w) / (arr.length + 1)}
+              y2={cy + h / 2}
+            />
+          ))}
+        </g>
+      )}
+      {item.type !== 'window' && (
+        <text
+          x={cx}
+          y={cy}
+          textAnchor="middle"
+          dominantBaseline="middle"
+          fontSize="9"
+          fill={def.stroke}
+          opacity="0.75"
+          pointerEvents="none"
+          style={{ letterSpacing: '0.04em' }}
+        >
+          {def.label.toUpperCase()}
+        </text>
+      )}
+    </g>
+  );
+}
 
 const REAR_LABELS: Record<string, string[]> = {
   cottage: ['BEDROOM', 'BATH', 'BEDROOM', 'STORAGE'],
