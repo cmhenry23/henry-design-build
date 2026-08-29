@@ -19,10 +19,12 @@ import type { PreviewScene } from '@/components/visualizer/CabinPreview';
  * are computed live from wherever the walls actually are, not fixed text.
  *
  * On top of that — for every scene — the toolbar below lets a visitor drop
- * in a room, a window, a run of cabinets or a fireplace and drag it
- * anywhere on the plan. These are a separate, freeform layer from the
- * structural walls above: they don't cut into the room breakdown, they're
- * just markers you can place and move.
+ * in a room, a window, a run of cabinets or a fireplace (or type their own
+ * label for anything else — a mudroom, a pantry, whatever) and drag it
+ * anywhere on the plan, or resize it from its bottom-right corner. These
+ * are a separate, freeform layer from the structural walls above: they
+ * don't cut into the room breakdown, they're just markers you can place,
+ * move and resize.
  */
 export default function FloorPlan({
   buildType,
@@ -60,13 +62,15 @@ export default function FloorPlan({
   const accent = '#4C7DA8';
   const wallW = 3;
 
-  // Freeform items — rooms, windows, cabinets, fireplaces — dropped in from
-  // the toolbar and dragged into place. Reset whenever the build type
-  // changes, so leftover items from a kitchen don't linger on a cottage.
+  // Freeform items — rooms, windows, cabinets, fireplaces, or anything
+  // typed into the toolbar's own prompt — dropped in and dragged into
+  // place. Reset whenever the build type changes, so leftover items from a
+  // kitchen don't linger on a cottage.
   const [items, setItems] = useState<PlacedItem[]>([]);
+  const [customLabel, setCustomLabel] = useState('');
   useEffect(() => setItems([]), [buildType]);
 
-  function addItem(type: ItemType) {
+  function addItem(type: ItemType, label?: string) {
     const def = ITEM_DEFS[type];
     setItems((prev) => {
       const n = prev.length;
@@ -77,12 +81,32 @@ export default function FloorPlan({
         depth - def.hFt / 2 - 1
       );
       const id = `${type}-${Date.now()}-${n}`;
-      return [...prev, { id, type, xFt, yFt, wFt: def.wFt, hFt: def.hFt }];
+      return [...prev, { id, type, xFt, yFt, wFt: def.wFt, hFt: def.hFt, label }];
     });
+  }
+
+  function handleAddCustom(e: React.FormEvent) {
+    e.preventDefault();
+    const trimmed = customLabel.trim();
+    if (!trimmed) return;
+    addItem('custom', trimmed.slice(0, 24));
+    setCustomLabel('');
   }
 
   function moveItem(id: string, xFt: number, yFt: number) {
     setItems((prev) => prev.map((it) => (it.id === id ? { ...it, xFt, yFt } : it)));
+  }
+
+  /** Resizes from the bottom-right corner, so the top-left corner stays put. */
+  function resizeItem(id: string, wFt: number, hFt: number) {
+    setItems((prev) =>
+      prev.map((it) => {
+        if (it.id !== id) return it;
+        const leftFt = it.xFt - it.wFt / 2;
+        const topFt = it.yFt - it.hFt / 2;
+        return { ...it, wFt, hFt, xFt: leftFt + wFt / 2, yFt: topFt + hFt / 2 };
+      })
+    );
   }
 
   function removeItem(id: string) {
@@ -260,34 +284,61 @@ export default function FloorPlan({
           width={width}
           depth={depth}
           onMove={(xFt, yFt) => moveItem(item.id, xFt, yFt)}
+          onResize={(wFt, hFt) => resizeItem(item.id, wFt, hFt)}
           onRemove={() => removeItem(item.id)}
         />
       ))}
     </svg>
 
-    <div className="flex flex-wrap items-center gap-2 border-t border-ink/10 bg-white/60 px-4 py-3">
-      <span className="mr-1 font-display text-[0.65rem] font-bold uppercase tracking-[0.12em] text-ink/45">
-        Add to the plan
-      </span>
-      {(Object.keys(ITEM_DEFS) as ItemType[]).map((type) => (
+    <div className="border-t border-ink/10 bg-white/60 px-4 py-3">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="mr-1 font-display text-[0.65rem] font-bold uppercase tracking-[0.12em] text-ink/45">
+          Add to the plan
+        </span>
+        {(Object.keys(ITEM_DEFS) as ItemType[])
+          .filter((type) => type !== 'custom')
+          .map((type) => (
+            <button
+              key={type}
+              type="button"
+              onClick={() => addItem(type)}
+              className="border border-ink/20 bg-white px-3 py-1.5 text-xs font-medium text-ink/75 transition-colors hover:border-ink hover:bg-ink hover:text-bone"
+            >
+              + {ITEM_DEFS[type].label}
+            </button>
+          ))}
+        {items.length > 0 && (
+          <button
+            type="button"
+            onClick={() => setItems([])}
+            className="ml-auto text-xs text-ink/40 underline underline-offset-2 hover:text-ink/70"
+          >
+            Clear added items
+          </button>
+        )}
+      </div>
+
+      <form onSubmit={handleAddCustom} className="mt-2.5 flex items-center gap-2">
+        <input
+          type="text"
+          value={customLabel}
+          onChange={(e) => setCustomLabel(e.target.value)}
+          placeholder="Or type something else to add — e.g. Mudroom, Pantry, Deck"
+          maxLength={24}
+          className="min-w-0 flex-1 border border-ink/20 bg-white px-3 py-1.5 text-xs placeholder:text-ink/35 focus:border-ink focus:outline-none"
+        />
         <button
-          key={type}
-          type="button"
-          onClick={() => addItem(type)}
-          className="border border-ink/20 bg-white px-3 py-1.5 text-xs font-medium text-ink/75 transition-colors hover:border-ink hover:bg-ink hover:text-bone"
+          type="submit"
+          disabled={!customLabel.trim()}
+          className="border border-ink/20 bg-white px-3 py-1.5 text-xs font-medium text-ink/75 transition-colors hover:border-ink hover:bg-ink hover:text-bone disabled:cursor-not-allowed disabled:opacity-40"
         >
-          + {ITEM_DEFS[type].label}
+          + Add
         </button>
-      ))}
-      {items.length > 0 && (
-        <button
-          type="button"
-          onClick={() => setItems([])}
-          className="ml-auto text-xs text-ink/40 underline underline-offset-2 hover:text-ink/70"
-        >
-          Clear added items
-        </button>
-      )}
+      </form>
+
+      <p className="mt-2 text-[0.68rem] leading-relaxed text-ink/40">
+        Drag the corner of anything you&rsquo;ve added to resize it.
+      </p>
     </div>
     </>
   );
@@ -442,7 +493,7 @@ const feet = (px: number, scale: number) => Math.max(1, Math.round(px / scale));
 
 /* ── Freeform items — added from the toolbar, dragged anywhere on the plan ── */
 
-type ItemType = 'room' | 'window' | 'cabinets' | 'fireplace';
+type ItemType = 'room' | 'window' | 'cabinets' | 'fireplace' | 'custom';
 
 interface PlacedItem {
   id: string;
@@ -452,6 +503,8 @@ interface PlacedItem {
   yFt: number;
   wFt: number;
   hFt: number;
+  /** Set for items typed into the toolbar's prompt — overrides the type's default label. */
+  label?: string;
 }
 
 const ITEM_DEFS: Record<ItemType, { wFt: number; hFt: number; label: string; fill: string; stroke: string }> = {
@@ -459,12 +512,15 @@ const ITEM_DEFS: Record<ItemType, { wFt: number; hFt: number; label: string; fil
   window: { wFt: 3, hFt: 0.6, label: 'Window', fill: '#4C7DA8', stroke: '#14110F' },
   cabinets: { wFt: 8, hFt: 2, label: 'Cabinets', fill: '#E8DFCF', stroke: '#14110F' },
   fireplace: { wFt: 4, hFt: 2, label: 'Fireplace', fill: '#B7A99A', stroke: '#14110F' },
+  custom: { wFt: 8, hFt: 8, label: 'Room', fill: '#FFFFFF', stroke: '#14110F' },
 };
 
 /**
  * A dropped-in item, freely draggable in two dimensions (unlike
- * `WallHandle`, which only slides along one axis). Same interaction model
- * otherwise: a genuine drag moves it, a tap with no movement removes it.
+ * `WallHandle`, which only slides along one axis) and resizable from its
+ * bottom-right corner. Same tap-to-remove interaction as everything else
+ * here: drag the body to move it, drag the corner to resize it, tap the
+ * body with no movement to remove it.
  */
 function DraggableItem({
   item,
@@ -474,6 +530,7 @@ function DraggableItem({
   width,
   depth,
   onMove,
+  onResize,
   onRemove,
 }: {
   item: PlacedItem;
@@ -483,11 +540,14 @@ function DraggableItem({
   width: number;
   depth: number;
   onMove: (xFt: number, yFt: number) => void;
+  onResize: (wFt: number, hFt: number) => void;
   onRemove: () => void;
 }) {
   const startRef = useRef<{ x: number; y: number } | null>(null);
   const movedRef = useRef(false);
+  const resizingRef = useRef(false);
   const def = ITEM_DEFS[item.type];
+  const label = item.label ?? def.label;
 
   const cx = x0 + item.xFt * scale;
   const cy = y0 + item.yFt * scale;
@@ -541,56 +601,123 @@ function DraggableItem({
     e.preventDefault();
   }
 
+  // Resize handle — a separate control at the bottom-right corner. It stops
+  // propagation on pointerdown so dragging it never also triggers the move
+  // handlers above; the top-left corner stays fixed while it drags.
+  function handleResizeDown(e: React.PointerEvent<SVGGElement>) {
+    e.stopPropagation();
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch {
+      /* proceed uncaptured */
+    }
+    resizingRef.current = true;
+  }
+
+  function handleResizeMove(e: React.PointerEvent<SVGGElement>) {
+    if (!resizingRef.current) return;
+    const svg = e.currentTarget.ownerSVGElement!;
+    const rect = svg.getBoundingClientRect();
+    const vb = svg.viewBox.baseVal;
+    const svgX = ((e.clientX - rect.left) / rect.width) * vb.width + vb.x;
+    const svgY = ((e.clientY - rect.top) / rect.height) * vb.height + vb.y;
+    const leftFt = item.xFt - item.wFt / 2;
+    const topFt = item.yFt - item.hFt / 2;
+    const wFt = clamp((svgX - x0) / scale - leftFt, 1, width - leftFt);
+    const hFt = clamp((svgY - y0) / scale - topFt, 0.5, depth - topFt);
+    onResize(wFt, hFt);
+  }
+
+  function handleResizeUp(e: React.PointerEvent<SVGGElement>) {
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    } catch {
+      /* wasn't captured — nothing to release */
+    }
+    resizingRef.current = false;
+  }
+
+  function handleResizeKeyDown(e: React.KeyboardEvent<SVGGElement>) {
+    const nudge = 0.5;
+    const leftFt = item.xFt - item.wFt / 2;
+    const topFt = item.yFt - item.hFt / 2;
+    if (e.key === 'ArrowRight') onResize(clamp(item.wFt + nudge, 1, width - leftFt), item.hFt);
+    else if (e.key === 'ArrowLeft') onResize(clamp(item.wFt - nudge, 1, width - leftFt), item.hFt);
+    else if (e.key === 'ArrowDown') onResize(item.wFt, clamp(item.hFt + nudge, 0.5, depth - topFt));
+    else if (e.key === 'ArrowUp') onResize(item.wFt, clamp(item.hFt - nudge, 0.5, depth - topFt));
+    else return;
+    e.preventDefault();
+  }
+
   return (
-    <g
-      role="button"
-      tabIndex={0}
-      aria-label={`${def.label} — drag to move, or activate to remove it`}
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
-      onKeyDown={handleKeyDown}
-      style={{ cursor: 'grab', touchAction: 'none' }}
-    >
-      <rect
-        x={cx - w / 2}
-        y={cy - h / 2}
-        width={w}
-        height={h}
-        rx="2"
-        fill={def.fill}
-        stroke={def.stroke}
-        strokeWidth="1.5"
-        opacity="0.95"
-      />
-      {item.type === 'cabinets' && (
-        <g stroke={def.stroke} strokeOpacity="0.3" strokeWidth="1">
-          {Array.from({ length: Math.max(2, Math.round(item.wFt / 2)) }).map((_, i, arr) => (
-            <line
-              key={i}
-              x1={cx - w / 2 + ((i + 1) * w) / (arr.length + 1)}
-              y1={cy - h / 2}
-              x2={cx - w / 2 + ((i + 1) * w) / (arr.length + 1)}
-              y2={cy + h / 2}
-            />
-          ))}
-        </g>
-      )}
-      {item.type !== 'window' && (
-        <text
-          x={cx}
-          y={cy}
-          textAnchor="middle"
-          dominantBaseline="middle"
-          fontSize="9"
+    <g>
+      <g
+        role="button"
+        tabIndex={0}
+        aria-label={`${label} — drag to move, or activate to remove it`}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onKeyDown={handleKeyDown}
+        style={{ cursor: 'grab', touchAction: 'none' }}
+      >
+        <rect
+          x={cx - w / 2}
+          y={cy - h / 2}
+          width={w}
+          height={h}
+          rx="2"
+          fill={def.fill}
+          stroke={def.stroke}
+          strokeWidth="1.5"
+          opacity="0.95"
+        />
+        {item.type === 'cabinets' && (
+          <g stroke={def.stroke} strokeOpacity="0.3" strokeWidth="1">
+            {Array.from({ length: Math.max(2, Math.round(item.wFt / 2)) }).map((_, i, arr) => (
+              <line
+                key={i}
+                x1={cx - w / 2 + ((i + 1) * w) / (arr.length + 1)}
+                y1={cy - h / 2}
+                x2={cx - w / 2 + ((i + 1) * w) / (arr.length + 1)}
+                y2={cy + h / 2}
+              />
+            ))}
+          </g>
+        )}
+        {item.type !== 'window' && (
+          <text
+            x={cx}
+            y={cy}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fontSize="9"
+            fill={def.stroke}
+            opacity="0.75"
+            pointerEvents="none"
+            style={{ letterSpacing: '0.04em' }}
+          >
+            {label.toUpperCase()}
+          </text>
+        )}
+      </g>
+      <g
+        role="slider"
+        tabIndex={0}
+        aria-label={`Resize ${label}`}
+        onPointerDown={handleResizeDown}
+        onPointerMove={handleResizeMove}
+        onPointerUp={handleResizeUp}
+        onKeyDown={handleResizeKeyDown}
+        style={{ cursor: 'nwse-resize', touchAction: 'none' }}
+      >
+        <rect x={cx + w / 2 - 11} y={cy + h / 2 - 11} width="16" height="16" fill="#000" opacity="0.001" />
+        <path
+          d={`M ${cx + w / 2 - 7} ${cy + h / 2} L ${cx + w / 2} ${cy + h / 2 - 7} L ${cx + w / 2} ${cy + h / 2} Z`}
           fill={def.stroke}
-          opacity="0.75"
-          pointerEvents="none"
-          style={{ letterSpacing: '0.04em' }}
-        >
-          {def.label.toUpperCase()}
-        </text>
-      )}
+          opacity="0.55"
+        />
+      </g>
     </g>
   );
 }

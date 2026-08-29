@@ -229,8 +229,8 @@ export default function Configurator() {
 
           <p className="border-t border-bone/10 px-5 py-3 text-center text-xs text-bone/45">
             {mode === 'render' && 'An AI image generated from your exact choices — a style reference, not a design.'}
-            {mode === 'plan' && !isInterior && 'Drag a wall to resize a room, tap one to remove it, or use the toolbar below to drop in and drag around a room, window, cabinets or a fireplace — scaled to your numbers, not a real floor plan.'}
-            {mode === 'plan' && isInterior && 'Use the toolbar below to drop in and drag around a room, window, cabinets or a fireplace — scaled to your numbers, not a real floor plan.'}
+            {mode === 'plan' && !isInterior && 'Drag a wall to resize a room, tap one to remove it, or use the toolbar below to drop in, drag and resize a room, window, cabinets, a fireplace, or type your own — scaled to your numbers, not a real floor plan.'}
+            {mode === 'plan' && isInterior && 'Use the toolbar below to drop in, drag and resize a room, window, cabinets, a fireplace, or type your own — scaled to your numbers, not a real floor plan.'}
           </p>
         </div>
 
