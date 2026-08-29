@@ -5,7 +5,6 @@ import { useEffect, useMemo, useState } from 'react';
 import MaterialBoard from '@/components/chat/MaterialBoard';
 import StyleBoard from '@/components/chat/StyleBoard';
 import StyleImage from '@/components/chat/StyleImage';
-import CabinPreview from '@/components/visualizer/CabinPreview';
 import ColorPaletteBuilder from '@/components/visualizer/ColorPaletteBuilder';
 import FloorPlan from '@/components/visualizer/FloorPlan';
 import MaterialDropzone from '@/components/visualizer/MaterialDropzone';
@@ -35,7 +34,7 @@ import {
 } from '@/lib/estimate';
 
 const INTERIOR_TYPES: BuildTypeId[] = ['kitchen', 'bath', 'reno'];
-type PreviewMode = 'elevation' | 'plan' | 'render';
+type PreviewMode = 'render' | 'plan';
 
 export default function Configurator() {
   const [buildType, setBuildType] = useState<BuildTypeId>('cottage');
@@ -56,7 +55,7 @@ export default function Configurator() {
   const [materials, setMaterials] = useState<string[]>([]);
   const [customMaterials, setCustomMaterials] = useState<CustomMaterial[]>([]);
   const [copied, setCopied] = useState(false);
-  const [mode, setMode] = useState<PreviewMode>('elevation');
+  const [mode, setMode] = useState<PreviewMode>('render');
   const [projectId, setProjectId] = useState<string | null>(null);
   const [skDownloaded, setSkDownloaded] = useState(false);
 
@@ -136,19 +135,10 @@ export default function Configurator() {
     setAddOns((prev) =>
       prev.filter((a) => ADD_ONS.find((x) => x.id === a)?.appliesTo.includes(id))
     );
-    setMode((m) => (m === 'plan' || m === 'render' ? m : 'elevation'));
   }
 
   function toggleAddOn(id: string) {
     setAddOns((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
-  }
-
-  // Backs the elevation drawing's tap-to-customize regions — tapping the
-  // walls or roof advances straight to the next option in the same list the
-  // swatch buttons below use, so the drawing and the form never disagree.
-  function cycleOption<T extends { id: string }>(list: T[], currentId: string, setter: (id: string) => void) {
-    const index = list.findIndex((item) => item.id === currentId);
-    setter(list[(index + 1) % list.length].id);
   }
 
   function toggleMaterial(id: string) {
@@ -202,9 +192,8 @@ export default function Configurator() {
           <div className="flex border-b border-bone/10">
             {(
               [
-                ['elevation', 'Elevation'],
-                ['plan', 'Floor plan'],
                 ['render', 'AI rendering'],
+                ['plan', 'Floor plan'],
               ] as [PreviewMode, string][]
             ).map(([id, label]) => (
               <button
@@ -221,34 +210,11 @@ export default function Configurator() {
             ))}
           </div>
 
-          {/* All three stay mounted so switching tabs never loses a
-              generated rendering or resets its loading state — only
-              visibility toggles. */}
-          <div className={mode === 'elevation' ? '' : 'hidden'}>
-            <CabinPreview
-              cladding={resolved.cladding}
-              roof={resolved.roof}
-              pitch={resolved.pitch.value}
-              sqft={sqft}
-              sizeRatio={sizeRatio}
-              windows={windows}
-              hasDeck={activeAddOns.includes('deck')}
-              hasLoft={activeAddOns.includes('loft')}
-              hasFireplace={activeAddOns.includes('fireplace')}
-              scene={summary.scene}
-              windowStyle={resolved.windowStyle.id}
-              doorColor={resolved.doorColor}
-              onCycleCladding={() => cycleOption(CLADDINGS, cladding, setCladding)}
-              onCycleRoof={() => cycleOption(ROOFS, roof, setRoof)}
-              onCyclePitch={() => cycleOption(PITCHES, pitch, setPitch)}
-              onCycleWindowStyle={() => cycleOption(WINDOW_STYLES, windowStyle, setWindowStyle)}
-              onCycleDoorColor={() => cycleOption(DOOR_COLORS, doorColor, setDoorColor)}
-              onToggleDeck={availableAddOns.some((a) => a.id === 'deck') ? () => toggleAddOn('deck') : undefined}
-              onToggleFireplace={
-                availableAddOns.some((a) => a.id === 'fireplace') ? () => toggleAddOn('fireplace') : undefined
-              }
-              onToggleLoft={availableAddOns.some((a) => a.id === 'loft') ? () => toggleAddOn('loft') : undefined}
-            />
+          {/* Both stay mounted so switching tabs never loses a generated
+              rendering or resets its loading state — only visibility
+              toggles. */}
+          <div className={mode === 'render' ? '' : 'hidden'}>
+            <StyleImage brief={brief} auto={false} />
           </div>
           <div className={mode === 'plan' ? '' : 'hidden'}>
             <FloorPlan
@@ -260,15 +226,11 @@ export default function Configurator() {
               hasLoft={activeAddOns.includes('loft')}
             />
           </div>
-          <div className={mode === 'render' ? '' : 'hidden'}>
-            <StyleImage brief={brief} auto={false} />
-          </div>
 
           <p className="border-t border-bone/10 px-5 py-3 text-center text-xs text-bone/45">
-            {mode === 'elevation' && !isInterior && 'Tap the walls, roof, gable peak, windows, door or a pin to change them — a stylised sketch, not an architectural drawing.'}
-            {mode === 'elevation' && isInterior && 'A stylised sketch to make choices feel real — not an architectural drawing.'}
-            {mode === 'plan' && 'A rough room breakdown, scaled to your numbers — not a real floor plan.'}
             {mode === 'render' && 'An AI image generated from your exact choices — a style reference, not a design.'}
+            {mode === 'plan' && !isInterior && 'Drag a wall to resize a room, tap one to remove it, or tap the + to add one — scaled to your numbers, not a real floor plan.'}
+            {mode === 'plan' && isInterior && 'A rough room breakdown, scaled to your numbers — not a real floor plan.'}
           </p>
         </div>
 

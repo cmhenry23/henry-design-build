@@ -82,7 +82,23 @@ export default function StyleImage({
 
   return (
     <figure className={`m-0 ${className}`}>
-      <div className="relative flex min-h-[12rem] items-center justify-center overflow-hidden bg-ink">
+      <div
+        className="relative flex min-h-[12rem] items-center justify-center overflow-hidden bg-ink"
+        style={
+          state.status !== 'ready'
+            ? {
+                backgroundColor: '#0F2A47',
+                backgroundImage:
+                  'repeating-linear-gradient(0deg, rgba(255,255,255,0.07) 0, rgba(255,255,255,0.07) 1px, transparent 1px, transparent 28px), repeating-linear-gradient(90deg, rgba(255,255,255,0.07) 0, rgba(255,255,255,0.07) 1px, transparent 1px, transparent 28px)',
+              }
+            : undefined
+        }
+      >
+        {/* Blueprint backdrop — a house outline drafted in, waiting to be
+            replaced by the real render. Not shown once a render exists, or
+            behind the actual photo. */}
+        {state.status !== 'ready' && <BlueprintSketch />}
+
         {state.status === 'loading' && (
           <div className="flex flex-col items-center gap-4 px-6 py-14 text-center">
             <span className="flex gap-1.5" aria-hidden="true">
@@ -167,5 +183,63 @@ export default function StyleImage({
         )}
       </figcaption>
     </figure>
+  );
+}
+
+/**
+ * A drafted-looking house outline behind the idle/loading/error states, so
+ * "nothing has been generated yet" reads as "your drawing is ready to be
+ * rendered" instead of an empty box. `-z-10` keeps it behind the actual
+ * content despite being position:absolute — without it, an absolutely
+ * positioned layer paints after non-positioned siblings and would sit on
+ * top of the button/spinner/error text instead of behind them.
+ */
+function BlueprintSketch() {
+  return (
+    <svg
+      viewBox="0 0 400 260"
+      className="absolute inset-0 -z-10 h-full w-full opacity-60"
+      preserveAspectRatio="xMidYMid slice"
+      aria-hidden="true"
+    >
+      {/* Corner crop marks, like a drafting sheet */}
+      {[
+        [14, 14, 1, 1],
+        [386, 14, -1, 1],
+        [14, 246, 1, -1],
+        [386, 246, -1, -1],
+      ].map(([x, y, dx, dy], i) => (
+        <g key={i} stroke="#6FA8DC" strokeWidth="1" opacity="0.7">
+          <line x1={x} y1={y} x2={x + 14 * dx} y2={y} />
+          <line x1={x} y1={y} x2={x} y2={y + 14 * dy} />
+        </g>
+      ))}
+
+      {/* House outline */}
+      <g fill="none" stroke="#6FA8DC" strokeWidth="1.5" opacity="0.85">
+        <polyline points="120,170 120,110 200,60 280,110 280,170" />
+        <line x1="105" y1="170" x2="295" y2="170" />
+        <rect x="185" y="128" width="30" height="42" />
+        <rect x="140" y="130" width="24" height="24" />
+        <rect x="236" y="130" width="24" height="24" />
+      </g>
+      {/* Dimension lines */}
+      <g stroke="#6FA8DC" strokeWidth="1" opacity="0.55">
+        <line x1="120" y1="188" x2="280" y2="188" />
+        <line x1="120" y1="182" x2="120" y2="194" />
+        <line x1="280" y1="182" x2="280" y2="194" />
+      </g>
+      <text
+        x="200"
+        y="205"
+        textAnchor="middle"
+        fontSize="9"
+        fill="#6FA8DC"
+        opacity="0.7"
+        style={{ letterSpacing: '0.08em' }}
+      >
+        AWAITING RENDER
+      </text>
+    </svg>
   );
 }
