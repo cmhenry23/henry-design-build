@@ -13,8 +13,7 @@ export const site = {
   subTagline: 'Real craftsmanship.',
   url: 'https://www.henrydb.ca',
 
-  // TODO: confirm the real business email before launch.
-  email: 'hello@henrydb.ca',
+  email: 'henrydesignbuild4@gmail.com',
 
   // TODO: add the real phone number. Leave it as an empty string and the
   // phone link disappears from the footer and contact page automatically.
