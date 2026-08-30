@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import MaterialBoard from '@/components/chat/MaterialBoard';
 import StyleBoard from '@/components/chat/StyleBoard';
 import StyleImage from '@/components/chat/StyleImage';
@@ -9,7 +9,7 @@ import ColorPaletteBuilder from '@/components/visualizer/ColorPaletteBuilder';
 import FloorPlan from '@/components/visualizer/FloorPlan';
 import MaterialDropzone from '@/components/visualizer/MaterialDropzone';
 import PhotoCustomizer from '@/components/visualizer/PhotoCustomizer';
-import { EMPTY_BRIEF, resolveBrief, type Brief, type CustomMaterial, type CustomPaletteColors } from '@/lib/brief';
+import { EMPTY_BRIEF, UNKNOWN, resolveBrief, type Brief, type CustomMaterial, type CustomPaletteColors } from '@/lib/brief';
 import { buildSummary } from '@/lib/briefSummary';
 import { makeProjectId } from '@/lib/projectId';
 import { buildSketchUpScript, sketchupFilename } from '@/lib/sketchup';
@@ -36,7 +36,7 @@ import {
 const INTERIOR_TYPES: BuildTypeId[] = ['kitchen', 'bath', 'reno'];
 type PreviewMode = 'render' | 'plan';
 
-export default function Configurator() {
+export default function Configurator({ seedBrief }: { seedBrief?: Brief } = {}) {
   const [buildType, setBuildType] = useState<BuildTypeId>('cottage');
   const [sqft, setSqft] = useState(1400);
   const [finish, setFinish] = useState<FinishLevelId>('crafted');
@@ -58,6 +58,45 @@ export default function Configurator() {
   const [mode, setMode] = useState<PreviewMode>('render');
   const [projectId, setProjectId] = useState<string | null>(null);
   const [skDownloaded, setSkDownloaded] = useState(false);
+
+  // Optional live sync from an external brief — used on /start, where the
+  // chat runs above this same component so a visitor can watch the studio
+  // fill in as they talk. One-directional and change-based: it only ever
+  // pushes a field when the CHAT'S OWN value for that field has actually
+  // changed since the last sync, never when it merely differs from
+  // whatever's currently in the studio — otherwise a visitor's own manual
+  // tweak here would get silently overwritten back to the chat's default
+  // the next time any unrelated chat field changed. List fields (add-ons,
+  // materials) merge in rather than replace, for the same reason.
+  const lastSyncedRef = useRef<Brief | null>(null);
+  useEffect(() => {
+    if (!seedBrief) return;
+    const prev = lastSyncedRef.current;
+    if (seedBrief.buildType !== UNKNOWN && seedBrief.buildType !== prev?.buildType) {
+      changeBuildType(seedBrief.buildType);
+    }
+    if (seedBrief.sqft > 0 && seedBrief.sqft !== prev?.sqft) setSqft(seedBrief.sqft);
+    if (seedBrief.finish !== UNKNOWN && seedBrief.finish !== prev?.finish) setFinish(seedBrief.finish);
+    if (seedBrief.access !== UNKNOWN && seedBrief.access !== prev?.access) setAccess(seedBrief.access);
+    if (seedBrief.season !== UNKNOWN && seedBrief.season !== prev?.season) setSeason(seedBrief.season);
+    if (seedBrief.addOns.length && JSON.stringify(seedBrief.addOns) !== JSON.stringify(prev?.addOns ?? [])) {
+      setAddOns((cur) => Array.from(new Set([...cur, ...seedBrief.addOns])));
+    }
+    if (seedBrief.style && seedBrief.style !== prev?.style) setStyle(seedBrief.style);
+    if (seedBrief.palette && seedBrief.palette !== prev?.palette) setPalette(seedBrief.palette);
+    if (seedBrief.customPalette && seedBrief.customPalette !== prev?.customPalette) {
+      setCustomPalette(seedBrief.customPalette);
+    }
+    if (
+      seedBrief.materials.length &&
+      JSON.stringify(seedBrief.materials) !== JSON.stringify(prev?.materials ?? [])
+    ) {
+      setMaterials((cur) => Array.from(new Set([...cur, ...seedBrief.materials])));
+    }
+    if (seedBrief.notes && seedBrief.notes !== prev?.notes) setNotes(seedBrief.notes);
+    lastSyncedRef.current = seedBrief;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [seedBrief]);
 
   const type = BUILD_TYPES.find((t) => t.id === buildType)!;
   const isInterior = INTERIOR_TYPES.includes(buildType);

@@ -21,9 +21,9 @@ export default function StartPage() {
             picturing
           </h1>
           <p className="lede mt-8 max-w-xl text-bone/65">
-            A short conversation — a couple of minutes, no forms. At the end you get a project
-            reference, a sketch of what you described, and a planning range. Send it to our team
-            in one click, or keep it for yourself.
+            A short conversation — a couple of minutes, no forms. Watch the Design Studio fill in
+            below as you talk, get a project reference and a planning range, and send the whole
+            thing to our team in one click.
           </p>
         </div>
       </section>
