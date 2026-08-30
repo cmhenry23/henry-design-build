@@ -11,13 +11,15 @@
  * here to a plausible recent cadence. Update them to the real publish
  * dates if these ever go out through another channel first.
  *
- * Cover photos are licensed stock (Unsplash License — free for commercial
- * use, no attribution required), living in /public/journal/, not real HDB
- * job photos. That's a deliberate split from /public/portfolio/, which is
- * exclusively real completed work — these posts are commentary on regions
- * and costs, not a specific project, so a stock photo illustrating the
- * subject is honest where a portfolio photo would misleadingly imply "we
- * built this."
+ * COVER PHOTO RULE (Ryan's, explicit): any cover that's a photo of a home
+ * or of construction must come from /public/portfolio/ (real HDB job
+ * photos) or Ryan's own Instagram — never outside stock — to keep clear
+ * of any copyright question. Landscape/scenery shots that don't depict a
+ * building or a build (a lake, a shoreline, dunes) are the one exception,
+ * since these posts are commentary on a region or a cost category rather
+ * than any specific project, and licensed stock (Unsplash License — free
+ * for commercial use, no attribution required) works fine for that. Those
+ * live in /public/journal/; everything else pulls from /public/portfolio/.
  */
 
 export type JournalBlock =
@@ -96,8 +98,8 @@ export const journalPosts: JournalPost[] = [
     ],
     closing: 'Thinking about a kitchen renovation in any of these areas? Let’s talk about what your space and your goals actually need.',
     cover: {
-      src: '/journal/modern-kitchen-renovation.jpg',
-      alt: 'A sleek modern kitchen with matte black cabinetry, a black island and pendant lighting',
+      src: '/portfolio/real-kitchen-sink-window.jpg',
+      alt: 'A black farmhouse sink under a large window looking into the trees, with black shaker cabinetry and a black range hood',
     },
   },
   {
@@ -160,8 +162,8 @@ export const journalPosts: JournalPost[] = [
     ],
     closing: 'Weighing renovating your current home or cottage against building new? Let’s look at your specific property and figure out which path actually makes sense.',
     cover: {
-      src: '/journal/new-home-construction-framing.jpg',
-      alt: 'A construction worker framing the roof of a new home under a clear blue sky',
+      src: '/portfolio/real-log-stair.jpg',
+      alt: 'Hand-peeled log stair with treads cantilevered off a single scribed post against a cedar wall',
     },
   },
   {
@@ -220,8 +222,8 @@ export const journalPosts: JournalPost[] = [
     ],
     closing: 'Market data is general and changes month to month — if you’re weighing the value of a renovation against current conditions on your specific street or lake, we’re happy to talk through what we’re seeing locally.',
     cover: {
-      src: '/journal/ontario-real-estate-aerial.jpg',
-      alt: 'Aerial view of a dense residential neighbourhood of detached houses, streets and driveways',
+      src: '/portfolio/real-cabin-exterior.jpg',
+      alt: 'A dark board-and-batten cabin exterior with a light blue door, photographed at dusk',
     },
   },
   {
@@ -424,8 +426,8 @@ export const journalPosts: JournalPost[] = [
     ],
     closing: 'Thinking about a renovation in London? We’d love to talk through your project.',
     cover: {
-      src: '/journal/london-ontario-character-home.jpg',
-      alt: 'A blue Victorian-style character home with a wraparound covered porch on a leafy residential street',
+      src: '/portfolio/real-kitchen-dining.jpg',
+      alt: 'Open kitchen and dining room with a live-edge table, leather chairs and pendant lighting over the island',
     },
   },
 ];
