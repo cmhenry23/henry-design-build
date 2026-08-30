@@ -10,6 +10,14 @@
  * Publish dates were not supplied with the source files — they're set
  * here to a plausible recent cadence. Update them to the real publish
  * dates if these ever go out through another channel first.
+ *
+ * Cover photos are licensed stock (Unsplash License — free for commercial
+ * use, no attribution required), living in /public/journal/, not real HDB
+ * job photos. That's a deliberate split from /public/portfolio/, which is
+ * exclusively real completed work — these posts are commentary on regions
+ * and costs, not a specific project, so a stock photo illustrating the
+ * subject is honest where a portfolio photo would misleadingly imply "we
+ * built this."
  */
 
 export type JournalBlock =
@@ -88,8 +96,8 @@ export const journalPosts: JournalPost[] = [
     ],
     closing: 'Thinking about a kitchen renovation in any of these areas? Let’s talk about what your space and your goals actually need.',
     cover: {
-      src: '/portfolio/real-kitchen-sink-window.jpg',
-      alt: 'A black farmhouse sink under a large window looking into the trees, with black shaker cabinetry and a black range hood',
+      src: '/journal/modern-kitchen-renovation.jpg',
+      alt: 'A sleek modern kitchen with matte black cabinetry, a black island and pendant lighting',
     },
   },
   {
@@ -152,8 +160,8 @@ export const journalPosts: JournalPost[] = [
     ],
     closing: 'Weighing renovating your current home or cottage against building new? Let’s look at your specific property and figure out which path actually makes sense.',
     cover: {
-      src: '/portfolio/real-kitchen-nook-shelf.jpg',
-      alt: 'A tiled coffee nook with a floating wood shelf holding cookbooks, under-shelf lighting and a stand mixer on the counter',
+      src: '/journal/new-home-construction-framing.jpg',
+      alt: 'A construction worker framing the roof of a new home under a clear blue sky',
     },
   },
   {
@@ -212,8 +220,8 @@ export const journalPosts: JournalPost[] = [
     ],
     closing: 'Market data is general and changes month to month — if you’re weighing the value of a renovation against current conditions on your specific street or lake, we’re happy to talk through what we’re seeing locally.',
     cover: {
-      src: '/portfolio/real-cabin-exterior.jpg',
-      alt: 'A dark board-and-batten cabin exterior with a light blue door, photographed at dusk',
+      src: '/journal/ontario-real-estate-aerial.jpg',
+      alt: 'Aerial view of a dense residential neighbourhood of detached houses, streets and driveways',
     },
   },
   {
@@ -270,8 +278,8 @@ export const journalPosts: JournalPost[] = [
     ],
     closing: 'Have a family cottage in Muskoka that needs some love? Let’s talk about what’s possible.',
     cover: {
-      src: '/portfolio/real-fireplace-mantel.jpg',
-      alt: 'A fieldstone fireplace with a hand-hewn timber mantel',
+      src: '/journal/muskoka-cottage-lake-dock.jpg',
+      alt: 'Two Muskoka chairs on a wooden dock overlooking a calm lake at sunset',
     },
   },
   {
@@ -319,8 +327,8 @@ export const journalPosts: JournalPost[] = [
     ],
     closing: 'Have a lot on the peninsula? We can help you understand what it will take to build there.',
     cover: {
-      src: '/portfolio/real-log-stair.jpg',
-      alt: 'Hand-peeled log stair with treads cantilevered off a single scribed post against a cedar wall',
+      src: '/journal/bruce-peninsula-rocky-shoreline.jpg',
+      alt: 'A stone cairn on the white dolomite rock shoreline of Georgian Bay near the Bruce Peninsula, turquoise water and forest behind it',
     },
   },
   {
@@ -368,8 +376,8 @@ export const journalPosts: JournalPost[] = [
     ],
     closing: 'Planning a build near the lake? Let’s talk about what your Grand Bend property needs.',
     cover: {
-      src: '/portfolio/real-cabin-exterior.jpg',
-      alt: 'A dark board-and-batten cabin exterior with a light blue door, photographed at dusk',
+      src: '/journal/grand-bend-lake-huron-dunes.jpg',
+      alt: 'Sandy dunes with beach grass overlooking Lake Huron under a partly cloudy sky',
     },
   },
   {
@@ -416,8 +424,8 @@ export const journalPosts: JournalPost[] = [
     ],
     closing: 'Thinking about a renovation in London? We’d love to talk through your project.',
     cover: {
-      src: '/portfolio/real-kitchen-dining.jpg',
-      alt: 'Open kitchen and dining room with a live-edge table, leather chairs and pendant lighting over the island',
+      src: '/journal/london-ontario-character-home.jpg',
+      alt: 'A blue Victorian-style character home with a wraparound covered porch on a leafy residential street',
     },
   },
 ];
