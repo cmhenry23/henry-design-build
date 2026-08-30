@@ -3,7 +3,9 @@
  * in (confirmed against the real Instagram bio: "London•Tobermory•Grand
  * bend•Muskoka"). No PLACEHOLDER flag here on purpose — unlike
  * testimonials.ts or furniture.ts, this content was supplied by Ryan
- * directly (blog 1.zip), not invented to show off the layout.
+ * directly (blog 1.zip, then a second batch in blog2.zip — cost/market
+ * pieces rather than per-region narrative posts), not invented to show
+ * off the layout.
  *
  * Publish dates were not supplied with the source files — they're set
  * here to a plausible recent cadence. Update them to the real publish
@@ -29,6 +31,191 @@ export interface JournalPost {
 }
 
 export const journalPosts: JournalPost[] = [
+  {
+    slug: 'kitchen-renovation-costs-by-region',
+    title: 'What Does a Kitchen Renovation Cost? A Regional Breakdown',
+    excerpt:
+      'Ontario baseline numbers for 2026, and what actually changes the price in London, Grand Bend, Tobermory and Muskoka.',
+    date: '2026-08-30',
+    category: 'Planning & budget',
+    body: [
+      {
+        type: 'p',
+        text: 'Kitchen renovation is consistently the project homeowners ask us about first — and consistently the one where cost expectations and reality are furthest apart. Here’s a realistic 2026 breakdown, along with what’s different about pricing a kitchen renovation in London versus Grand Bend, Tobermory, or Muskoka.',
+      },
+      { type: 'h2', text: 'Ontario Baseline Numbers' },
+      {
+        type: 'p',
+        text: 'Before getting into regional differences, it helps to know the general Ontario ranges for 2026:',
+      },
+      {
+        type: 'ul',
+        items: [
+          'Cosmetic refresh (new counters, backsplash, paint, hardware, no layout change): roughly $15,000–$25,000',
+          'Mid-range renovation (new cabinets, countertops, flooring, some plumbing/electrical work): roughly $45,000–$65,000 for a standard 10’×12’ kitchen',
+          'Full gut renovation (layout changes, custom cabinetry, premium finishes, moved plumbing): $80,000–$150,000+',
+        ],
+      },
+      {
+        type: 'p',
+        text: 'Cabinetry and countertops typically make up close to half of a mid-range budget, and any work that moves plumbing or takes out a load-bearing wall adds a meaningful chunk on top — often $3,000–$8,000 for plumbing relocation and $8,000–$20,000+ for structural wall removal with engineering and permits included.',
+      },
+      { type: 'h2', text: 'London: Closest to Baseline Pricing' },
+      {
+        type: 'p',
+        text: 'London tracks closest to the general Ontario mid-range numbers, since it has strong trade availability and reasonable material access. A typical mid-range kitchen renovation here lands in the $45,000–$65,000 range, with older character homes (Old North, Wortley Village) sometimes running higher due to plaster wall repairs, outdated wiring that needs upgrading, or non-standard room dimensions that rule out stock cabinetry.',
+      },
+      { type: 'h2', text: 'Grand Bend: Moisture and Seasonal-Use Considerations Add Cost' },
+      {
+        type: 'p',
+        text: 'A Grand Bend kitchen renovation starts from similar baseline numbers but often lands 10–20% higher once you account for materials suited to a humid, lake-adjacent environment — better moisture-resistant cabinet construction, corrosion-resistant hardware, and ventilation upgrades. Cottages being converted from seasonal to year-round use also frequently need mechanical and insulation work bundled into the kitchen renovation, which pushes the effective project cost up even when the kitchen finishes themselves are mid-range.',
+      },
+      { type: 'h2', text: 'Tobermory: Remote Access Drives the Premium' },
+      {
+        type: 'p',
+        text: 'Tobermory sees the widest gap between "sticker price" finishes and actual project cost, almost entirely due to logistics. Material delivery to the peninsula, limited local trade availability (meaning trades often travel from Owen Sound, Wiarton, or further), and rock conditions that can complicate any plumbing rerouting all add cost on top of the base renovation numbers. A mid-range kitchen renovation that might run $50,000 in London can often run 20–35% higher in Tobermory once travel time, delivery logistics, and scheduling around a short building season are factored in.',
+      },
+      { type: 'h2', text: 'Muskoka: Baseline Costs, Elevated Finish Expectations' },
+      {
+        type: 'p',
+        text: 'Muskoka’s underlying labour and material costs aren’t dramatically different from the rest of cottage country, but finish expectations often are — many Muskoka kitchen renovations lean toward higher-end cabinetry, natural stone, and premium appliances that reflect the region’s luxury cottage market. It’s less that the same kitchen costs more here, and more that the "typical" Muskoka kitchen renovation is specified at a higher tier from the outset, often landing in the $80,000–$150,000+ range for a full renovation on a waterfront cottage.',
+      },
+      { type: 'h2', text: 'The Number That Actually Matters' },
+      {
+        type: 'p',
+        text: 'Every range above is a starting point for budgeting conversations, not a quote. The only way to get a real number is a proper site visit — measuring the space, understanding what’s behind the walls, and talking through what finishes actually matter to you. That’s always where we start.',
+      },
+    ],
+    closing: 'Thinking about a kitchen renovation in any of these areas? Let’s talk about what your space and your goals actually need.',
+    cover: {
+      src: '/portfolio/real-kitchen-sink-window.jpg',
+      alt: 'A black farmhouse sink under a large window looking into the trees, with black shaker cabinetry and a black range hood',
+    },
+  },
+  {
+    slug: 'build-vs-renovate-costs',
+    title: 'Build New or Renovate? What the 2026 Numbers Actually Say',
+    excerpt:
+      'Custom-build costs, renovation costs by scope, and the real decision factors behind Ontario’s current build-vs-renovate math.',
+    date: '2026-08-29',
+    category: 'Planning & budget',
+    body: [
+      {
+        type: 'p',
+        text: 'It’s one of the first questions almost every homeowner asks us: should I renovate what I have, or tear down and start fresh? The honest answer is that it depends on your existing structure, your goals, and your budget — but the current cost picture in Ontario makes the trade-offs clearer than they’ve been in a while.',
+      },
+      { type: 'h2', text: 'What a New Custom Build Costs in 2026' },
+      {
+        type: 'p',
+        text: 'Custom home construction in Ontario is running roughly $300 to $600 per square foot for construction alone in most regions outside the GTA core, with mid-range quality builds commonly landing between $340 and $475 per square foot. That’s before land, permits, development charges, and site work — which typically add another 10 to 30 percent on top of the construction number, depending on the lot.',
+      },
+      {
+        type: 'p',
+        text: 'For a 2,500-square-foot home, that puts all-in construction costs somewhere between $750,000 and $1.5 million before you factor in the cost of the land itself — a number that varies enormously between a serviced London lot and a rural or waterfront property near Grand Bend, Tobermory, or Muskoka.',
+      },
+      { type: 'h2', text: 'What a Major Renovation Costs' },
+      {
+        type: 'p',
+        text: 'A whole-home renovation is harder to put a single number on than new construction, because so much depends on what’s already there. As a rough planning guide:',
+      },
+      {
+        type: 'ul',
+        items: [
+          'Cosmetic updates (finishes, fixtures, no structural changes): often $50–$150 per square foot',
+          'Mid-scope renovations (some layout changes, updated systems): often $150–$300 per square foot',
+          'Major renovations (structural changes, additions, full mechanical overhauls): can approach or exceed new-build costs per square foot, especially on older homes with unexpected structural or code-compliance surprises',
+        ],
+      },
+      {
+        type: 'p',
+        text: 'That last point is the one that catches people off guard: a gut renovation on a century home with knob-and-tube wiring, no insulation, and a foundation that needs work can end up costing more per square foot than building new, once every system has to be brought up to current code.',
+      },
+      { type: 'h2', text: 'The Real Decision Factors' },
+      {
+        type: 'p',
+        text: 'Cost per square foot is only part of the picture. The renovate-vs-build decision usually comes down to:',
+      },
+      {
+        type: 'ul',
+        items: [
+          'Structural condition: a sound structure with good bones favours renovating. Significant foundation, framing, or moisture issues shift the math toward rebuilding.',
+          'Lot restrictions: on tight urban lots or environmentally sensitive rural and waterfront lots (common around Tobermory and Muskoka), your existing footprint may have grandfathered rights that a new build wouldn’t retain.',
+          'Emotional and family value: especially for cottages, the existing structure often carries decades of family history that a rebuild can’t replicate — this is a real factor, not just a sentimental one, and it belongs in the decision alongside the numbers.',
+          'Timeline: renovations can sometimes be faster than a full build, though a major renovation with permits and structural work can take just as long as new construction.',
+        ],
+      },
+      { type: 'h2', text: 'Getting a Real Number' },
+      {
+        type: 'p',
+        text: 'Every one of these ranges is a planning tool, not a quote. The only way to know what your specific project will cost is a proper assessment of your existing structure (if there is one), your lot, and your goals. That’s the conversation worth having before you commit to either path.',
+      },
+    ],
+    closing: 'Weighing renovating your current home or cottage against building new? Let’s look at your specific property and figure out which path actually makes sense.',
+    cover: {
+      src: '/portfolio/real-kitchen-nook-shelf.jpg',
+      alt: 'A tiled coffee nook with a floating wood shelf holding cookbooks, under-shelf lighting and a stand mixer on the counter',
+    },
+  },
+  {
+    slug: 'real-estate-snapshot-2026',
+    title: 'Real Estate Snapshot 2026: London, Grand Bend, Tobermory & Muskoka',
+    excerpt:
+      'An honest look at where each of the four markets we build in actually stands, current as of mid-to-late 2026.',
+    date: '2026-08-28',
+    category: 'Market notes',
+    body: [
+      {
+        type: 'p',
+        text: 'If you’re weighing a renovation, a new build, or a move, it helps to understand what’s actually happening in each market. Here’s an honest look at where things stand across the four regions we build and renovate in, current as of mid-to-late 2026.',
+      },
+      { type: 'h2', text: 'London: A Stable, More Affordable Market' },
+      {
+        type: 'p',
+        text: 'London has settled into a balanced-to-buyer’s market after a few volatile years. Average home prices have been sitting in the $600,000–$640,000 range through 2026, with the benchmark price closer to $555,000–$560,000 — both essentially flat to slightly down year over year. Listings have climbed noticeably, giving buyers more choice and more negotiating room than they’ve had in several years.',
+      },
+      {
+        type: 'p',
+        text: 'What this means for renovators: with resale prices stable and inventory up, a well-executed renovation is a reliable way to add value without waiting on price appreciation to do the work for you. It’s also a market where buyers are comparing move-in-ready homes against fixer-uppers, so a quality renovation can be the difference between a fast sale and a stale listing.',
+      },
+      { type: 'h2', text: 'Grand Bend: Correcting After a Pandemic Surge, Still Lake-Premium' },
+      {
+        type: 'p',
+        text: 'Grand Bend prices pulled back somewhat through 2025, with average residential prices easing from the mid-$800,000s toward the current range, while listing prices for the broader market (including higher-end waterfront) can run well past $1 million. The area has permanently shifted from a purely seasonal market toward more year-round living, driven by remote-work flexibility and buyers who decided lake life could be their everyday life, not just a summer one.',
+      },
+      {
+        type: 'p',
+        text: 'What this means for renovators: with more owners converting seasonal cottages into full-time residences, insulation upgrades, four-season mechanical systems, and additions are in high demand. A property renovated for year-round comfort stands out in a market where buyers increasingly want exactly that.',
+      },
+      { type: 'h2', text: 'Tobermory: A Small, Thin Market Where Data Is Limited' },
+      {
+        type: 'p',
+        text: 'Tobermory’s real estate market is genuinely small — often just a handful of active listings at any given time, with average asking prices in the $750,000 to $1.5 million range depending on waterfront access and lot size. Because so few properties trade in any given month, pricing here is less about broad trend lines and more about the specifics of each lot: shoreline, rock conditions, and access.',
+      },
+      {
+        type: 'p',
+        text: 'What this means for renovators: with limited turnover, most owners hold onto Tobermory properties for the long term rather than flipping them, which makes durability and long-term livability — not resale timing — the priority for most renovation and build decisions here.',
+      },
+      { type: 'h2', text: 'Muskoka: A Two-Speed Market' },
+      {
+        type: 'p',
+        text: 'Muskoka’s cottage market has been correcting since its 2022 peak, with median waterfront prices easing into the $800,000–$950,000 range broadly, while the ultra-luxury tier on Lakes Muskoka, Rosseau, and Joseph continues to hold firm — average waterfront pricing on the "Big Three" lakes remains in the multi-million-dollar range. Inventory is elevated and properties are taking longer to sell than the historical norm, giving buyers real negotiating leverage outside the top tier.',
+      },
+      {
+        type: 'p',
+        text: 'What this means for renovators: in a market where buyers have more choice and more patience, a dated cottage competes poorly against a well-renovated one. At the same time, the luxury segment’s resilience shows that quality, character, and four-season capability continue to command a premium even when the broader market softens.',
+      },
+      { type: 'h2', text: 'The Common Thread' },
+      {
+        type: 'p',
+        text: 'Across all four regions, 2026 buyers have more inventory, more time, and more negotiating power than they did a few years ago. That shifts the value proposition: a property that’s move-in ready, energy-efficient, and thoughtfully updated stands out far more in today’s market than it would have during the frantic bidding wars of 2021 and 2022. Whether you’re renovating to sell or to enjoy for years to come, quality work matters more in a patient market, not less.',
+      },
+    ],
+    closing: 'Market data is general and changes month to month — if you’re weighing the value of a renovation against current conditions on your specific street or lake, we’re happy to talk through what we’re seeing locally.',
+    cover: {
+      src: '/portfolio/real-cabin-exterior.jpg',
+      alt: 'A dark board-and-batten cabin exterior with a light blue door, photographed at dusk',
+    },
+  },
   {
     slug: 'renovating-a-muskoka-cottage',
     title: 'Renovating a Muskoka Cottage: Honouring the Past While Building for the Future',
