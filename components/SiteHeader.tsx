@@ -73,11 +73,14 @@ export default function SiteHeader() {
                 key={item.href}
                 href={item.href}
                 aria-current={active ? 'page' : undefined}
-                className={`relative font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] transition-colors ${
-                  scrolled
-                    ? 'text-ink/70 hover:text-ink'
-                    : 'text-bone/85 hover:text-bone'
-                } ${active ? (scrolled ? 'text-ink' : 'text-bone') : ''}`}
+                // Deliberately NOT scroll- or page-dependent, same reasoning
+                // as the hamburger button: swapping between a light and a
+                // dark text colour assumed a dark hero always sits behind
+                // the header. This is the logo's own blue instead — one
+                // colour that reads on every page and every scroll state.
+                className={`relative font-display text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-[#157FFB] transition-opacity ${
+                  active ? 'opacity-100' : 'opacity-70 hover:opacity-100'
+                }`}
               >
                 {item.label}
                 {active && (
