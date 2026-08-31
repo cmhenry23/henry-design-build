@@ -44,7 +44,7 @@ export const testimonials: Testimonial[] = [
   },
   {
     quote:
-      'The site was cleaner at the end of each day than our house is on a normal Tuesday. We lived here through the whole renovation and it never once felt like a construction zone.',
+      'Watching this kitchen go from framed walls to finished cabinetry was the best part of building new — every choice we made on paper showed up exactly the way we pictured it.',
     name: 'PLACEHOLDER — client name',
     detail: 'PLACEHOLDER — project type and town',
     project: 'forest-kitchen',

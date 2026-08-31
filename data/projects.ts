@@ -127,14 +127,14 @@ export const projects: Project[] = [
     location: 'TODO: confirm location',
     year: 'TODO: confirm year',
     summary:
-      'A closed-off galley opened into one long room — island, dining, and a hidden coffee pantry, all pointed at the window and the trees behind it.',
+      'An open kitchen, dining room and hidden coffee pantry, built from the ground up around one thing: a window with nothing but forest behind it.',
     story: [
-      'The original layout wasted the best thing the house had: a window with nothing but forest behind it. We took the wall out, ran the working counter along the glass, and put the sink where you actually want to stand.',
+      'The site had one obvious asset before a single wall went up: a clear sightline into the trees. We designed the whole room around it from the drawings on — ran the working counter along the glass and put the sink exactly where you’d want to stand, with nothing splitting the kitchen from the dining room beside it.',
       'Dark grey shaker doors, white quartz with a soft vein, and matte black hardware do the heavy lifting. A full-height white subway tile keeps the wall bright without competing with the cabinetry.',
       'Around the corner, a butler’s pantry takes the countertop clutter out of the main room — grey cabinetry, a beverage fridge, and enough landing space that the coffee maker and the mixer never have to move.',
     ],
     specs: [
-      { label: 'Scope', value: 'Full gut and rebuild, wall removal' },
+      { label: 'Scope', value: 'New build — kitchen, dining and pantry' },
       { label: 'Cabinetry', value: 'Dark grey shaker, full-height pantry wall' },
       { label: 'Counters', value: 'White quartz, waterfall-free square edge' },
       { label: 'Backsplash', value: 'White subway tile, full height' },
@@ -142,10 +142,10 @@ export const projects: Project[] = [
       { label: 'Duration', value: 'TODO: add build duration' },
     ],
     highlights: [
-      'Load-bearing wall removed and beam concealed in the ceiling',
+      'Kitchen and dining framed as one open room from the first drawing',
+      'Counter run and sink placed to put the forest view front and centre',
       'Butler’s pantry with a built-in beverage fridge',
       'Full-height subway tile from counter to ceiling',
-      'Wide-plank flooring run continuously through both rooms',
     ],
     cover: {
       src: '/portfolio/real-kitchen-island.jpg',
@@ -166,7 +166,7 @@ export const projects: Project[] = [
       {
         src: '/portfolio/real-kitchen-dining.jpg',
         alt: 'Open kitchen and dining room with a live-edge table, leather chairs and pendant lighting over the island',
-        caption: 'One room now. The wall that used to split these two is gone.',
+        caption: 'Kitchen and dining, one continuous room from the first framing.',
         portrait: true,
       },
       {
