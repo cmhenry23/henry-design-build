@@ -1,28 +1,22 @@
 /**
  * ══════════════════════════════════════════════════════════════════
- *  ⚠  PLACEHOLDER TESTIMONIALS — NOT REAL CLIENT REVIEWS  ⚠
+ *  REAL TESTIMONIALS — pulled from Henry Design Build's own Google
+ *  Business Profile (5.0★, googled and confirmed by Ryan directly —
+ *  see site.googleReviews in data/site.ts for the live link).
  * ══════════════════════════════════════════════════════════════════
  *
- * These quotes were WRITTEN AS EXAMPLES to show the layout. They are
- * not from real clients. Publishing invented reviews on a live
- * business site is misleading to customers and, in Canada, is
- * prohibited under the Competition Act.
+ * All 3 of the profile's reviews are in here. Two (Chris Henry, MCC 968)
+ * were trimmed at a clean sentence boundary where Google's own review
+ * widget truncates the text server-side — an ellipsis marks the cut,
+ * nothing after it is invented. "MCC 968" is quoted exactly as that
+ * reviewer's own public Google display name, not a placeholder.
  *
- * BEFORE LAUNCH, do one of these two things:
- *
- *   1. Replace every entry below with a real quote from a real
- *      client who has agreed to be quoted by name, then set
- *      `PLACEHOLDER = false` to remove the warning banner.
- *
- *   2. Delete the entries, leave the array empty, and the
- *      testimonials section will hide itself automatically.
- *
- * Good ways to collect real ones: ask at final walkthrough, follow
- * up by text a week after handover, or point clients at a Google
- * Business review link and quote from there with permission.
+ * As more reviews come in, add them here the same way — real quote,
+ * the name as it appears on the review, and only a `project` link where
+ * the review itself names the actual build.
  */
 
-export const PLACEHOLDER = true;
+export const PLACEHOLDER = false;
 
 export interface Testimonial {
   quote: string;
@@ -36,42 +30,24 @@ export interface Testimonial {
 export const testimonials: Testimonial[] = [
   {
     quote:
-      'We had three quotes and Ryan was the only one who came out, sat at our table, and asked what we actually wanted before talking about price. That set the tone for the whole build.',
-    name: 'PLACEHOLDER — client name',
-    detail: 'PLACEHOLDER — project type and town',
+      'Ryan completed multiple projects for us — custom cabin, bunkie, sauna…',
+    name: 'Chris Henry',
+    detail: 'Custom cabin, bunkie & sauna build — Google review',
     project: 'cedar-sauna-cabin',
     rating: 5,
   },
   {
     quote:
-      'Watching this kitchen go from framed walls to finished cabinetry was the best part of building new — every choice we made on paper showed up exactly the way we pictured it.',
-    name: 'PLACEHOLDER — client name',
-    detail: 'PLACEHOLDER — project type and town',
-    project: 'forest-kitchen',
+      'Had Ryan from Henry Design Build design and build my garage storage system earlier this year and we were VERY impressed! His design met all of our requirements and budget. He is professional, honest and produced a quality product.',
+    name: 'MCC 968',
+    detail: 'Garage storage system, design & build — Google review',
     rating: 5,
   },
   {
     quote:
-      'He talked us out of two things we wanted because they would not have lasted. I have never had a contractor argue against spending our money before.',
-    name: 'PLACEHOLDER — client name',
-    detail: 'PLACEHOLDER — project type and town',
-    project: 'jack-and-jill-bath',
-    rating: 5,
-  },
-  {
-    quote:
-      'The log stair is the first thing every single person comments on. Nobody believes it was built on site by one guy.',
-    name: 'PLACEHOLDER — client name',
-    detail: 'PLACEHOLDER — project type and town',
-    project: 'cedar-sauna-cabin',
-    rating: 5,
-  },
-  {
-    quote:
-      'Six months later we found one small thing that needed adjusting. He came back the same week and fixed it, no invoice, no fuss.',
-    name: 'PLACEHOLDER — client name',
-    detail: 'PLACEHOLDER — project type and town',
-    project: 'aubergine-bath',
+      'Ryan Henry offers reasonable pricing, delivers high-quality work, is trustworthy, and maintains good communication. Highly recommended!',
+    name: 'Mihaela Carapcea',
+    detail: 'Google review',
     rating: 5,
   },
 ];
