@@ -15,9 +15,11 @@ export const site = {
 
   email: 'henrydesignbuild4@gmail.com',
 
-  // TODO: add the real phone number. Leave it as an empty string and the
-  // phone link disappears from the footer and contact page automatically.
-  phone: '' as string,
+  // Pulled from Ryan's own Instagram promo graphics (the "GET IN TOUCH" /
+  // "DECK SEASON" carousel cards) — confirm this is still current. Leave it
+  // as an empty string and the phone link disappears from the footer and
+  // contact page automatically.
+  phone: '(226) 224-8633' as string,
 
   instagram: 'https://www.instagram.com/henry_designbuild/',
   instagramHandle: '@henry_designbuild',
@@ -26,8 +28,22 @@ export const site = {
   serviceArea: 'Ontario cottage country and the surrounding region',
   serviceAreaShort: 'Ontario',
 
+  // Towns named in the journal's own market/build posts — shown in the
+  // footer and on the contact page so a visitor from one of these towns
+  // sees themselves reflected. Add to or trim this list as your real
+  // service area changes.
+  serviceTowns: ['London', 'Grand Bend', 'Tobermory', 'Muskoka'] as string[],
+
   founded: 2020,
   yearsExperience: '5+',
+
+  // Only real, confirmable credentials belong here — this prints as a
+  // public trust line in the footer. Set insured to true only once that's
+  // actually true; leaving it false just omits it, nothing prints "no".
+  credentials: {
+    redSeal: true,
+    insured: false as boolean,
+  },
 
   owner: {
     name: 'Ryan Henry',
@@ -41,10 +57,15 @@ export const site = {
   },
 } as const;
 
+// "Design Studio" (/visualizer) is deliberately not a top-level nav item —
+// it's the same configurator that lives inside /start, just without the
+// chat intake. Keeping both in the nav made a first-time visitor choose
+// between two doors into the same room. /visualizer still works and is
+// still linked from "Design your build" buttons across the site — it's
+// just not competing with Start for top billing.
 export const nav = [
   { href: '/', label: 'Home' },
   { href: '/portfolio', label: 'Portfolio' },
-  { href: '/visualizer', label: 'Design Studio' },
   { href: '/start', label: 'Start' },
   { href: '/about', label: 'About' },
   { href: '/journal', label: 'Journal' },

@@ -67,7 +67,12 @@ export default function SiteFooter() {
                   {site.instagramHandle}
                 </a>
               </li>
-              <li className="pt-3 text-bone/45">{site.serviceArea}</li>
+              <li className="pt-3 text-bone/45">
+                {site.serviceArea}
+                {site.serviceTowns.length > 0 && (
+                  <span className="block text-bone/35">{site.serviceTowns.join(' · ')}</span>
+                )}
+              </li>
             </ul>
           </div>
         </div>
@@ -75,6 +80,18 @@ export default function SiteFooter() {
         <div className="mt-16 flex flex-col gap-4 border-t border-bone/12 pt-8 text-xs text-bone/40 sm:flex-row sm:items-center sm:justify-between">
           <p>
             &copy; {new Date().getFullYear()} {site.name}. All rights reserved.
+            {(site.credentials.redSeal || site.credentials.insured) && (
+              <span className="ml-2 text-bone/30">
+                ·{' '}
+                {[
+                  site.credentials.redSeal && 'Red Seal Certified',
+                  site.credentials.insured && 'Fully Insured',
+                  `${site.yearsExperience} Years`,
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
+              </span>
+            )}
           </p>
           <p>
             {site.owner.name} &amp; {site.partner.name}

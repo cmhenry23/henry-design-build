@@ -73,6 +73,11 @@ export default function ContactPage() {
             <div>
               <h2 className="eyebrow text-ink/40">Where we work</h2>
               <p className="mt-6 leading-relaxed text-ink/70">{site.serviceArea}.</p>
+              {site.serviceTowns.length > 0 && (
+                <p className="mt-2 text-sm text-ink/50">
+                  Including {site.serviceTowns.join(', ')}.
+                </p>
+              )}
             </div>
 
             <div className="border border-ink/12 bg-white/55 p-7">

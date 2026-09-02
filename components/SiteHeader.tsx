@@ -91,7 +91,15 @@ export default function SiteHeader() {
           })}
         </nav>
 
-        <div className="hidden lg:block">
+        <div className="hidden items-center gap-5 lg:flex">
+          {site.phone && (
+            <a
+              href={`tel:${site.phone.replace(/[^0-9+]/g, '')}`}
+              className="font-display text-[0.72rem] font-semibold uppercase tracking-[0.1em] text-[#157FFB] opacity-80 transition-opacity hover:opacity-100"
+            >
+              {site.phone}
+            </a>
+          )}
           <Link href="/start" className="btn-primary !px-6 !py-3">
             Start a project
           </Link>
@@ -159,6 +167,14 @@ export default function SiteHeader() {
             <Link href="/start" className="btn-cedar mt-5 w-full text-center">
               Start a project
             </Link>
+            {site.phone && (
+              <a
+                href={`tel:${site.phone.replace(/[^0-9+]/g, '')}`}
+                className="mt-4 text-center font-display text-sm font-bold text-ink"
+              >
+                {site.phone}
+              </a>
+            )}
             <a
               href={site.instagram}
               target="_blank"
