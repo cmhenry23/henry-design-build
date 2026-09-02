@@ -12,12 +12,18 @@
  * /public/portfolio/, and add an entry to this array.
  */
 
-export type ProjectCategory = 'Cottages & Cabins' | 'Kitchens' | 'Bathrooms' | 'Craft & Detail';
+export type ProjectCategory =
+  | 'Cottages & Cabins'
+  | 'Kitchens'
+  | 'Bathrooms'
+  | 'Decks & Exteriors'
+  | 'Craft & Detail';
 
 export const categories: ProjectCategory[] = [
   'Cottages & Cabins',
   'Kitchens',
   'Bathrooms',
+  'Decks & Exteriors',
   'Craft & Detail',
 ];
 
@@ -237,6 +243,12 @@ export const projects: Project[] = [
         caption: 'Marble-look tile, matte black fixtures, a frosted window onto the yard.',
         portrait: true,
       },
+      {
+        src: '/portfolio/real-bath-aubergine-wide.jpg',
+        alt: 'Wide view of the plum bathroom showing the fluted vanity, reeded glass tub enclosure and tiled niche together',
+        caption: 'The whole room in one shot — vanity, tub and niche sharing the same wall.',
+        portrait: true,
+      },
     ],
   },
   {
@@ -303,6 +315,12 @@ export const projects: Project[] = [
         caption: 'The walk-in shower on the other side — niche framed and sealed before a single tile went on.',
         portrait: true,
       },
+      {
+        src: '/portfolio/real-bath-white-window.jpg',
+        alt: 'White shaker vanity seen from across the room with a window and round mirror, grey plank tile underfoot',
+        caption: 'The vanity hall, full width — window light, round mirror, grey plank tile.',
+        portrait: true,
+      },
     ],
   },
   {
@@ -336,6 +354,18 @@ export const projects: Project[] = [
     },
     photos: [
       {
+        src: '/portfolio/mantel-build-fireplace-base.jpg',
+        alt: 'Electric fireplace insert set on a rough fieldstone base against a bare cedar wall, with a level resting on top',
+        caption: 'Before the stone went up — insert set on the base and squared off.',
+        portrait: true,
+      },
+      {
+        src: '/portfolio/mantel-build-stone-face.jpg',
+        alt: 'Fieldstone being built up around a taped-off fireplace insert against a cedar wall',
+        caption: 'The stone face going up around the taped-off insert.',
+        portrait: true,
+      },
+      {
         src: '/portfolio/mantel-hand-hewn.jpg',
         alt: 'Blackened hand-hewn timber mantel on sawhorses surrounded by hand tools, a level and wood shavings',
         caption: 'Hand plane, slick, level, and a lot of shavings.',
@@ -345,6 +375,53 @@ export const projects: Project[] = [
         alt: 'The finished mantel installed above a fieldstone fireplace against a cedar wall',
         caption: 'Installed. Scribed to the stone, no gaps, no caulk line.',
         portrait: true,
+      },
+    ],
+  },
+  {
+    slug: 'deck-rebuild',
+    title: 'The Deck Rebuild',
+    category: 'Decks & Exteriors',
+    location: 'TODO: confirm location',
+    year: 'TODO: confirm year',
+    summary:
+      'A weathered, splintering deck torn back to the frame and rebuilt from the ground up — same footprint, same view of the yard, none of the grey.',
+    story: [
+      'This one started with a deck that had done its job for years and was done doing it — grey, splintering boards, a railing that had seen better decades. Nothing about it was safe to leave as-is.',
+      'We stripped it back and rebuilt it board by board on the same footprint, then stained it the same week so it would cure before the first season of real use. What used to disappear into the yard now anchors it.',
+      'A deck rebuild is a long day of unglamorous work — pulling old fasteners, checking every joist, replacing what the old one was hiding — before a single new board goes down. That is the part that decides whether it lasts five years or twenty-five.',
+    ],
+    specs: [
+      { label: 'Scope', value: 'Full deck tear-off and rebuild, same footprint' },
+      { label: 'Structure', value: 'New joists and ledger, existing footings inspected and reused' },
+      { label: 'Decking', value: 'Pressure-treated lumber, stained on site' },
+      { label: 'Duration', value: 'TODO: add build duration' },
+    ],
+    highlights: [
+      'Torn off and rebuilt on the original footprint',
+      'Every joist and footing checked before new decking went down',
+      'Stained the same week it was built, ahead of the first season',
+    ],
+    cover: {
+      src: '/portfolio/real-deck-after.jpg',
+      alt: 'Freshly stained backyard deck in warm evening light, wrapping around a brick bungalow',
+      caption: 'Same footprint, new everything — stained and ready for the season.',
+    },
+    photos: [
+      {
+        src: '/portfolio/real-deck-before.jpg',
+        alt: 'A weathered grey deck mid tear-off, with old railings and splintering boards',
+        caption: 'Where it started — grey, splintering, and past its best years.',
+      },
+      {
+        src: '/portfolio/real-deck-after.jpg',
+        alt: 'Freshly stained backyard deck in warm evening light, wrapping around a brick bungalow',
+        caption: 'Same footprint, new everything — stained and ready for the season.',
+      },
+      {
+        src: '/portfolio/real-deck-after-detail.jpg',
+        alt: 'Corner of the finished deck at golden hour with tools and a storage shed in the background',
+        caption: 'Still wet from the last coat of stain.',
       },
     ],
   },
