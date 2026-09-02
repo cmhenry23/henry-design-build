@@ -67,6 +67,19 @@ export default function ContactPage() {
                     {site.instagramHandle} &mdash; see what&rsquo;s on the bench this week
                   </a>
                 </li>
+                {site.googleReviews && (
+                  <li>
+                    <a
+                      href={site.googleReviews.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-ink/70 transition-colors hover:text-ink"
+                    >
+                      {site.googleReviews.rating.toFixed(1)}★ on Google (
+                      {site.googleReviews.count} reviews) &mdash; read them
+                    </a>
+                  </li>
+                )}
               </ul>
             </div>
 

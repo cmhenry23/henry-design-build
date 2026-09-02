@@ -80,11 +80,12 @@ export default function SiteFooter() {
         <div className="mt-16 flex flex-col gap-4 border-t border-bone/12 pt-8 text-xs text-bone/40 sm:flex-row sm:items-center sm:justify-between">
           <p>
             &copy; {new Date().getFullYear()} {site.name}. All rights reserved.
-            {(site.credentials.redSeal || site.credentials.insured) && (
+            {(site.credentials.redSeal || site.credentials.insured || site.credentials.wedi) && (
               <span className="ml-2 text-bone/30">
                 ·{' '}
                 {[
                   site.credentials.redSeal && 'Red Seal Certified',
+                  site.credentials.wedi && 'Wedi Certified',
                   site.credentials.insured && 'Fully Insured',
                   `${site.yearsExperience} Years`,
                 ]

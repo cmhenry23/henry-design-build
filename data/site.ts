@@ -15,10 +15,7 @@ export const site = {
 
   email: 'henrydesignbuild4@gmail.com',
 
-  // Pulled from Ryan's own Instagram promo graphics (the "GET IN TOUCH" /
-  // "DECK SEASON" carousel cards) — confirm this is still current. Leave it
-  // as an empty string and the phone link disappears from the footer and
-  // contact page automatically.
+  // Confirmed current by Ryan (Sept 2026).
   phone: '(226) 224-8633' as string,
 
   instagram: 'https://www.instagram.com/henry_designbuild/',
@@ -37,12 +34,23 @@ export const site = {
   founded: 2020,
   yearsExperience: '5+',
 
-  // Only real, confirmable credentials belong here — this prints as a
-  // public trust line in the footer. Set insured to true only once that's
-  // actually true; leaving it false just omits it, nothing prints "no".
+  // Only real, confirmable credentials belong here — each one prints as a
+  // small trust badge (footer, homepage, about). Flip one to false and it
+  // just disappears, nothing prints "no". Confirmed by Ryan (Sept 2026):
+  // Red Seal, insured, and Wedi (waterproofing system) certified.
   credentials: {
     redSeal: true,
-    insured: false as boolean,
+    insured: true,
+    wedi: true as boolean,
+  },
+
+  // Real Google Business Profile — 5.0 stars / 3 reviews, checked Sept
+  // 2026. Update `count`/`rating` here as more reviews come in; there's no
+  // API wired up to pull it live.
+  googleReviews: {
+    url: 'https://share.google/VQ2sqRIASpskSkQHC',
+    rating: 5.0,
+    count: 3,
   },
 
   owner: {

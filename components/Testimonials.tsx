@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { site } from '@/data/site';
 import { PLACEHOLDER, testimonials } from '@/data/testimonials';
 
 function Stars({ count }: { count: number }) {
@@ -57,6 +58,26 @@ export default function Testimonials() {
             afterwards. These are the people who used it.
           </p>
         </div>
+
+        {site.googleReviews && (() => {
+          const reviewCount: number = site.googleReviews.count;
+          return (
+            <a
+              href={site.googleReviews.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-8 inline-flex items-center gap-3 border border-bone/20 px-5 py-3 transition-colors hover:border-cedar"
+            >
+              <Stars count={Math.round(site.googleReviews.rating)} />
+              <span className="font-display text-sm font-bold">
+                {site.googleReviews.rating.toFixed(1)} on Google
+              </span>
+              <span className="text-sm text-bone/45">
+                ({reviewCount} review{reviewCount === 1 ? '' : 's'}) — read them &rarr;
+              </span>
+            </a>
+          );
+        })()}
 
         {PLACEHOLDER && (
           <div
