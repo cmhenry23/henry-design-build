@@ -3,7 +3,6 @@ import Link from 'next/link';
 import InstagramFeed from '@/components/InstagramFeed';
 import Reveal from '@/components/Reveal';
 import Testimonials from '@/components/Testimonials';
-import TrustBadges from '@/components/TrustBadges';
 import { projects } from '@/data/projects';
 import { services, site } from '@/data/site';
 
@@ -55,8 +54,6 @@ export default function HomePage() {
               Design your build
             </Link>
           </div>
-
-          <TrustBadges variant="dark" className="mt-8 animate-rise" />
 
           <div className="mt-16 max-w-xl border-t border-bone/15 pt-8">
             <p className="text-sm leading-relaxed text-bone/55">

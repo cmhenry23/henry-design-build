@@ -3,7 +3,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Reveal from '@/components/Reveal';
 import Testimonials from '@/components/Testimonials';
-import TrustBadges from '@/components/TrustBadges';
 import { processSteps, site } from '@/data/site';
 
 export const metadata: Metadata = {
@@ -89,8 +88,6 @@ export default function AboutPage() {
                 </li>
               ))}
             </ul>
-
-            <TrustBadges variant="light" className="mt-6" />
           </Reveal>
         </div>
       </section>

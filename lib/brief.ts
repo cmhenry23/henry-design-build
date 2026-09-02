@@ -23,6 +23,7 @@ import {
   SEASONS,
   SITE_ACCESS,
   WINDOW_STYLES,
+  guessLocationId,
   type BuildTypeId,
   type FinishLevelId,
   type SeasonId,
@@ -130,6 +131,11 @@ export function resolveBrief(brief: Brief) {
     addOns: brief.addOns.filter((id) =>
       ADD_ONS.find((a) => a.id === id)?.appliesTo.includes(buildType)
     ),
+    // Pricing region, guessed from whatever town/area the visitor typed —
+    // the free-text `location` field itself stays untouched for display.
+    // A visitor adjusting the Design Studio's own location picker directly
+    // always wins over this guess; see Configurator's sync effect.
+    region: guessLocationId(brief.location),
     style: brief.style ?? '',
     palette: brief.palette ?? '',
     customPalette: brief.customPalette ?? null,

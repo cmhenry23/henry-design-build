@@ -6,7 +6,7 @@ import StyleImage from '@/components/chat/StyleImage';
 import CabinPreview from '@/components/visualizer/CabinPreview';
 import { resolveBrief, type Brief } from '@/lib/brief';
 import { buildSummary } from '@/lib/briefSummary';
-import { BUILD_TYPES, PLACEHOLDER_PRICING, formatCAD } from '@/lib/estimate';
+import { BUILD_TYPES, formatCAD } from '@/lib/estimate';
 
 /**
  * The deliverable at the end of the conversation: a reference, a drawing, and
@@ -138,13 +138,11 @@ export default function BriefCard({
         )}
       </div>
 
-      {PLACEHOLDER_PRICING && (
-        <p className="border-t border-cedar bg-cedar/15 px-6 py-4 text-xs leading-relaxed" role="note">
-          <strong className="font-display uppercase tracking-wider">Ryan —</strong> this range uses
-          the placeholder rates in <code className="bg-ink/10 px-1.5 py-0.5">lib/estimate.ts</code>.
-          Replace them with your own before launch.
-        </p>
-      )}
+      <p className="border-t border-cedar bg-cedar/15 px-6 py-4 text-xs leading-relaxed" role="note">
+        This range is an estimate built from published 2026 Ontario construction-cost research and
+        regional adjustments, not from our own completed jobs — a starting point for budgeting, never
+        a quote.
+      </p>
     </section>
   );
 }

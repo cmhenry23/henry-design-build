@@ -19,16 +19,18 @@ import {
   CLADDINGS,
   DOOR_COLORS,
   FINISH_LEVELS,
+  LOCATIONS,
   PITCHES,
-  PLACEHOLDER_PRICING,
   ROOFS,
   SEASONS,
   SITE_ACCESS,
   WINDOW_STYLES,
   calculateEstimate,
   formatCAD,
+  guessLocationId,
   type BuildTypeId,
   type FinishLevelId,
+  type LocationId,
   type SeasonId,
   type SiteAccessId,
 } from '@/lib/estimate';
@@ -42,6 +44,7 @@ export default function Configurator({ seedBrief }: { seedBrief?: Brief } = {}) 
   const [finish, setFinish] = useState<FinishLevelId>('crafted');
   const [access, setAccess] = useState<SiteAccessId>('easy');
   const [season, setSeason] = useState<SeasonId>('four');
+  const [location, setLocation] = useState<LocationId>('other');
   const [addOns, setAddOns] = useState<string[]>(['sauna']);
   const [cladding, setCladding] = useState(CLADDINGS[0].id);
   const [roof, setRoof] = useState(ROOFS[0].id);
@@ -79,6 +82,12 @@ export default function Configurator({ seedBrief }: { seedBrief?: Brief } = {}) 
     if (seedBrief.finish !== UNKNOWN && seedBrief.finish !== prev?.finish) setFinish(seedBrief.finish);
     if (seedBrief.access !== UNKNOWN && seedBrief.access !== prev?.access) setAccess(seedBrief.access);
     if (seedBrief.season !== UNKNOWN && seedBrief.season !== prev?.season) setSeason(seedBrief.season);
+    if (seedBrief.location && seedBrief.location !== prev?.location) {
+      // Only auto-apply a confident match — a vague or unrelated mention
+      // shouldn't silently reset a location the visitor already picked here.
+      const guessed = guessLocationId(seedBrief.location);
+      if (guessed !== 'other') setLocation(guessed);
+    }
     if (seedBrief.addOns.length && JSON.stringify(seedBrief.addOns) !== JSON.stringify(prev?.addOns ?? [])) {
       setAddOns((cur) => Array.from(new Set([...cur, ...seedBrief.addOns])));
     }
@@ -123,6 +132,9 @@ export default function Configurator({ seedBrief }: { seedBrief?: Brief } = {}) 
       pitch,
       windowStyle,
       doorColor,
+      // Free-text stand-in for the picked location so buildSummary's own
+      // region guess lands back on the exact same id — see guessLocationId.
+      location: LOCATIONS.find((l) => l.id === location)?.label ?? '',
       notes,
     }),
     [
@@ -141,6 +153,7 @@ export default function Configurator({ seedBrief }: { seedBrief?: Brief } = {}) 
       roof,
       pitch,
       windowStyle,
+      location,
       doorColor,
       notes,
     ]
@@ -155,8 +168,9 @@ export default function Configurator({ seedBrief }: { seedBrief?: Brief } = {}) 
   }, [projectId, buildType, sqft]);
 
   const estimate = useMemo(
-    () => calculateEstimate({ buildType, sqft, finish, access, season, addOns: activeAddOns }),
-    [buildType, sqft, finish, access, season, activeAddOns]
+    () =>
+      calculateEstimate({ buildType, sqft, finish, access, season, addOns: activeAddOns, location }),
+    [buildType, sqft, finish, access, season, activeAddOns, location]
   );
 
   const summary = useMemo(
@@ -406,45 +420,61 @@ export default function Configurator({ seedBrief }: { seedBrief?: Brief } = {}) 
             </div>
           </Field>
 
-          {/* Season + access */}
-          {(type.showsSeason || type.showsAccess) && (
-            <Field label="Tell us about the site" step={nextStep()}>
-              <div className="grid gap-6 sm:grid-cols-2">
-                {type.showsSeason && (
-                  <div>
-                    <p className="eyebrow mb-3 text-ink/45">Season of use</p>
-                    <div className="space-y-2">
-                      {SEASONS.map((s) => (
-                        <Choice
-                          key={s.id}
-                          selected={season === s.id}
-                          onClick={() => setSeason(s.id)}
-                          label={s.label}
-                          blurb={s.blurb}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {type.showsAccess && (
-                  <div>
-                    <p className="eyebrow mb-3 text-ink/45">Site access</p>
-                    <div className="space-y-2">
-                      {SITE_ACCESS.map((a) => (
-                        <Choice
-                          key={a.id}
-                          selected={access === a.id}
-                          onClick={() => setAccess(a.id)}
-                          label={a.label}
-                          blurb={a.blurb}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
+          {/* Location + season + access */}
+          <Field label="Tell us about the site" step={nextStep()}>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <div>
+                <p className="eyebrow mb-3 text-ink/45">Where is this?</p>
+                <div className="space-y-2">
+                  {LOCATIONS.map((l) => (
+                    <Choice
+                      key={l.id}
+                      selected={location === l.id}
+                      onClick={() => setLocation(l.id)}
+                      label={l.label}
+                      blurb={l.blurb}
+                    />
+                  ))}
+                </div>
               </div>
-            </Field>
-          )}
+              {type.showsSeason && (
+                <div>
+                  <p className="eyebrow mb-3 text-ink/45">Season of use</p>
+                  <div className="space-y-2">
+                    {SEASONS.map((s) => (
+                      <Choice
+                        key={s.id}
+                        selected={season === s.id}
+                        onClick={() => setSeason(s.id)}
+                        label={s.label}
+                        blurb={s.blurb}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+              {type.showsAccess && (
+                <div>
+                  <p className="eyebrow mb-3 text-ink/45">Site access</p>
+                  <div className="space-y-2">
+                    {SITE_ACCESS.map((a) => (
+                      <Choice
+                        key={a.id}
+                        selected={access === a.id}
+                        onClick={() => setAccess(a.id)}
+                        label={a.label}
+                        blurb={a.blurb}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            <p className="mt-5 text-xs leading-relaxed text-ink/45">
+              The location adjusts the planning range below to reflect published regional cost
+              research — it doesn&rsquo;t change the drawing.
+            </p>
+          </Field>
 
           {/* Exterior look */}
           {!isInterior && (
@@ -666,6 +696,17 @@ export default function Configurator({ seedBrief }: { seedBrief?: Brief } = {}) 
               Roughly {formatCAD(estimate.perSqFtLow)} – {formatCAD(estimate.perSqFtHigh)} per sq ft
               at this spec.
             </p>
+            <p className="mt-2 text-xs leading-relaxed text-bone/50">
+              {estimate.location.multiplier !== 1 ? (
+                <>
+                  Adjusted for {estimate.location.label} pricing (
+                  {estimate.location.multiplier > 1 ? '+' : ''}
+                  {Math.round((estimate.location.multiplier - 1) * 100)}%).
+                </>
+              ) : (
+                <>Using {estimate.location.label} pricing.</>
+              )}
+            </p>
           </div>
 
           {projectId && (
@@ -717,23 +758,19 @@ export default function Configurator({ seedBrief }: { seedBrief?: Brief } = {}) 
           </p>
         </div>
 
-        {PLACEHOLDER_PRICING && (
-          <div className="mt-4 border border-cedar bg-cedar/15 p-6 text-xs leading-relaxed" role="note">
-            <p className="font-display text-[0.7rem] font-bold uppercase tracking-[0.14em]">
-              Ryan — replace these rates before launch
-            </p>
-            <p className="mt-3 text-ink/75">
-              The dollar figures above are placeholders seeded from published 2026 Ontario
-              cost-per-square-foot guides, not from your jobs. Open{' '}
-              <code className="bg-ink/10 px-1.5 py-0.5">lib/estimate.ts</code>, put your own numbers
-              into the <code className="bg-ink/10 px-1.5 py-0.5">rate</code> field of each entry in{' '}
-              <code className="bg-ink/10 px-1.5 py-0.5">BUILD_TYPES</code>, check the tool
-              against a project you have already completed, then set{' '}
-              <code className="bg-ink/10 px-1.5 py-0.5">PLACEHOLDER_PRICING = false</code> to hide
-              this notice.
-            </p>
-          </div>
-        )}
+        <div className="mt-4 border border-cedar bg-cedar/15 p-6 text-xs leading-relaxed" role="note">
+          <p className="font-display text-[0.7rem] font-bold uppercase tracking-[0.14em]">
+            This is an estimate based on research, not our invoices
+          </p>
+          <p className="mt-3 text-ink/75">
+            Every dollar figure above comes from published 2026 Ontario construction-cost guides and
+            the regional breakdowns in our own journal — not from what any of our own projects
+            actually cost. The {estimate.location.label} adjustment is the same: a general
+            regional estimate, not a number pulled from a job we&rsquo;ve built there. Treat this
+            whole range as a starting point for the conversation, never as what we&rsquo;ll charge
+            you.
+          </p>
+        </div>
       </aside>
     </div>
   );

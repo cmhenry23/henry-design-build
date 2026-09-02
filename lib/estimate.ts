@@ -1,32 +1,30 @@
 /**
  * ══════════════════════════════════════════════════════════════════
- *  ⚠  PLACEHOLDER PRICING — RYAN MUST REPLACE THESE NUMBERS  ⚠
+ *  RESEARCH-BASED PLANNING ESTIMATE — by design, not a placeholder
  * ══════════════════════════════════════════════════════════════════
  *
- * Every rate in this file is a PLACEHOLDER seeded from published
- * 2026 Ontario cost-per-square-foot ranges. They are NOT Ryan's
- * numbers and they are NOT a quote.
+ * Ryan's call (Sept 2026): this tool stays research-based rather than
+ * being calibrated off past invoices. Every rate below is seeded from
+ * published 2026 Ontario cost-per-square-foot guides, cross-checked
+ * against the regional numbers already published in the journal
+ * (see data/journal.ts — "Kitchen Renovation Costs by Region",
+ * "Build vs Renovate Costs"). None of it comes from Ryan's own jobs.
  *
- * Sources used for the seed ranges (public 2026 guides):
+ * Sources used for the base seed ranges (public 2026 guides):
  *   - Ontario custom builds commonly quoted $300–$600+/sq ft
  *   - Three-season cottage roughly $350–$500/sq ft
  *   - Four-season / waterfront roughly $500–$800+/sq ft
  *   - Estate-level $900–$1,200+/sq ft
  *
- * HOW TO MAKE THIS REAL:
- *   1. Take your last 3–5 completed projects.
- *   2. Divide final invoice by finished square footage.
- *   3. Put your own low/high per-sq-ft into the `rate` field of each
- *      entry in BUILD_TYPES below.
- *   4. Adjust the multipliers so a known past project lands inside
- *      the range the tool produces. If it doesn't, the tool is
- *      wrong and it will cost you trust — fix it before launch.
- *
- * The UI always shows this as a RANGE and always labels it a
- * planning estimate, never a quote. Keep it that way.
+ * The UI must always show this as a RANGE, always label it a planning
+ * estimate rather than a quote, and always say plainly that it's built
+ * from published research rather than Ryan's completed jobs — that
+ * disclosure is the thing that keeps this tool honest, not a detail to
+ * trim later. See LOCATIONS below for the regional adjustment and its
+ * own sourcing notes.
  */
 
-export const PLACEHOLDER_PRICING = true;
+export const PLACEHOLDER_PRICING = false;
 
 export type BuildTypeId = 'cottage' | 'tiny' | 'sauna' | 'kitchen' | 'bath' | 'reno';
 export type FinishLevelId = 'essential' | 'crafted' | 'heirloom';
@@ -177,6 +175,85 @@ export const SEASONS = [
   { id: 'four' as SeasonId, label: 'Four season', blurb: 'Full insulation, winter-rated mechanicals, freeze protection.', multiplier: 1.0 },
 ];
 
+/**
+ * Regional pricing adjustment — a general market/labour-availability premium
+ * for the area, layered on top of the base per-sq-ft rate.
+ *
+ * This is deliberately separate from `SITE_ACCESS` above: SITE_ACCESS prices
+ * what a *specific lot* costs to build on (a long lane, a barge, bare rock),
+ * something only the visitor knows about their own property. LOCATIONS
+ * prices the *region* — the going trade rate, how far materials travel to
+ * get there, how many local crews are competing for the work — regardless
+ * of any one lot's own access. A remote, rock-access lot in Muskoka should
+ * pick BOTH "Muskoka" here AND "Remote or water access" above; the two
+ * multiply together rather than double up on the same thing.
+ *
+ * Sourced from the regional breakdowns already published in the journal
+ * (data/journal.ts — "Kitchen Renovation Costs by Region": Grand Bend
+ * running 10–20% over baseline, Tobermory 20–35% over baseline once
+ * logistics are counted) plus published 2026 cottage-construction guides
+ * for the Muskoka premium. Deliberately kept toward the low end of what
+ * those sources report, since the higher end of most published Muskoka/
+ * Tobermory premiums is largely the same site-specific rock/remote-access
+ * cost that SITE_ACCESS already prices separately above — this number is
+ * just the regional layer on top of that.
+ */
+export type LocationId = 'london' | 'grand-bend' | 'muskoka' | 'tobermory' | 'other';
+
+export interface Location {
+  id: LocationId;
+  label: string;
+  blurb: string;
+  multiplier: number;
+}
+
+export const LOCATIONS: Location[] = [
+  {
+    id: 'london',
+    label: 'London & area',
+    blurb: 'Closest to the Ontario baseline — strong trade availability, easy material access.',
+    multiplier: 1.0,
+  },
+  {
+    id: 'grand-bend',
+    label: 'Grand Bend & Lake Huron shoreline',
+    blurb: 'Moisture-resistant materials and seasonal-to-four-season conversions typically add 10–20%.',
+    multiplier: 1.12,
+  },
+  {
+    id: 'muskoka',
+    label: 'Muskoka',
+    blurb: 'Higher regional demand and trade rates. Add "remote or water access" below too if your lot is boat-in.',
+    multiplier: 1.15,
+  },
+  {
+    id: 'tobermory',
+    label: 'Tobermory & Bruce Peninsula',
+    blurb: 'Fewest local trades — most travel from Owen Sound or Wiarton — plus a short building season.',
+    multiplier: 1.2,
+  },
+  {
+    id: 'other',
+    label: 'Elsewhere in Ontario',
+    blurb: 'Using the general Ontario baseline. Tell us your town when you reach out and we’ll refine this.',
+    multiplier: 1.0,
+  },
+];
+
+/**
+ * Best-effort match from free text (e.g. what a visitor typed in the chat)
+ * to one of the LOCATIONS above. Used only to pre-select a sensible default
+ * — the visitor can always override it directly in the Design Studio.
+ */
+export function guessLocationId(text: string): LocationId {
+  const t = text.toLowerCase();
+  if (/muskoka|huntsville|bracebridge|gravenhurst|port carling/.test(t)) return 'muskoka';
+  if (/tobermory|bruce peninsula|lion's head|lions head|wiarton/.test(t)) return 'tobermory';
+  if (/grand bend|lambton shores|lake huron|bayfield|goderich/.test(t)) return 'grand-bend';
+  if (/london|old north|wortley|byron/.test(t)) return 'london';
+  return 'other';
+}
+
 /** Optional add-ons. Flat placeholder dollar amounts. */
 export interface AddOn {
   id: string;
@@ -278,6 +355,7 @@ export interface EstimateInput {
   access: SiteAccessId;
   season: SeasonId;
   addOns: string[];
+  location: LocationId;
 }
 
 export interface EstimateResult {
@@ -290,6 +368,8 @@ export interface EstimateResult {
   addOnLow: number;
   addOnHigh: number;
   lines: { label: string; low: number; high: number }[];
+  /** The resolved location entry, so the UI can show its label/blurb without a second lookup. */
+  location: Location;
 }
 
 /** Round to a sensible presentation number so the output never looks falsely precise. */
@@ -302,10 +382,11 @@ export function calculateEstimate(input: EstimateInput): EstimateResult {
   const finish = FINISH_LEVELS.find((f) => f.id === input.finish) ?? FINISH_LEVELS[1];
   const access = SITE_ACCESS.find((a) => a.id === input.access) ?? SITE_ACCESS[0];
   const season = SEASONS.find((s) => s.id === input.season) ?? SEASONS[1];
+  const location = LOCATIONS.find((l) => l.id === input.location) ?? LOCATIONS[LOCATIONS.length - 1];
 
   const accessMult = type.showsAccess ? access.multiplier : 1;
   const seasonMult = type.showsSeason ? season.multiplier : 1;
-  const mult = finish.multiplier * accessMult * seasonMult;
+  const mult = finish.multiplier * accessMult * seasonMult * location.multiplier;
 
   const perSqFtLow = type.rate[0] * mult;
   const perSqFtHigh = type.rate[1] * mult;
@@ -334,6 +415,7 @@ export function calculateEstimate(input: EstimateInput): EstimateResult {
     perSqFtHigh: Math.round(perSqFtHigh),
     baseLow,
     baseHigh,
+    location,
     addOnLow,
     addOnHigh,
     lines,

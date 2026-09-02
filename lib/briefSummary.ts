@@ -68,6 +68,7 @@ export function buildSummary(brief: Brief, projectId: string): BriefSummary {
     access: r.access,
     season: r.season,
     addOns: r.addOns,
+    location: r.region,
   });
 
   const type = BUILD_TYPES.find((t) => t.id === r.buildType)!;
@@ -132,6 +133,9 @@ export function buildSummary(brief: Brief, projectId: string): BriefSummary {
     });
   }
   if (brief.location) rows.push({ label: 'Location', value: brief.location });
+  if (estimate.location.id !== 'other') {
+    rows.push({ label: 'Pricing region', value: estimate.location.label });
+  }
   if (brief.timeline) rows.push({ label: 'Timeline', value: brief.timeline });
 
   const line = (s = '') => s;
