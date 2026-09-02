@@ -105,6 +105,18 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
         </div>
       </section>
 
+      {/* Gallery */}
+      <section className="border-t border-ink/10 bg-sand py-20 sm:py-24">
+        <div className="shell">
+          <h2 className="eyebrow text-ink/40">
+            The gallery &mdash; {project.photos.length} photos
+          </h2>
+          <div className="mt-9">
+            <ProjectGallery photos={project.photos} projectTitle={project.title} />
+          </div>
+        </div>
+      </section>
+
       {/* Build video */}
       {project.video && (
         <section className="border-t border-ink/10 bg-ink py-20 sm:py-24">
@@ -127,18 +139,6 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
           </div>
         </section>
       )}
-
-      {/* Gallery */}
-      <section className="border-t border-ink/10 bg-sand py-20 sm:py-24">
-        <div className="shell">
-          <h2 className="eyebrow text-ink/40">
-            The gallery &mdash; {project.photos.length} photos
-          </h2>
-          <div className="mt-9">
-            <ProjectGallery photos={project.photos} projectTitle={project.title} />
-          </div>
-        </div>
-      </section>
 
       {/* Next project */}
       <section className="shell py-20 sm:py-24">
