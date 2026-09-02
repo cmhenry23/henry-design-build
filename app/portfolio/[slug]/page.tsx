@@ -105,6 +105,29 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
         </div>
       </section>
 
+      {/* Build video */}
+      {project.video && (
+        <section className="border-t border-ink/10 bg-ink py-20 sm:py-24">
+          <div className="shell">
+            <h2 className="eyebrow text-bone/40">Watch it come together</h2>
+            <div className="mt-9 grid gap-10 lg:grid-cols-[auto_1fr] lg:items-center">
+              <video
+                controls
+                playsInline
+                preload="metadata"
+                poster={project.video.poster}
+                className="mx-auto aspect-[9/16] w-full max-w-xs bg-black object-cover lg:mx-0"
+              >
+                <source src={project.video.src} type="video/mp4" />
+              </video>
+              <p className="max-w-md text-[1.05rem] leading-relaxed text-bone/70">
+                {project.video.caption}
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Gallery */}
       <section className="border-t border-ink/10 bg-sand py-20 sm:py-24">
         <div className="shell">

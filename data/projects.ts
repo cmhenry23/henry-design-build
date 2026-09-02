@@ -35,6 +35,12 @@ export interface Photo {
   portrait?: boolean;
 }
 
+export interface ProjectVideo {
+  src: string;
+  poster: string;
+  caption: string;
+}
+
 export interface Project {
   slug: string;
   title: string;
@@ -52,6 +58,8 @@ export interface Project {
   highlights: string[];
   cover: Photo;
   photos: Photo[];
+  /** Optional build recap clip, shown between the story and the gallery. */
+  video?: ProjectVideo;
   featured?: boolean;
 }
 
@@ -124,6 +132,12 @@ export const projects: Project[] = [
         portrait: true,
       },
     ],
+    video: {
+      src: '/portfolio/cabin-build-video.mp4',
+      poster: '/portfolio/cabin-build-video-poster.jpg',
+      caption:
+        'The drive in, the frame going up, the log stair cut by hand — the build, start to (almost) finish.',
+    },
     featured: true,
   },
   {
