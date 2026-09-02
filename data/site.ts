@@ -74,7 +74,7 @@ export const site = {
 export const nav = [
   { href: '/', label: 'Home' },
   { href: '/portfolio', label: 'Portfolio' },
-  { href: '/start', label: 'Start' },
+  { href: '/start', label: 'Design Studio' },
   { href: '/about', label: 'About' },
   { href: '/journal', label: 'Journal' },
   { href: '/papas-shop', label: "Papa's Shop" },
