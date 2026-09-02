@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import ProjectGallery from '@/components/ProjectGallery';
-import { getProject, projects } from '@/data/projects';
+import { getProject, projectMeta, projects } from '@/data/projects';
 
 export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));
@@ -52,7 +52,7 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
             <span aria-hidden="true">&larr;</span> All work
           </Link>
           <p className="eyebrow mt-8 text-cedar">
-            {project.category} &middot; {project.location} &middot; {project.year}
+            {[project.category, projectMeta(project)].filter(Boolean).join(' · ')}
           </p>
           <h1 className="h-hero mt-5 max-w-4xl">{project.title}</h1>
           <p className="lede mt-8 max-w-xl text-bone/70">{project.summary}</p>

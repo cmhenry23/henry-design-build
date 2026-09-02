@@ -431,6 +431,21 @@ export function getProject(slug: string) {
   return projects.find((p) => p.slug === slug);
 }
 
+/**
+ * True for the seeded 'TODO: confirm ...' values on `location`/`year`.
+ * Used to hide those fields from real visitors instead of printing "TODO"
+ * on the live site — fill in the real value in the project entry above and
+ * this stops hiding it automatically.
+ */
+export function isPlaceholderField(value: string) {
+  return value.trim().toUpperCase().startsWith('TODO');
+}
+
+/** `location · year`, skipping either (or both) while they're still TODO. */
+export function projectMeta(project: Project) {
+  return [project.location, project.year].filter((v) => !isPlaceholderField(v)).join(' · ');
+}
+
 /** Every photo across every project, for the "All work" masonry view. */
 export function allPhotos() {
   return projects.flatMap((p) =>

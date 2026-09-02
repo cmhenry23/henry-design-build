@@ -101,9 +101,24 @@ export default function JournalPostPage({ params }: { params: { slug: string } }
           <p className="mt-10 border-l-2 border-cedar pl-6 font-display text-lg font-bold italic leading-snug text-ink">
             {post.closing}
           </p>
+
+          <div className="mt-10 flex flex-wrap items-center gap-4 bg-stone/40 px-6 py-6 sm:px-8">
+            <p className="font-display text-sm font-bold uppercase tracking-[0.08em] text-ink">
+              Thinking about a project like this?
+            </p>
+            <Link href="/start" className="btn-primary !px-6 !py-3">
+              Start a project
+            </Link>
+            <Link
+              href="/contact"
+              className="font-display text-[0.72rem] font-bold uppercase tracking-[0.16em] text-ink/60 transition-colors hover:text-brass"
+            >
+              Or just ask a question →
+            </Link>
+          </div>
         </div>
 
-        <div className="mx-auto mt-16 max-w-2xl border-t border-ink/10 pt-8">
+        <div className="mx-auto mt-10 max-w-2xl border-t border-ink/10 pt-8">
           <Link
             href="/journal"
             className="inline-flex items-center gap-2 font-display text-[0.72rem] font-bold uppercase tracking-[0.16em] text-ink/60 transition-colors hover:text-brass"

@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import Lightbox from '@/components/Lightbox';
-import { categories, projects, type ProjectCategory } from '@/data/projects';
+import { categories, projectMeta, projects, type ProjectCategory } from '@/data/projects';
 
 type Filter = 'All work' | ProjectCategory;
 type View = 'projects' | 'photos';
@@ -104,9 +104,9 @@ export default function PortfolioBrowser() {
               </div>
 
               <div className="flex flex-col justify-center p-8 sm:p-12">
-                <p className="eyebrow text-ink/40">
-                  {project.location} &middot; {project.year}
-                </p>
+                {projectMeta(project) && (
+                  <p className="eyebrow text-ink/40">{projectMeta(project)}</p>
+                )}
                 <h2 className="mt-4 font-display text-3xl font-extrabold uppercase leading-[0.98] tracking-[-0.015em] sm:text-[2.6rem]">
                   {project.title}
                 </h2>
