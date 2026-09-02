@@ -42,6 +42,77 @@ export interface JournalPost {
 
 export const journalPosts: JournalPost[] = [
   {
+    slug: 'material-choices-and-costs',
+    title: 'Material Choices & Costs: What 2026 Numbers Say About Quartz, Hardwood and Cedar',
+    excerpt:
+      'Quartz or granite. Hardwood or LVP. Cedar or fiber cement. A real 2026 cost comparison for the three material decisions we get asked about most.',
+    date: '2026-09-01',
+    category: 'Planning & budget',
+    body: [
+      {
+        type: 'p',
+        text: 'Three material questions come up on almost every project, whether it is a full kitchen or a single deck: what goes on the counter, what goes on the floor, and what goes on the outside. Here is a real 2026 breakdown of what each option actually costs installed, and why the more expensive one is not always the right call.',
+      },
+      { type: 'h2', text: 'Countertops: Quartz vs. Granite' },
+      {
+        type: 'p',
+        text: 'In Ontario, granite typically runs $55–$110 per square foot installed, with quartz running somewhat higher at $70–$130. On a standard mid-range slab the gap is usually $10–$30 per square foot — quartz costs more, but not dramatically more, once you are past entry-level options on both sides.',
+      },
+      {
+        type: 'ul',
+        items: [
+          'Quartz is engineered and non-porous — no sealing, ever, and very consistent colour from slab to slab',
+          'Granite is a natural stone — every slab is genuinely one of one, but it needs sealing every one to five years depending on use',
+          'Add roughly $25–$50 per square foot for installation, plus $75–$150 per sink cutout and $150–$300 per seam, on either material',
+        ],
+      },
+      {
+        type: 'p',
+        text: 'The honest answer: if you want zero maintenance and predictable colour matching across a large run, quartz is worth the premium. If you want a countertop that looks like nothing else in anyone else’s kitchen and do not mind resealing it occasionally, granite is not the compromise choice it gets treated as.',
+      },
+      { type: 'h2', text: 'Flooring: Hardwood vs. Luxury Vinyl Plank' },
+      {
+        type: 'p',
+        text: 'This is the widest gap of the three. Mid-range LVP runs roughly $5–$9 per square foot installed. Engineered hardwood runs $9–$20 installed, and solid hardwood climbs to $14–$35 — meaning a full hardwood floor can cost two to four times what the same square footage in LVP costs.',
+      },
+      {
+        type: 'ul',
+        items: [
+          'LVP is fully waterproof and stable in basements, mudrooms and bathrooms — rooms where hardwood is a genuinely bad idea regardless of budget',
+          'Hardwood can be sanded and refinished multiple times over decades; LVP gets replaced, not refinished, once it is worn out',
+          'Real estate agents and appraisers still weight hardwood higher — expect roughly $2,000–$5,000 more in perceived resale value on a comparable renovation',
+        ],
+      },
+      {
+        type: 'p',
+        text: 'Our usual recommendation: hardwood in the rooms people actually see and live in day to day, LVP in the rooms where water and durability matter more than resale perception. Mixing the two in one renovation is common and, done with the right transition details, does not read as a compromise.',
+      },
+      { type: 'h2', text: 'Exterior Cladding: Cedar vs. Fiber Cement' },
+      {
+        type: 'p',
+        text: 'Fiber cement (Hardie board and similar) runs roughly $10–$18 per square foot installed and holds up 40–50 years with minimal maintenance. Real cedar siding runs noticeably higher, typically $15–$30+ per square foot, and needs re-staining or re-sealing every few years to keep that look.',
+      },
+      {
+        type: 'ul',
+        items: [
+          'Fiber cement is the practical choice for most exteriors — paintable, fire-resistant, and effectively maintenance-free once installed',
+          'Cedar is the choice when the look and the material itself matter to you specifically — it ages, weathers and smells like nothing manufactured does, and it is what most of the cottage and cabin work in our portfolio is actually clad in',
+          'A hybrid approach — fiber cement on the bulk of the building, real cedar on an entry feature, gable end or accent wall — gets a lot of the look at a fraction of the maintenance commitment',
+        ],
+      },
+      { type: 'h2', text: 'The Number That Actually Matters' },
+      {
+        type: 'p',
+        text: 'Every range above is a starting point, not a quote — material pricing moves with supplier, finish, and what is available that season. The material that is “worth it” is the one that matches how you will actually use the room or the building, not the one at the top of the price list. That conversation is always where we start.',
+      },
+    ],
+    closing: 'Weighing material choices for an upcoming project? Let’s talk through what actually fits your space and your budget.',
+    cover: {
+      src: '/portfolio/real-deck-after.jpg',
+      alt: 'A freshly stained cedar deck in warm evening light against a brick house',
+    },
+  },
+  {
     slug: 'kitchen-renovation-costs-by-region',
     title: 'What Does a Kitchen Renovation Cost? A Regional Breakdown',
     excerpt:
